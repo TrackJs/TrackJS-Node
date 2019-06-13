@@ -1,13 +1,38 @@
 import https from 'https';
 
+const context: TrackJSOptions = {
+  token: '',
+  application: '',
+  sessionId: '',
+  userId: '',
+  version: ''
+}
+
+export interface TrackJSOptions {
+  token: string,
+  application?: string,
+  sessionId?: string,
+  userId?: string,
+  version?: string
+}
+
 export var TrackJS = {
+
+  install: function(options: TrackJSOptions): void {
+    Object.keys(context).forEach((key) => {
+      if (options[key] && typeof options[key] === typeof context[key]) {
+        context[key] = options[key]
+      }
+    })
+  },
+
   track: function (error: Error): any {
     return new Promise((resolve, reject) => {
       var req = https.request({
         method: 'POST',
-        hostname: 'capture.trackjs.com',
+        hostname: 'dev-capture.trackjs.com',
         port: 443,
-        path: '/capture?token=8de4c78a3ec64020ab2ad15dea1ae9ff&v=3.3.0'
+        path: `/capture?token=${context.token}&v=3.3.0`
       }, (res) => {
         var data = ''
         res.on('data', (chunk) => data += chunk);
@@ -19,12 +44,12 @@ export var TrackJS = {
         "bindTime": null,
         "console": [],
         "customer": {
-          "application": "",
+          "application": context.application,
           "correlationId": "1234",
-          "sessionId": "",
-          "token": "8de4c78a3ec64020ab2ad15dea1ae9ff",
-          "userId": "",
-          "version": ""
+          "sessionId": context.sessionId,
+          "token": context.token,
+          "userId": context.userId,
+          "version": context.version
         },
         "entry": "server",
         "environment": {
