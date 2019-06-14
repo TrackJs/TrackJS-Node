@@ -31,7 +31,6 @@
   },
   "jest": {
     "roots": [
-      "<rootDir>/src",
       "<rootDir>/test"
     ],
     "transform": {

@@ -1,29 +1,16 @@
 import https from 'https';
+import { TrackJSOptions } from './interfaces/TrackJSOptions';
+import { Agent } from './Agent';
 
-const context: TrackJSOptions = {
-  token: '',
-  application: '',
-  sessionId: '',
-  userId: '',
-  version: ''
-}
-
-export interface TrackJSOptions {
-  token: string,
-  application?: string,
-  sessionId?: string,
-  userId?: string,
-  version?: string
-}
+let agent:Agent = null;
 
 export var TrackJS = {
 
   install: function(options: TrackJSOptions): void {
-    Object.keys(context).forEach((key) => {
-      if (options[key] && typeof options[key] === typeof context[key]) {
-        context[key] = options[key]
-      }
-    })
+    if (!options) { throw new Error('Install options are required. See https://docs.trackjs.com/' )}
+    if (!options.token) { throw new Error('Install token is required. See https://docs.trackjs.com/' )}
+
+    agent = new Agent(options);
   },
 
   track: function (error: Error): any {
@@ -32,7 +19,7 @@ export var TrackJS = {
         method: 'POST',
         hostname: 'dev-capture.trackjs.com',
         port: 443,
-        path: `/capture?token=${context.token}&v=3.3.0`
+        path: `/capture?token=${agent.options.token}&v=3.3.0`
       }, (res) => {
         var data = ''
         res.on('data', (chunk) => data += chunk);
@@ -44,12 +31,12 @@ export var TrackJS = {
         "bindTime": null,
         "console": [],
         "customer": {
-          "application": context.application,
+          "application": agent.options.application,
           "correlationId": "1234",
-          "sessionId": context.sessionId,
-          "token": context.token,
-          "userId": context.userId,
-          "version": context.version
+          "sessionId": agent.options.sessionId,
+          "token": agent.options.token,
+          "userId": agent.options.userId,
+          "version": agent.options.version
         },
         "entry": "server",
         "environment": {

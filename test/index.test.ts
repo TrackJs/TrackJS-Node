@@ -2,6 +2,15 @@ import { TrackJS } from '../src/index';
 
 describe('TrackJS', () => {
 
+  describe('install()', () => {
+    test('it throws without options', () => {
+      expect(() => TrackJS.install(null)).toThrow();
+    })
+    test('it throws without token', () => {
+      expect(() => TrackJS.install({ token: '' })).toThrow();
+    });
+  })
+
   describe('track()', () => {
 
     test('returns promise that resolves OK', () => {
