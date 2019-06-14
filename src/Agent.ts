@@ -1,6 +1,7 @@
-import { TrackJSOptions } from "./interfaces/TrackJSOptions";
+import { TrackJSOptions } from "./types/TrackJSOptions";
+import TelemetryBuffer from "./telemetry/TelemetryBuffer";
 
-export class Agent {
+export default class Agent {
 
   static defaults:TrackJSOptions = {
     token: '',
@@ -10,20 +11,12 @@ export class Agent {
     version: ''
   }
 
-  options:TrackJSOptions = null
-  telemetry = []
+  options:TrackJSOptions
+  telemetry:TelemetryBuffer
 
   constructor(options: TrackJSOptions) {
     this.options = Object.assign({}, Agent.defaults, options);
-  }
-
-  addTelemetry(type: string, data: any): string {
-    this.telemetry.push({
-      id: 'id',
-      type,
-      data
-    })
-    return 'id';
+    this.telemetry = new TelemetryBuffer(30);
   }
 
 }

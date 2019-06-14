@@ -1,4 +1,4 @@
-import { patch } from '../../src/utils/patch'
+import patch from '../../src/utils/patch'
 
 describe('patch(obj, name, func)', () => {
 

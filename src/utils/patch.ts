@@ -7,7 +7,7 @@
   * @param {Function} func A function to monkeypatch into the method. Will
   *         be called with the original function as the parameter.
   */
-export function patch(obj: any, name: string, func: Function): void {
+export default function patch(obj: any, name: string, func: Function): void {
   var original = obj[name] || function() {}
   obj[name] = func(original)
 }

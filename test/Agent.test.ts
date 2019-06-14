@@ -1,4 +1,4 @@
-import { Agent } from '../src/Agent'
+import Agent from '../src/Agent'
 
 describe('Agent', () => {
 
@@ -31,26 +31,5 @@ describe('Agent', () => {
     });
 
   })
-
-  describe('addTelemetry()', () => {
-    let fakeAgent = null
-    beforeEach(() => {
-      fakeAgent = new Agent({ token: 'test' });
-    })
-
-    test('it adds telemetry', () => {
-      fakeAgent.addTelemetry('t',  {
-        foo: 'bar'
-      });
-      expect(fakeAgent.telemetry).toEqual([{
-        id: expect.any(String),
-        type: 't',
-        data: {
-          foo: 'bar'
-        }
-      }])
-    });
-
-  });
 
 })
