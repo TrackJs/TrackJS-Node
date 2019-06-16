@@ -38,6 +38,18 @@ export default class TelemetryBuffer {
     return key;
   }
 
+  /**
+    * Returns all the Telemetry of a type.
+    *
+    * @method getAllByCategory
+    * @param {String} category The category of logs to return.
+    */
+  getAllByCategory(category: string): Array<TelemetryData> {
+    return this._store
+      .filter((envelope) => envelope.category === category)
+      .map((envelope) => envelope.data);
+  }
+
 }
 
 

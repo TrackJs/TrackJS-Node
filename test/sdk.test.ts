@@ -35,6 +35,8 @@ describe('sdk', () => {
     describe('track()', () => {
       test('returns promise that resolves OK', () => {
         expect.assertions(1);
+        TrackJS.addLogTelemetry('log', 'a message');
+
         return TrackJS.track(new Error('node test with token')).then(data => expect(data).toBe('OK'))
       })
 

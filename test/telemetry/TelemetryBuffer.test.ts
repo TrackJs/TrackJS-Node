@@ -27,6 +27,32 @@ describe('TelemetryBuffer', () => {
 
   });
 
+  describe('getAllByCategory()', () => {
+    test('returns all objects from category', () => {
+      let telemetry1 = new TestTelemetry();
+      let telemetry2 = new TestTelemetry();
+      let telemetry3 = new TestTelemetry();
+      let telemetry4 = new TestTelemetry();
+      let telemetry5 = new TestTelemetry();
+      telemetry.add('test', telemetry1);
+      telemetry.add('other', telemetry2);
+      telemetry.add('other', telemetry3);
+      telemetry.add('test', telemetry4);
+      telemetry.add('test', telemetry5);
+
+      expect(telemetry.getAllByCategory('test')).toEqual([
+        telemetry1,
+        telemetry4,
+        telemetry5
+      ]);
+      expect(telemetry.getAllByCategory('other')).toEqual([
+        telemetry2,
+        telemetry3
+      ]);
+      expect(telemetry.getAllByCategory('empty')).toEqual([]);
+    });
+  });
+
   // describe('get()', () => {
 
   //   test('returns an object from appender', () => {
@@ -41,17 +67,7 @@ describe('TelemetryBuffer', () => {
 
   // });
 
-  // describe('all()', () => {
 
-  //   test('returns array of objects from appender', () => {
-  //     for (var i = 0; i < 5; i++) {
-  //       log.add('test', { name: 'name' + i });
-  //     }
-  //     var objs = log.all('test');
-  //     expect(objs.length).toBe(5);
-  //     expect(objs[0]).toEqual({ name: 'name0' });
-  //   });
-  // });
 
   // describe('clear()', () => {
 

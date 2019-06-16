@@ -1,8 +1,8 @@
-import * as consoleWatcher from '../src/consoleWatcher';
+import ConsoleWatcher from '../src/ConsoleWatcher';
 import Agent from '../src/Agent';
 import ConsoleTelemetryData from '../src/telemetry/ConsoleTelemetryData';
 
-describe('consoleWatcher', () => {
+describe('ConsoleWatcher', () => {
   describe('install()', () => {
     let fakeConsole = null;
     let fakeAgent = null;
@@ -14,14 +14,14 @@ describe('consoleWatcher', () => {
 
     it('console patches add telemetry', () => {
       fakeAgent.telemetry.add = jest.fn();
-      consoleWatcher.install(fakeAgent, fakeConsole);
+      ConsoleWatcher.install(fakeAgent, fakeConsole);
       fakeConsole.log('a log message');
       expect(fakeAgent.telemetry.add).toHaveBeenCalledWith('c', expect.any(ConsoleTelemetryData))
     })
 
     it('calls through to console', () => {
       let originalConsoleLog = fakeConsole.log;
-      consoleWatcher.install(fakeAgent, fakeConsole);
+      ConsoleWatcher.install(fakeAgent, fakeConsole);
       fakeConsole.log('a log message', 2, 3, 4);
       expect(originalConsoleLog).toHaveBeenCalledWith('a log message', 2, 3, 4);
     })
