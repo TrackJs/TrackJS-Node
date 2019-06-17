@@ -61,4 +61,23 @@ describe('Metadata', () => {
     }]);
   })
 
+  test('removes values', () => {
+    var m = new Metadata();
+    m.add('foo', 'bar');
+    m.remove('foo');
+    expect(m.get()).toEqual([]);
+  })
+
+  test('removes multiple values', () => {
+    var m = new Metadata();
+    m.add('foo', 'bar');
+    m.add('bar', 'bar');
+    m.add('baz', 'bar');
+    m.remove({
+      'foo': '',
+      'baz': ''
+    });
+    expect(m.get()).toEqual([{ key: 'bar', value: 'bar' }]);
+  })
+
 })

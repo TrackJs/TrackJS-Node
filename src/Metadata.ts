@@ -31,5 +31,16 @@ export class Metadata {
     });
   }
 
+  remove(meta: string | dictionary): void {
+    if (isString(meta)) {
+      delete this._hash[meta as string];
+    }
+    else {
+      Object.keys(meta).forEach((key) => {
+        delete this._hash[serialize(key) as string];
+      })
+    }
+  }
+
 }
 

@@ -17,6 +17,11 @@ export function addMetadata(meta: string | { [key: string]: string}, value?: str
   return agent.metadata.add(meta, value);
 }
 
+export function removeMetadata(meta: string | { [key: string]: string}) {
+  if (!agent) { throw new TrackJSError('not installed.'); }
+  return agent.metadata.remove(meta);
+}
+
 export function addLogTelemetry(severity: string, ...messages: any): Symbol {
   if (!agent) { throw new TrackJSError('not installed.'); }
   return agent.telemetry.add('c', new ConsoleTelemetryData(severity, messages));
