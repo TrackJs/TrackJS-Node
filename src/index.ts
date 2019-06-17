@@ -1,4 +1,5 @@
 export {
+  TrackJSCapturePayload,
   TrackJSError,
   TrackJSOptions
 } from './types/index';

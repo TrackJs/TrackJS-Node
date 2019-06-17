@@ -1,4 +1,4 @@
-import { TrackJSOptions, TrackJSError } from "./types/index";
+import { TrackJSOptions, TrackJSError, TrackJSCapturePayload } from "./types/index";
 import Agent from "./Agent";
 import ConsoleTelemetryData from "./telemetry/ConsoleTelemetryData";
 
@@ -15,6 +15,11 @@ export function install(options: TrackJSOptions): void {
 export function addLogTelemetry(severity: string, ...messages: any): Symbol {
   if (!agent) { throw new TrackJSError('not installed.'); }
   return agent.telemetry.add('c', new ConsoleTelemetryData(severity, messages));
+}
+
+export function onError(func: (payload: TrackJSCapturePayload) => boolean) {
+  if (!agent) { throw new TrackJSError('not installed.'); }
+  return agent.onError(func);
 }
 
 export function track(error: Error): Promise<string> {
