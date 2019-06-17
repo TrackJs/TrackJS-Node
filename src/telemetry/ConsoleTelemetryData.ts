@@ -1,7 +1,7 @@
 import serialize from '../utils/serialize';
-import { TelemetryData } from './TelemetryBuffer';
+import { TrackJSConsole } from '../types/TrackJSCapturePayload';
 
-export default class ConsoleTelemetryData implements TelemetryData {
+export default class ConsoleTelemetryData implements TrackJSConsole {
 
   message:string
   severity:string

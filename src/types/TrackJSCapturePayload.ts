@@ -1,11 +1,7 @@
 export interface TrackJSCapturePayload {
   bindStack?: string
   bindTime?: string
-  console: Array<{
-    timestamp: string
-    severity: string
-    message: string
-  }>
+  console: Array<TrackJSConsole>
   customer: {
     application: string
     correlationId: string
@@ -28,7 +24,7 @@ export interface TrackJSCapturePayload {
   }
   file: string
   message: string
-  metadata: Array<{}>
+  metadata: Array<TrackJSMetadata>
   nav: Array<{}>
   network: Array<{}>
   url: string
@@ -37,4 +33,15 @@ export interface TrackJSCapturePayload {
   timestamp: string
   visitor: Array<{}>
   version: string
+}
+
+export interface TrackJSConsole {
+  timestamp: string
+  severity: string
+  message: string
+}
+
+export interface TrackJSMetadata {
+  key: string,
+  value: string
 }

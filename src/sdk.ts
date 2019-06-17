@@ -12,6 +12,11 @@ export function install(options: TrackJSOptions): void {
   agent = new Agent(options);
 }
 
+export function addMetadata(meta: string | { [key: string]: string}, value?: string) {
+  if (!agent) { throw new TrackJSError('not installed.'); }
+  return agent.metadata.add(meta, value);
+}
+
 export function addLogTelemetry(severity: string, ...messages: any): Symbol {
   if (!agent) { throw new TrackJSError('not installed.'); }
   return agent.telemetry.add('c', new ConsoleTelemetryData(severity, messages));

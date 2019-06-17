@@ -6,6 +6,7 @@ export {
 
 export {
   install,
+  addMetadata,
   addLogTelemetry,
   track
 } from './sdk'
