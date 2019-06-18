@@ -1,4 +1,4 @@
-import patch from '../../src/utils/patch'
+import { patch, unpatch } from '../../src/utils/patch'
 
 describe('patch(obj, name, func)', () => {
 
@@ -32,3 +32,17 @@ describe('patch(obj, name, func)', () => {
   });
 
 });
+
+describe('unpatch(obj, name)', () => {
+
+  test('restores a patched function to original', () => {
+    var func = jest.fn();
+    var obj = { func };
+    patch(obj, 'func', (original) => function() { return original(); });
+    expect(obj.func).not.toBe(func);
+    unpatch(obj, 'func');
+    expect(obj.func).toBe(func);
+  });
+
+});
+

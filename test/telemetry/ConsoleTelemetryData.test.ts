@@ -29,10 +29,10 @@ describe('ConsoleTelemetryData', () => {
   describe('constructor()', () => {
 
     test('it handles weird message formats', () => {
-      expect(new ConsoleTelemetryData('log', 'a message').message).toBe('a message');
-      expect(new ConsoleTelemetryData('log', 1, 2, 3, 4, 5).message).toBe('[1,2,3,4,5]');
-      expect(new ConsoleTelemetryData('log', { foo: 'bar' }).message).toBe('{\"foo\":\"bar\"}');
-      expect(new ConsoleTelemetryData('log', { foo: 'bar' }, { bar: 'baz' }).message)
+      expect(new ConsoleTelemetryData('log', ['a message']).message).toBe('a message');
+      expect(new ConsoleTelemetryData('log', [1, 2, 3, 4, 5]).message).toBe('[1,2,3,4,5]');
+      expect(new ConsoleTelemetryData('log', [{ foo: 'bar' }]).message).toBe('{\"foo\":\"bar\"}');
+      expect(new ConsoleTelemetryData('log', [{ foo: 'bar' }, { bar: 'baz' }]).message)
         .toBe('[{\"foo\":\"bar\"},{\"bar\":\"baz\"}]');
     })
 

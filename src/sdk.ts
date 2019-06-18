@@ -12,6 +12,12 @@ export function install(options: TrackJSOptions): void {
   agent = new Agent(options);
 }
 
+export function uninstall(): void {
+  if (!agent) { return; }
+  agent.dispose();
+  agent = null;
+}
+
 export function addMetadata(meta: string | { [key: string]: string}, value?: string) {
   if (!agent) { throw new TrackJSError('not installed.'); }
   return agent.metadata.add(meta, value);

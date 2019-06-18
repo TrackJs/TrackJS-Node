@@ -106,4 +106,11 @@ export default class Agent {
     this._onErrorFns.push(func);
   }
 
+  dispose(): void {
+    this._onErrorFns.length = 0;
+    this.telemetry = null;
+    this.metadata = null;
+    ConsoleWatcher.uninstall(this);
+  }
+
 }

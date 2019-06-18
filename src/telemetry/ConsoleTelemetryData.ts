@@ -7,7 +7,7 @@ export default class ConsoleTelemetryData implements TrackJSConsole {
   severity:string
   timestamp:string
 
-  constructor(severity: string, ...messages: any) {
+  constructor(severity: string, messages: Array<any>) {
     this.severity = ConsoleTelemetryData.normalizeSeverity(severity);
     this.message = serialize(messages.length === 1 ? messages[0] : messages);
     this.timestamp = new Date().toISOString()

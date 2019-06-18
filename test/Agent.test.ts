@@ -116,4 +116,27 @@ describe('Agent', () => {
 
   });
 
+  describe('Telemetry', () => {
+
+    test('it adds console telemetry to payload', () => {
+      let agent = new Agent({ token: 'test' });
+      console.log('a log message');
+      console.warn('a warning', { foo: 'bar' })
+      let payload = agent.createErrorReport(new Error('test error'));
+      expect(payload.console).toEqual([
+        {
+          severity: 'log',
+          message: 'a log message',
+          timestamp: expect.any(String)
+        },
+        {
+          severity: 'warn',
+          message: '["a warning",{"foo":"bar"}]',
+          timestamp: expect.any(String)
+        }
+      ])
+    });
+
+  });
+
 })
