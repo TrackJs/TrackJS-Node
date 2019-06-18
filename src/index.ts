@@ -9,5 +9,7 @@ export {
   addMetadata,
   removeMetadata,
   addLogTelemetry,
-  track
+  track,
+  Handlers
 } from './sdk'
+

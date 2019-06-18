@@ -1,5 +1,6 @@
 import { TrackJSOptions, TrackJSError, TrackJSCapturePayload } from "./types/index";
 import Agent from "./Agent";
+import { expressErrorHandler } from './handlers/express';
 import ConsoleTelemetryData from "./telemetry/ConsoleTelemetryData";
 
 // the one agent to rule them all. A singleton.
@@ -41,4 +42,13 @@ export function onError(func: (payload: TrackJSCapturePayload) => boolean) {
 export function track(error: Error): Promise<string> {
   if (!agent) { throw new TrackJSError('not installed.'); }
   return agent.captureError(error);
+}
+
+export const Handlers = {
+
+  expressErrorHandler(): Function {
+    if (!agent) { throw new TrackJSError('not installed.'); }
+    return expressErrorHandler(agent);
+  }
+
 }
