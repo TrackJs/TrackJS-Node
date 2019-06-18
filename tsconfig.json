@@ -2,11 +2,12 @@
   "compilerOptions": {
     "declaration": true,
     "declarationDir": "./dist",
-    "module": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "./dist",
     "removeComments": true,
     "esModuleInterop": true,
     "types": ["node","jest"]
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src/**/*"]
 }

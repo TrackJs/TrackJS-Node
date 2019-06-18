@@ -1,6 +1,4 @@
-import TelemetryBuffer, { TelemetryData } from "../../src/telemetry/TelemetryBuffer";
-
-class TestTelemetry implements TelemetryData {}
+import TelemetryBuffer from "../../src/telemetry/TelemetryBuffer";
 
 describe('TelemetryBuffer', () => {
 
@@ -14,13 +12,13 @@ describe('TelemetryBuffer', () => {
   describe('add()', () => {
 
     test('adds telemetry to buffer', () => {
-      telemetry.add('test', new TestTelemetry());
+      telemetry.add('test', {});
       expect(telemetry._store.length).toBe(1);
     });
 
     test('rolls old items from the buffer', () => {
       for (var i = 0; i < 40; i++) {
-        telemetry.add('test', new TestTelemetry());
+        telemetry.add('test', {});
       }
       expect(telemetry._store.length).toBe(bufferSize);
     });
@@ -29,11 +27,11 @@ describe('TelemetryBuffer', () => {
 
   describe('getAllByCategory()', () => {
     test('returns all objects from category', () => {
-      let telemetry1 = new TestTelemetry();
-      let telemetry2 = new TestTelemetry();
-      let telemetry3 = new TestTelemetry();
-      let telemetry4 = new TestTelemetry();
-      let telemetry5 = new TestTelemetry();
+      let telemetry1 = {};
+      let telemetry2 = {};
+      let telemetry3 = {};
+      let telemetry4 = {};
+      let telemetry5 = {};
       telemetry.add('test', telemetry1);
       telemetry.add('other', telemetry2);
       telemetry.add('other', telemetry3);
