@@ -1,7 +1,10 @@
+import { TrackJSCapturePayload } from "./TrackJSCapturePayload";
+
 export interface TrackJSOptions {
   token: string,
   application?: string,
-  metadata?: { [name: string]: string },
+  metadata?: { [key: string]: string },
+  onError?: (payload: TrackJSCapturePayload) => boolean,
   sessionId?: string,
   userId?: string,
   version?: string,

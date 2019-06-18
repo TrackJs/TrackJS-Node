@@ -1,8 +1,8 @@
 import https from 'https';
-import { TrackJSOptions, TrackJSConsole } from './types/index';
+import { TrackJSCapturePayload, TrackJSOptions, TrackJSConsole } from './types/index';
+import { isFunction } from './utils/isType';
 import TelemetryBuffer from './telemetry/TelemetryBuffer';
 import ConsoleWatcher from './ConsoleWatcher';
-import { TrackJSCapturePayload } from './types/index';
 import { Metadata } from './Metadata';
 
 export default class Agent {
@@ -22,6 +22,11 @@ export default class Agent {
 
   constructor(options: TrackJSOptions) {
     this.options = Object.assign({}, Agent.defaults, options);
+
+    if (isFunction(options.onError)) {
+      this.onError(options.onError);
+      delete this.options.onError;
+    }
 
     this.metadata = new Metadata(this.options.metadata);
     delete this.options.metadata;
