@@ -39,9 +39,9 @@ export function onError(func: (payload: TrackJSCapturePayload) => boolean) {
   return agent.onError(func);
 }
 
-export function track(error: Error): Promise<string> {
+export function track(error: Error): void {
   if (!agent) { throw new TrackJSError('not installed.'); }
-  return agent.captureError(error);
+  agent.captureError(error).catch((error) => null);
 }
 
 export const Handlers = {
