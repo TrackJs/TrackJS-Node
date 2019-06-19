@@ -1,9 +1,10 @@
 import https from 'https';
-import { TrackJSCapturePayload, TrackJSOptions, TrackJSConsole } from './types/index';
+import { TrackJSCapturePayload, TrackJSOptions, TrackJSConsole } from './types';
 import { isFunction } from './utils/isType';
 import TelemetryBuffer from './telemetry/TelemetryBuffer';
-import ConsoleWatcher from './ConsoleWatcher';
 import { Metadata } from './Metadata';
+import { Context } from './Context';
+import { ConsoleWatcher, ExceptionWatcher } from './watchers';
 
 export default class Agent {
 
@@ -15,10 +16,13 @@ export default class Agent {
     version: ''
   }
 
+  context = new Context();
+  metadata = new Metadata()
   options:TrackJSOptions
   telemetry = new TelemetryBuffer(30)
-  metadata = new Metadata()
-  private _onErrorFns = []
+
+  private _onErrorFns = [];
+  private _watchers = [];
 
   constructor(options: TrackJSOptions) {
     this.options = Object.assign({}, Agent.defaults, options);
@@ -31,7 +35,9 @@ export default class Agent {
     this.metadata = new Metadata(this.options.metadata);
     delete this.options.metadata;
 
-    ConsoleWatcher.install(this);
+    this._watchers.push(new ConsoleWatcher(this));
+    this._watchers.push(new ExceptionWatcher(this));
+    this._watchers.forEach((watcher) => watcher.install());
   }
 
   captureError(error: Error): Promise<string> {
@@ -64,6 +70,7 @@ export default class Agent {
   }
 
   createErrorReport(error: Error): TrackJSCapturePayload {
+    let now = new Date();
     return {
       'bindStack': null,
       'bindTime': null,
@@ -78,13 +85,13 @@ export default class Agent {
       },
       'entry': 'server',
       'environment': {
-        'age': 0,
+        'age': now.getTime() - this.context.start.getTime(),
         'dependencies': {
           'name': '1.0.0'
         },
-        'originalUrl': 'http://example.com/',
-        'referrer': 'http://example.com/',
-        'userAgent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36',
+        'originalUrl': this.context.url,
+        'referrer': this.context.referrerUrl,
+        'userAgent': this.context.userAgent,
         'viewportHeight': 0,
         'viewportWidth': 0
       },
@@ -93,10 +100,10 @@ export default class Agent {
       'metadata': this.metadata.get(),
       'nav': [],
       'network': this.telemetry.getAllByCategory('n'),
-      'url': 'http://example.com/',
+      'url': this.context.url,
       'stack': error.stack,
       'throttled': 0,
-      'timestamp': new Date().toISOString(),
+      'timestamp': now.toISOString(),
       'visitor': [],
       'version': '3.0.0'
     };
@@ -107,10 +114,11 @@ export default class Agent {
   }
 
   dispose(): void {
+    this._watchers.forEach((watcher) => watcher.uninstall());
     this._onErrorFns.length = 0;
+    this._watchers.length = 0;
     this.telemetry = null;
     this.metadata = null;
-    ConsoleWatcher.uninstall(this);
   }
 
 }

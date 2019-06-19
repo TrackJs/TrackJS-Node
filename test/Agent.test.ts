@@ -30,7 +30,45 @@ describe('Agent', () => {
       });
     });
 
-  })
+  });
+
+  describe('Context', () => {
+
+    test('it adds properties to payloads', () => {
+      let agent = new Agent({ token: 'test' });
+      agent.context.start = new Date(new Date().getTime() - 1);
+      agent.context.url = 'http://example.com/path?foo=bar';
+      agent.context.referrerUrl = 'http://test.com/path?bar=baz';
+      agent.context.userAgent = 'user agent';
+      let report = agent.createErrorReport(new Error('test'));
+      expect(report).toEqual(expect.objectContaining({
+        environment: expect.objectContaining({
+          age: expect.any(Number),
+          originalUrl: 'http://example.com/path?foo=bar',
+          referrer: 'http://test.com/path?bar=baz',
+          userAgent: 'user agent'
+        }),
+        url: 'http://example.com/path?foo=bar'
+      }));
+      expect(report.environment.age).toBeLessThan(5);
+      expect(report.environment.age).toBeGreaterThanOrEqual(1);
+    });
+
+    test('it adds default properties to payloads', () => {
+      let agent = new Agent({ token: 'test' });
+      let report = agent.createErrorReport(new Error('test'));
+      expect(report).toEqual(expect.objectContaining({
+        environment: expect.objectContaining({
+          age: expect.any(Number),
+          originalUrl: '',
+          referrer: '',
+          userAgent: ''
+        }),
+        url: ''
+      }));
+    });
+
+  });
 
   describe('metadata', () => {
     test('includes metadata from constructor', () => {
@@ -138,5 +176,7 @@ describe('Agent', () => {
     });
 
   });
+
+
 
 })
