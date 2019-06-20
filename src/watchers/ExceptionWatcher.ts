@@ -1,13 +1,7 @@
-import Agent from '../Agent';
+import { AgentRegistrar } from '../AgentRegistrar';
+import { Watcher } from '.';
 
-export class ExceptionWatcher {
-
-  private _agent: Agent;
-
-  constructor(agent: Agent) {
-    this._agent = agent;
-    this._handler = this._handler.bind(this);
-  }
+class _ExceptionWatcher implements Watcher {
 
   install(): void {
     global.process.on('uncaughtException', this._handler);
@@ -18,7 +12,9 @@ export class ExceptionWatcher {
   }
 
   private _handler(error: Error): void {
-    this._agent.captureError(error);
+    AgentRegistrar.getCurrentAgent().captureError(error);
   }
 
 }
+
+export const ExceptionWatcher = new _ExceptionWatcher() as Watcher;

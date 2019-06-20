@@ -1,33 +1,35 @@
-import Agent from "../../src/Agent";
-import { ConsoleWatcher } from "../../src/watchers";
-import ConsoleTelemetryData from "../../src/telemetry/ConsoleTelemetryData";
+import { ConsoleWatcher } from '../../src/watchers';
+import { ConsoleTelemetry } from '../../src/telemetry';
+import { Agent } from '../../src/Agent';
+import { AgentRegistrar } from '../../src/AgentRegistrar';
+
+let _ConsoleWatcher = ConsoleWatcher as any;
 
 describe('ConsoleWatcher', () => {
   describe('install()', () => {
     let fakeConsole = null;
     let fakeAgent = null;
-    let consoleWatcher = null;
 
     beforeEach(() => {
       fakeConsole = jest.genMockFromModule('console');
       fakeAgent = new Agent({ token: 'test' });
-      consoleWatcher = new ConsoleWatcher(fakeAgent);
-    })
+      AgentRegistrar.init(fakeAgent);
+    });
 
     afterEach(() => {
-      consoleWatcher.uninstall();
-    })
+      AgentRegistrar.clear();
+    });
 
     it('console patches add telemetry', () => {
       fakeAgent.telemetry.add = jest.fn();
-      consoleWatcher.install(fakeConsole);
+      _ConsoleWatcher.install(fakeConsole);
       fakeConsole.log('a log message');
-      expect(fakeAgent.telemetry.add).toHaveBeenCalledWith('c', expect.any(ConsoleTelemetryData))
+      expect(fakeAgent.telemetry.add).toHaveBeenCalledWith('c', expect.any(ConsoleTelemetry))
     })
 
     it('calls through to console', () => {
       let originalConsoleLog = fakeConsole.log;
-      consoleWatcher.install(fakeConsole);
+      _ConsoleWatcher.install(fakeConsole);
       fakeConsole.log('a log message', 2, 3, 4);
       expect(originalConsoleLog).toHaveBeenCalledWith('a log message', 2, 3, 4);
     })

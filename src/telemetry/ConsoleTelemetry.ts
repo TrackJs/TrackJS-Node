@@ -1,14 +1,14 @@
 import serialize from '../utils/serialize';
-import { TrackJSConsole } from '../types/TrackJSCapturePayload';
+import { TrackJSConsole } from '../types';
 
-export default class ConsoleTelemetryData implements TrackJSConsole {
+export class ConsoleTelemetry implements TrackJSConsole {
 
   message:string
   severity:string
   timestamp:string
 
   constructor(severity: string, messages: Array<any>) {
-    this.severity = ConsoleTelemetryData.normalizeSeverity(severity);
+    this.severity = ConsoleTelemetry.normalizeSeverity(severity);
     this.message = serialize(messages.length === 1 ? messages[0] : messages);
     this.timestamp = new Date().toISOString()
   }
@@ -20,5 +20,4 @@ export default class ConsoleTelemetryData implements TrackJSConsole {
     }
     return severity;
   }
-
 }

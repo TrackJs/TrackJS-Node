@@ -1,24 +1,18 @@
-import Agent from '../Agent';
 import { patch, unpatch } from '../utils/patch';
-import ConsoleTelemetryData from '../telemetry/ConsoleTelemetryData';
+import { ConsoleTelemetry } from '../telemetry';
+import { AgentRegistrar } from '../AgentRegistrar';
+import { Watcher } from './Watcher';
 
 const CONSOLE_FN_NAMES = ['debug','info','warn','error','log'];
 
-export class ConsoleWatcher {
-
-  private _agent: Agent;
-
-  constructor(agent: Agent) {
-    this._agent = agent;
-  }
+class _ConsoleWatcher implements Watcher {
 
   install(_console?: Object): void {
     let consoleObj = _console || console;
-    let agent = this._agent;
     CONSOLE_FN_NAMES.forEach((name) => {
       patch(consoleObj, name, function(originalFn) {
         return function(...messages: any) {
-          agent.telemetry.add('c', new ConsoleTelemetryData(name, messages));
+          AgentRegistrar.getCurrentAgent().telemetry.add('c', new ConsoleTelemetry(name, messages));
           return originalFn.apply(consoleObj, arguments);
         };
       });
@@ -31,3 +25,5 @@ export class ConsoleWatcher {
   }
 
 }
+
+export const ConsoleWatcher = new _ConsoleWatcher() as Watcher;

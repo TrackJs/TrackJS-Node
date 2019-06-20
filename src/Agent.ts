@@ -1,12 +1,11 @@
 import https from 'https';
 import { TrackJSCapturePayload, TrackJSOptions, TrackJSConsole } from './types';
 import { isFunction } from './utils/isType';
-import TelemetryBuffer from './telemetry/TelemetryBuffer';
+import { TelemetryBuffer } from './telemetry';
 import { Metadata } from './Metadata';
-import { Context } from './Context';
-import { ConsoleWatcher, ExceptionWatcher } from './watchers';
+import { Environment } from './Environment';
 
-export default class Agent {
+export class Agent {
 
   static defaults:TrackJSOptions = {
     token: '',
@@ -16,13 +15,12 @@ export default class Agent {
     version: ''
   }
 
-  context = new Context();
+  environment = new Environment();
   metadata = new Metadata()
   options:TrackJSOptions
   telemetry = new TelemetryBuffer(30)
 
   private _onErrorFns = [];
-  private _watchers = [];
 
   constructor(options: TrackJSOptions) {
     this.options = Object.assign({}, Agent.defaults, options);
@@ -34,10 +32,6 @@ export default class Agent {
 
     this.metadata = new Metadata(this.options.metadata);
     delete this.options.metadata;
-
-    this._watchers.push(new ConsoleWatcher(this));
-    this._watchers.push(new ExceptionWatcher(this));
-    this._watchers.forEach((watcher) => watcher.install());
   }
 
   captureError(error: Error): Promise<string> {
@@ -69,6 +63,26 @@ export default class Agent {
     })
   }
 
+  /**
+   * Creates a copy of the current agent and the contextual logs and event
+   * handlers. This allows for cloned objects to be later modified independently
+   * of the parent.
+   */
+  clone(): Agent {
+    let cloned = new Agent(this.options);
+    cloned.metadata = this.metadata.clone();
+    cloned.telemetry = this.telemetry.clone();
+    cloned.environment = this.environment.clone();
+    cloned._onErrorFns = this._onErrorFns.slice(0);
+    return cloned;
+  }
+
+  /**
+   * Generate a full error report payload for a given error with the context logs
+   * gathered by this agent.
+   *
+   * @param error {Error} Error to base for the report.
+   */
   createErrorReport(error: Error): TrackJSCapturePayload {
     let now = new Date();
     return {
@@ -85,13 +99,13 @@ export default class Agent {
       },
       'entry': 'server',
       'environment': {
-        'age': now.getTime() - this.context.start.getTime(),
+        'age': now.getTime() - this.environment.start.getTime(),
         'dependencies': {
           'name': '1.0.0'
         },
-        'originalUrl': this.context.url,
-        'referrer': this.context.referrerUrl,
-        'userAgent': this.context.userAgent,
+        'originalUrl': this.environment.url,
+        'referrer': this.environment.referrerUrl,
+        'userAgent': this.environment.userAgent,
         'viewportHeight': 0,
         'viewportWidth': 0
       },
@@ -100,7 +114,7 @@ export default class Agent {
       'metadata': this.metadata.get(),
       'nav': [],
       'network': this.telemetry.getAllByCategory('n'),
-      'url': this.context.url,
+      'url': this.environment.url,
       'stack': error.stack,
       'throttled': 0,
       'timestamp': now.toISOString(),
@@ -109,14 +123,19 @@ export default class Agent {
     };
   }
 
+  /**
+   * Attach a event handler to Errors. Event handlers will be called in order
+   * they were attached.
+   *
+   * @param func {Function} Event handler that accepts a `TrackJSCapturePayload`.
+   * Returning `false` from the handler will cause the Error to be ignored.
+   */
   onError(func: (payload: TrackJSCapturePayload) => boolean): void {
     this._onErrorFns.push(func);
   }
 
   dispose(): void {
-    this._watchers.forEach((watcher) => watcher.uninstall());
     this._onErrorFns.length = 0;
-    this._watchers.length = 0;
     this.telemetry = null;
     this.metadata = null;
   }

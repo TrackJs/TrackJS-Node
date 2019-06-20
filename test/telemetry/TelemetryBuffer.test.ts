@@ -1,4 +1,4 @@
-import TelemetryBuffer from "../../src/telemetry/TelemetryBuffer";
+import { TelemetryBuffer } from '../../src/telemetry';
 
 describe('TelemetryBuffer', () => {
 
@@ -11,22 +11,62 @@ describe('TelemetryBuffer', () => {
 
   describe('add()', () => {
 
-    test('adds telemetry to buffer', () => {
+    it('adds telemetry to buffer', () => {
       telemetry.add('test', {});
-      expect(telemetry._store.length).toBe(1);
+      expect(telemetry.count()).toBe(1);
     });
 
-    test('rolls old items from the buffer', () => {
+    it('rolls old items from the buffer', () => {
       for (var i = 0; i < 40; i++) {
         telemetry.add('test', {});
       }
-      expect(telemetry._store.length).toBe(bufferSize);
+      expect(telemetry.count()).toBe(bufferSize);
     });
 
   });
 
+  describe('clear()', () => {
+    it('it empties the buffer', () => {
+      let key = telemetry.add('test', {});
+      telemetry.clear();
+      expect(telemetry.count()).toBe(0);
+      expect(telemetry.get(key)).toBeNull();
+    })
+  });
+
+  describe('clone()', () => {
+    it('it creates equal buffer', () => {
+      telemetry.add('test', {});
+      telemetry.add('test', {});
+      var buffer2 = telemetry.clone();
+      expect(telemetry.getAllByCategory('test')).toEqual(buffer2.getAllByCategory('test'));
+    });
+    it('it can be cross-referenced', () => {
+      let key1 = telemetry.add('test', {});
+      var buffer2 = telemetry.clone();
+      expect(telemetry.get(key1)).toBe(buffer2.get(key1));
+    });
+  });
+
+  describe('count()', () => {
+    it('it returns correct count', () => {
+      telemetry.add('test', {});
+      telemetry.add('test', {});
+      telemetry.add('test', {});
+      expect(telemetry.count()).toBe(3);
+    });
+  });
+
+  describe('get()', () => {
+    it('returns items from store', () => {
+      let item = { foo: 'bar' };
+      let key = telemetry.add('test', item);
+      expect(telemetry.get(key)).toBe(item);
+    });
+  })
+
   describe('getAllByCategory()', () => {
-    test('returns all objects from category', () => {
+    it('returns all objects from category', () => {
       let telemetry1 = {};
       let telemetry2 = {};
       let telemetry3 = {};
@@ -50,33 +90,5 @@ describe('TelemetryBuffer', () => {
       expect(telemetry.getAllByCategory('empty')).toEqual([]);
     });
   });
-
-  // describe('get()', () => {
-
-  //   test('returns an object from appender', () => {
-  //     var obj = { name: 'thing' };
-  //     var key = log.add('test', obj);
-  //     expect(log.get('test', key)).toBe(obj);
-  //   });
-
-  //   test('returns false with bad key', () => {
-  //     expect(log.get('test', 'crap')).toBe(false);
-  //   });
-
-  // });
-
-
-
-  // describe('clear()', () => {
-
-  //   test('empties all appenders', () => {
-  //     for (var i = 0; i < 5; i++) {
-  //       log.add('test' + i, { name: 'name' + i });
-  //     }
-  //     log.clear();
-  //     expect(log.appender.length).toBe(0);
-  //   });
-
-  // });
 
 });
