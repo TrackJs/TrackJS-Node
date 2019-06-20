@@ -9,7 +9,9 @@ describe('Agent', () => {
       let options = {
         token: 'token',
         application: 'application',
+        captureURL: 'https://mycapture.com/',
         sessionId: 'session',
+        usageURL: 'https://myusage.com/',
         userId: 'user',
         version: 'version'
       };
@@ -25,7 +27,9 @@ describe('Agent', () => {
       expect(agent.options).toEqual({
         token: 'token',
         application: '',
+        captureURL: 'https://dev-capture.trackjs.com/capture',
         sessionId: '',
+        usageURL: 'https://dev-usage.trackjs.com/usage.gif',
         userId: '',
         version: ''
       });

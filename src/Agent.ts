@@ -1,16 +1,18 @@
-import https from 'https';
 import { TrackJSCapturePayload, TrackJSOptions, TrackJSConsole } from './types';
 import { isFunction } from './utils/isType';
 import { TelemetryBuffer } from './telemetry';
 import { Metadata } from './Metadata';
 import { Environment } from './Environment';
+import { transmit } from './Transmitter';
 
 export class Agent {
 
   static defaults:TrackJSOptions = {
     token: '',
     application: '',
+    captureURL: 'https://dev-capture.trackjs.com/capture',
     sessionId: '',
+    usageURL: 'https://dev-usage.trackjs.com/usage.gif',
     userId: '',
     version: ''
   }
@@ -41,27 +43,39 @@ export class Agent {
    * @returns {Boolean} `false` if the error was ignored.
    */
   captureError(error: Error): boolean {
-    let payload = this.createErrorReport(error);
+    let report = this.createErrorReport(error);
     let hasIgnored = false;
     this._onErrorFns.forEach((fn) => {
       if (!hasIgnored) {
-        hasIgnored = !fn(payload);
+        hasIgnored = !fn(report);
       }
     });
     if (hasIgnored) {
       return false;
     }
 
-    var req = https.request({
+    transmit({
+      url: this.options.captureURL,
       method: 'POST',
-      hostname: 'dev-capture.trackjs.com',
-      port: 443,
-      path: `/capture?token=${encodeURIComponent(this.options.token)}&v=3.3.0`
-    }, (res) => null);
-    req.on('error', () => null) // TODO??
-    req.write(JSON.stringify(payload))
-    req.end();
+      queryParams: {
+        token: this.options.token,
+        v: '3.3.0' //TODO
+      },
+      payload: report
+    });
     return true;
+  }
+
+  captureUsage(): void {
+    transmit({
+      url: this.options.usageURL,
+      method: 'GET',
+      queryParams: {
+        token: this.options.token,
+        correlationId: 'TODO',
+        application: this.options.application
+      }
+    });
   }
 
   /**

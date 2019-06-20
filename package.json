@@ -7,8 +7,9 @@
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
     "start": "run-s test:watch",
-    "test": "run-s test:jest test:express",
-    "test:express": "node ./test/integration/express.js",
+    "test": "run-s test:jest test:express test:transmit",
+    "test:express": "node ./test/integration/express",
+    "test:transmit": "node ./test/integration/transmit",
     "test:jest": "jest",
     "test:watch": "jest --watch"
   },

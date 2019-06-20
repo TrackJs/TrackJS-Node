@@ -1,9 +1,19 @@
 const http = require('http');
 const express = require('express');
-const { TrackJS } = require('../../dist');
+const { TrackJS } = require('../../../dist');
 
-console.log('Testing express integration...');
+console.log('Starting ExpressJS Test...');
 
+const TESTS_EXPECTED = 4;
+let testsComplete = 0;
+
+function testComplete() {
+  testsComplete++;
+  if (testsComplete >= TESTS_EXPECTED) {
+    console.log('ExpressJS Tests PASSED');
+    process.exit(0);
+  }
+}
 function assertStrictEqual(thing1, thing2) {
   if (thing1 !== thing2) {
     console.error("Assertion strict equal failed", thing1, thing2);
@@ -11,8 +21,6 @@ function assertStrictEqual(thing1, thing2) {
   }
 }
 
-const ERRORS_EXPECTED = 4;
-let errorsReceived = 0;
 
 TrackJS.install({
   token: 'test',
@@ -62,22 +70,12 @@ TrackJS.install({
         process.exit(1);
     }
 
-    errorsReceived++;
-
-    if (errorsReceived === ERRORS_EXPECTED) {
-      console.log('Express integration PASSED');
-      process.exit(0);
-    }
-
+    testComplete();
     return false;
   }
 });
 
 TrackJS.addMetadata('test', 'express');
-
-process.on('uncaughtException', (err) => {
-  console.log('oh shit', err);
-})
 
 express()
   .use(TrackJS.Handlers.expressRequestHandler())

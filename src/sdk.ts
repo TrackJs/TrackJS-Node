@@ -53,6 +53,14 @@ export function onError(func: (payload: TrackJSCapturePayload) => boolean): void
 }
 
 /**
+ * Sends a usage beacon for tracking error rates.
+ */
+export function usage(): void {
+  if (!isInstalled) { throw new TrackJSError('not installed.'); }
+  AgentRegistrar.getCurrentAgent().captureUsage();
+}
+
+/**
  * Track error data.
  *
  * @param data {*} Data to be tracked to the TrackJS service.
