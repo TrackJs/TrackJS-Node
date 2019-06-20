@@ -4,6 +4,8 @@ import { expressRequestHandler, expressErrorHandler } from './handlers/express';
 import { ConsoleTelemetry } from './telemetry';
 import { AgentRegistrar } from './AgentRegistrar';
 import { ConsoleWatcher, ExceptionWatcher, RejectionWatcher, Watcher } from './watchers';
+import { isError } from './utils/isType';
+import serialize from './utils/serialize';
 
 let isInstalled = false;
 let watchers: Array<Watcher> = [
@@ -50,8 +52,14 @@ export function onError(func: (payload: TrackJSCapturePayload) => boolean): void
   AgentRegistrar.getCurrentAgent().onError(func);
 }
 
-export function track(error: Error): boolean {
+/**
+ * Track error data.
+ *
+ * @param data {*} Data to be tracked to the TrackJS service.
+ */
+export function track(data: any): boolean {
   if (!isInstalled) { throw new TrackJSError('not installed.'); }
+  let error = isError(data) ? data : new Error(serialize(data));
   return AgentRegistrar.getCurrentAgent().captureError(error);
 }
 
