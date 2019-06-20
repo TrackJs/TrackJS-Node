@@ -1,4 +1,4 @@
-import { TrackJSCapturePayload, TrackJSOptions, TrackJSConsole } from './types';
+import { TrackJSCapturePayload, TrackJSInstallOptions, TrackJSOptions, TrackJSConsole } from './types';
 import { isFunction } from './utils/isType';
 import { TelemetryBuffer } from './telemetry';
 import { Metadata } from './Metadata';
@@ -24,7 +24,7 @@ export class Agent {
 
   private _onErrorFns = [];
 
-  constructor(options: TrackJSOptions) {
+  constructor(options: TrackJSInstallOptions) {
     this.options = Object.assign({}, Agent.defaults, options);
 
     if (isFunction(options.onError)) {
@@ -82,13 +82,20 @@ export class Agent {
    * Creates a copy of the current agent and the contextual logs and event
    * handlers. This allows for cloned objects to be later modified independently
    * of the parent.
+   *
+   * @param options {TrackJSOptions} Override the installation settings.
    */
-  clone(): Agent {
-    let cloned = new Agent(this.options);
+  clone(options?: TrackJSOptions): Agent {
+    let cloned = new Agent(Object.assign({}, this.options, options) as TrackJSInstallOptions);
     cloned.metadata = this.metadata.clone();
     cloned.telemetry = this.telemetry.clone();
     cloned.environment = this.environment.clone();
-    cloned._onErrorFns = this._onErrorFns.slice(0);
+    this._onErrorFns.forEach((fn) => cloned.onError(fn));
+
+    if (options && options.metadata) {
+      cloned.metadata.add(options.metadata);
+    }
+
     return cloned;
   }
 

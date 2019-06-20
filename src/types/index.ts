@@ -5,4 +5,4 @@ export {
 } from './TrackJSCapturePayload'
 
 export { TrackJSError } from './TrackJSError';
-export { TrackJSOptions } from './TrackJSOptions';
+export { TrackJSInstallOptions, TrackJSOptions } from './TrackJSOptions';

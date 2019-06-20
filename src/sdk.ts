@@ -1,4 +1,4 @@
-import { TrackJSOptions, TrackJSError, TrackJSCapturePayload } from './types';
+import { TrackJSInstallOptions, TrackJSOptions, TrackJSError, TrackJSCapturePayload } from './types';
 import { Agent }  from './Agent';
 import { expressRequestHandler, expressErrorHandler } from './handlers/express';
 import { ConsoleTelemetry } from './telemetry';
@@ -14,7 +14,7 @@ let watchers: Array<Watcher> = [
   RejectionWatcher
 ];
 
-export function install(options: TrackJSOptions): void {
+export function install(options: TrackJSInstallOptions): void {
   if (isInstalled) { throw new TrackJSError('already installed.'); }
   if (!options) { throw new TrackJSError('install options are required.' )}
   if (!options.token) { throw new TrackJSError('install token is required.' )}
@@ -64,10 +64,17 @@ export function usage(): void {
  * Track error data.
  *
  * @param data {*} Data to be tracked to the TrackJS service.
+ * @param options {TrackJSOptions} Override the installation settings.
  */
-export function track(data: any): boolean {
+export function track(data: any, options?: TrackJSOptions): boolean {
   if (!isInstalled) { throw new TrackJSError('not installed.'); }
   let error = isError(data) ? data : new Error(serialize(data));
+
+  // The user wants to do a one-off track() that overrides agent options
+  if (options) {
+    return AgentRegistrar.getCurrentAgent().clone(options).captureError(error)
+  }
+
   return AgentRegistrar.getCurrentAgent().captureError(error);
 }
 

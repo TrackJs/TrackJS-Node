@@ -1,7 +1,21 @@
 import { TrackJSCapturePayload } from "./TrackJSCapturePayload";
 
-export interface TrackJSOptions {
+export interface TrackJSInstallOptions extends TrackJSOptions {
+  /**
+   * @inheritdoc
+   */
   token: string,
+}
+
+export interface TrackJSOptions {
+  /**
+   * Your TrackJS Account Token.
+   */
+  token?: string,
+
+  /**
+   * TrackJS Application Key
+   */
   application?: string,
 
   /**
@@ -9,8 +23,19 @@ export interface TrackJSOptions {
    */
   captureURL?: string,
 
+  /**
+   * Metadata Key-Value pairs
+   */
   metadata?: { [key: string]: string },
+
+  /**
+   * Custom callback handler for errors detected.
+   */
   onError?: (payload: TrackJSCapturePayload) => boolean,
+
+  /**
+   * Custom user-session identifier.
+   */
   sessionId?: string,
 
   /**
@@ -18,6 +43,13 @@ export interface TrackJSOptions {
    */
   usageURL?: string,
 
+  /**
+   * Custom user id.
+   */
   userId?: string,
+
+  /**
+   * Version id of your application.
+   */
   version?: string,
 }

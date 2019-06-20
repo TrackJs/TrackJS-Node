@@ -85,6 +85,21 @@ describe('Agent', () => {
       expect(handler1).toHaveBeenCalled();
       expect(handler2).toHaveBeenCalled();
     });
+    it('clones with options', () => {
+      let agent1 = new Agent({ token: 'test' });
+      let agent2 = agent1.clone({ application: 'app' });
+      expect(agent2.options).toEqual(expect.objectContaining({
+        token: 'test',
+        application: 'app'
+      }));
+    });
+    it('clones with metadata', () => {
+      let agent1 = new Agent({ token: 'test' });
+      let agent2 = agent1.clone({ metadata: { 'foo': 'bar' } });
+      expect(agent2.metadata.get()).toEqual([
+        { key: 'foo', value: 'bar' }
+      ]);
+    });
   });
 
   describe('createErrorReport()', () => {
