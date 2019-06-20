@@ -1,4 +1,4 @@
-import domain from 'domain';
+import domain, { Domain } from 'domain';
 import { Agent } from "./Agent";
 
 class _AgentRegistrar {
@@ -14,10 +14,11 @@ class _AgentRegistrar {
    * Finds or creates an agent for the current state. Looks for the current running
    * domain.
    *
+   * @param activeDomain {Domain} Active Domain override.
    * @see https://nodejs.org/api/domain.html
    */
-  getCurrentAgent(): Agent {
-    let activeDomain = domain['active'];
+  getCurrentAgent(activeDomain?: Domain): Agent {
+    activeDomain = activeDomain || domain['active'];
     if (!activeDomain) {
       return this._masterAgent;
     }

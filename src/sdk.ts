@@ -3,12 +3,13 @@ import { Agent }  from './Agent';
 import { expressRequestHandler, expressErrorHandler } from './handlers/express';
 import { ConsoleTelemetry } from './telemetry';
 import { AgentRegistrar } from './AgentRegistrar';
-import { ConsoleWatcher, ExceptionWatcher, Watcher } from './watchers';
+import { ConsoleWatcher, ExceptionWatcher, RejectionWatcher, Watcher } from './watchers';
 
 let isInstalled = false;
 let watchers: Array<Watcher> = [
   ConsoleWatcher,
-  ExceptionWatcher
+  ExceptionWatcher,
+  RejectionWatcher
 ];
 
 export function install(options: TrackJSOptions): void {

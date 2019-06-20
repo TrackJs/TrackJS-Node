@@ -7,6 +7,10 @@ const CONSOLE_FN_NAMES = ['debug','info','warn','error','log'];
 
 class _ConsoleWatcher implements Watcher {
 
+  /**
+   * @inheritdoc
+   * @param _console {Object} override of the global console object.
+   */
   install(_console?: Object): void {
     let consoleObj = _console || console;
     CONSOLE_FN_NAMES.forEach((name) => {
@@ -19,6 +23,10 @@ class _ConsoleWatcher implements Watcher {
     });
   }
 
+  /**
+   * @inheritdoc
+   * @param _console {Object} override of the global console object.
+   */
   uninstall(_console?: Object): void {
     let consoleObj = _console || console;
     CONSOLE_FN_NAMES.forEach((name) => unpatch(consoleObj, name));
@@ -26,4 +34,8 @@ class _ConsoleWatcher implements Watcher {
 
 }
 
+/**
+ * Watches the global Console for logs.
+ * Singleton.
+ */
 export const ConsoleWatcher = new _ConsoleWatcher() as Watcher;

@@ -3,18 +3,28 @@ import { Watcher } from '.';
 
 class _ExceptionWatcher implements Watcher {
 
+  /**
+   * @inheritdoc
+   */
   install(): void {
-    global.process.on('uncaughtException', this._handler);
+    process.on('uncaughtException', this.handleException);
   }
 
+  /**
+   * @inheritdoc
+   */
   uninstall(): void {
-    global.process.off('uncaughtException', this._handler);
+    process.off('uncaughtException', this.handleException);
   }
 
-  private _handler(error: Error): void {
+  handleException(error: Error): void {
     AgentRegistrar.getCurrentAgent().captureError(error);
   }
 
 }
 
+/**
+ * Watches for Global Uncaught Exceptions.
+ * Singleton.
+ */
 export const ExceptionWatcher = new _ExceptionWatcher() as Watcher;
