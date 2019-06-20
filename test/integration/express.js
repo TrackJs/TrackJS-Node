@@ -11,7 +11,7 @@ function assertStrictEqual(thing1, thing2) {
   }
 }
 
-const ERRORS_EXPECTED = 2;
+const ERRORS_EXPECTED = 4;
 let errorsReceived = 0;
 
 TrackJS.install({
@@ -41,14 +41,25 @@ TrackJS.install({
         assertStrictEqual(payload.metadata[1].value, 'async');
         break;
       case '/reject':
-        console.log(payload);
-        // assertStrictEqual(payload.message, 'a test error');
-        // assertStrictEqual(payload.console.length, 1);
-        // assertStrictEqual(payload.console[0].message, 'a message');
+        assertStrictEqual(payload.url, '/reject');
+        assertStrictEqual(payload.message, 'rejected!');
+        assertStrictEqual(payload.console.length, 1);
+        assertStrictEqual(payload.console[0].message, 'a message from /reject');
+        assertStrictEqual(payload.metadata.length, 2);
+        assertStrictEqual(payload.metadata[0].key, 'test');
+        assertStrictEqual(payload.metadata[0].value, 'express');
+        assertStrictEqual(payload.metadata[1].key, 'action');
+        assertStrictEqual(payload.metadata[1].value, 'reject');
+        break;
+      case '/console':
+        assertStrictEqual(payload.url, '/console');
+        assertStrictEqual(payload.message, 'console blew up');
+        assertStrictEqual(payload.console.length, 1);
+        assertStrictEqual(payload.console[0].message, 'console blew up');
         break;
       default:
-      console.error('unknown url error');
-      process.exit(1);
+        console.error('unknown url error', payload);
+        process.exit(1);
     }
 
     errorsReceived++;
@@ -95,6 +106,12 @@ express()
     })
   })
 
+  .get('/console', (req, res, next) => {
+    console.error('console blew up');
+    res.status(200);
+    next();
+  })
+
   .get('/ok', (req, res, next) => {
     TrackJS.addLogTelemetry('log', 'a message from /ok');
     TrackJS.addMetadata('action', 'ok');
@@ -115,6 +132,7 @@ express()
 
 
 http.get('http://localhost:3001/async');
-// http.get('http://localhost:3001/reject');
+http.get('http://localhost:3001/reject');
 http.get('http://localhost:3001/sync');
+http.get('http://localhost:3001/console');
 http.get('http://localhost:3001/ok');

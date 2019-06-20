@@ -25,13 +25,22 @@ describe('ConsoleWatcher', () => {
       _ConsoleWatcher.install(fakeConsole);
       fakeConsole.log('a log message');
       expect(fakeAgent.telemetry.add).toHaveBeenCalledWith('c', expect.any(ConsoleTelemetry))
-    })
+    });
 
     it('calls through to console', () => {
       let originalConsoleLog = fakeConsole.log;
       _ConsoleWatcher.install(fakeConsole);
       fakeConsole.log('a log message', 2, 3, 4);
       expect(originalConsoleLog).toHaveBeenCalledWith('a log message', 2, 3, 4);
-    })
-  })
-})
+    });
+
+    it('captures on console error', () => {
+      fakeAgent.captureError = jest.fn((error) => null);
+      _ConsoleWatcher.install(fakeConsole);
+      fakeConsole.error('oops');
+      expect(fakeAgent.captureError).toHaveBeenCalled();
+    });
+
+  });
+
+});

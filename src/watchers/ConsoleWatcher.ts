@@ -16,7 +16,12 @@ class _ConsoleWatcher implements Watcher {
     CONSOLE_FN_NAMES.forEach((name) => {
       patch(consoleObj, name, function(originalFn) {
         return function(...messages: any) {
-          AgentRegistrar.getCurrentAgent().telemetry.add('c', new ConsoleTelemetry(name, messages));
+          let agent = AgentRegistrar.getCurrentAgent();
+          let data = new ConsoleTelemetry(name, messages);
+          agent.telemetry.add('c', data);
+          if (name === 'error') {
+            agent.captureError(new Error(data.message));
+          }
           return originalFn.apply(consoleObj, arguments);
         };
       });
