@@ -1,6 +1,6 @@
 import { TrackJSOptions, TrackJSError, TrackJSCapturePayload } from './types';
 import { Agent }  from './Agent';
-import { expressErrorHandler } from './handlers/express';
+import { expressRequestHandler, expressErrorHandler } from './handlers/express';
 import { ConsoleTelemetry } from './telemetry';
 import { AgentRegistrar } from './AgentRegistrar';
 import { ConsoleWatcher, ExceptionWatcher, Watcher } from './watchers';
@@ -25,7 +25,7 @@ export function install(options: TrackJSOptions): void {
 export function uninstall(): void {
   if (!isInstalled) { return; }
   watchers.forEach((w) => w.uninstall());
-  AgentRegistrar.clear();
+  AgentRegistrar.close();
   isInstalled = false;
 }
 
@@ -49,16 +49,21 @@ export function onError(func: (payload: TrackJSCapturePayload) => boolean): void
   AgentRegistrar.getCurrentAgent().onError(func);
 }
 
-export function track(error: Error): void {
+export function track(error: Error): boolean {
   if (!isInstalled) { throw new TrackJSError('not installed.'); }
-  AgentRegistrar.getCurrentAgent().captureError(error).catch((error) => null);
+  return AgentRegistrar.getCurrentAgent().captureError(error);
 }
 
 export const Handlers = {
 
   expressErrorHandler(): Function {
     if (!isInstalled) { throw new TrackJSError('not installed.'); }
-    return expressErrorHandler;
+    return expressErrorHandler();
+  },
+
+  expressRequestHandler(): Function {
+    if (!isInstalled) { throw new TrackJSError('not installed.'); }
+    return expressRequestHandler();
   }
 
 }

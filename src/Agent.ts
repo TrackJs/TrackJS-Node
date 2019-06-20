@@ -34,33 +34,34 @@ export class Agent {
     delete this.options.metadata;
   }
 
-  captureError(error: Error): Promise<string> {
-    return new Promise((resolve, reject) => {
-      let payload = this.createErrorReport(error);
-      let hasIgnored = false;
-      this._onErrorFns.forEach((fn) => {
-        if (!hasIgnored) {
-          hasIgnored = !fn(payload);
-        }
-      });
-      if (hasIgnored) {
-        reject('TrackJS: error ignored.')
+  /**
+   * Capture an error report.
+   *
+   * @param error {Error} Error to be captured to the TrackJS Service.
+   * @returns {Boolean} `false` if the error was ignored.
+   */
+  captureError(error: Error): boolean {
+    let payload = this.createErrorReport(error);
+    let hasIgnored = false;
+    this._onErrorFns.forEach((fn) => {
+      if (!hasIgnored) {
+        hasIgnored = !fn(payload);
       }
+    });
+    if (hasIgnored) {
+      return false;
+    }
 
-      var req = https.request({
-        method: 'POST',
-        hostname: 'dev-capture.trackjs.com',
-        port: 443,
-        path: `/capture?token=${this.options.token}&v=3.3.0`
-      }, (res) => {
-        var data = ''
-        res.on('data', (chunk) => data += chunk);
-        res.on('end', () => resolve(data || 'OK'))
-      })
-      req.on('error', (error) => reject(error))
-      req.write(JSON.stringify(payload))
-      req.end()
-    })
+    var req = https.request({
+      method: 'POST',
+      hostname: 'dev-capture.trackjs.com',
+      port: 443,
+      path: `/capture?token=${encodeURIComponent(this.options.token)}&v=3.3.0`
+    }, (res) => null);
+    req.on('error', () => null) // TODO??
+    req.write(JSON.stringify(payload))
+    req.end();
+    return true;
   }
 
   /**

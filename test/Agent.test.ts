@@ -77,7 +77,7 @@ describe('Agent', () => {
       agent1.onError(handler1);
       agent1.onError(handler2);
       let agent2 = agent1.clone();
-      agent2.captureError(new Error('test')).catch((error) => null);
+      agent2.captureError(new Error('test'));
       expect(handler1).toHaveBeenCalled();
       expect(handler2).toHaveBeenCalled();
     });
@@ -143,16 +143,14 @@ describe('Agent', () => {
         expect(payload.message).toBe('test message');
         return false;
       })
-      agent.captureError(new Error('test message')).catch(() => null);
+      agent.captureError(new Error('test message'));
     });
 
     it('can ignore error events', () => {
       let agent = new Agent({ token: 'test '});
       expect.assertions(1);
       agent.onError((payload) => false);
-      agent.captureError(new Error('test message')).catch((error) => {
-        expect(error).toBe('TrackJS: error ignored.');
-      })
+      expect(agent.captureError(new Error('test message'))).toBe(false);
     });
 
     it('handles multiple callbacks', () => {
@@ -162,7 +160,7 @@ describe('Agent', () => {
 
       agent.onError(cb1);
       agent.onError(cb2);
-      agent.captureError(new Error('test message')).catch(() => null);
+      agent.captureError(new Error('test message'));
 
       expect(cb1).toHaveBeenCalled();
       expect(cb2).toHaveBeenCalled();
@@ -177,7 +175,7 @@ describe('Agent', () => {
       agent.onError(cb1);
       agent.onError(cb2);
       agent.onError(cb3);
-      agent.captureError(new Error('test message')).catch(() => null);
+      agent.captureError(new Error('test message'));
 
       expect(cb1).toHaveBeenCalled();
       expect(cb2).toHaveBeenCalled();
@@ -194,7 +192,7 @@ describe('Agent', () => {
       expect(agent.options).not.toEqual(expect.objectContaining({
         onError: handler
       }));
-      agent.captureError(new Error('test message')).catch(() => null);
+      agent.captureError(new Error('test message'));
       expect(handler).toHaveBeenCalled();
     });
 

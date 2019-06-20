@@ -1,6 +1,6 @@
 const http = require('http');
 const express = require('express');
-const TrackJS = require('../../dist/index.js');
+const { TrackJS } = require('../../dist');
 
 console.log('Testing express integration...');
 
@@ -11,28 +11,110 @@ function assertStrictEqual(thing1, thing2) {
   }
 }
 
+const ERRORS_EXPECTED = 2;
+let errorsReceived = 0;
+
 TrackJS.install({
   token: 'test',
   onError: function(payload) {
-    // console.log(payload);
-    assertStrictEqual(payload.message, 'a test error');
-    assertStrictEqual(payload.console.length, 1);
-    assertStrictEqual(payload.console[0].message, 'a message');
+    switch(payload.url) {
+      case '/sync':
+        assertStrictEqual(payload.url, '/sync');
+        assertStrictEqual(payload.message, 'sync blew up');
+        assertStrictEqual(payload.console.length, 1);
+        assertStrictEqual(payload.console[0].message, 'a message from /sync');
+        assertStrictEqual(payload.metadata.length, 2);
+        assertStrictEqual(payload.metadata[0].key, 'test');
+        assertStrictEqual(payload.metadata[0].value, 'express');
+        assertStrictEqual(payload.metadata[1].key, 'action');
+        assertStrictEqual(payload.metadata[1].value, 'sync');
+        break;
+      case '/async':
+        assertStrictEqual(payload.url, '/async');
+        assertStrictEqual(payload.message, 'async blew up');
+        assertStrictEqual(payload.console.length, 1);
+        assertStrictEqual(payload.console[0].message, 'a message from /async');
+        assertStrictEqual(payload.metadata.length, 2);
+        assertStrictEqual(payload.metadata[0].key, 'test');
+        assertStrictEqual(payload.metadata[0].value, 'express');
+        assertStrictEqual(payload.metadata[1].key, 'action');
+        assertStrictEqual(payload.metadata[1].value, 'async');
+        break;
+      case '/reject':
+        console.log(payload);
+        // assertStrictEqual(payload.message, 'a test error');
+        // assertStrictEqual(payload.console.length, 1);
+        // assertStrictEqual(payload.console[0].message, 'a message');
+        break;
+      default:
+      console.error('unknown url error');
+      process.exit(1);
+    }
 
-    console.log('Express integration PASSED');
-    process.exit(0);
+    errorsReceived++;
+
+    if (errorsReceived === ERRORS_EXPECTED) {
+      console.log('Express integration PASSED');
+      process.exit(0);
+    }
+
     return false;
   }
 });
 
-// add onError to check and ignore
-// setup express with a path that errors
-let app = express()
-  .get('/throw', (req, res, next) => {
-    console.log('a message');
-    throw new Error('a test error');
+TrackJS.addMetadata('test', 'express');
+
+process.on('uncaughtException', (err) => {
+  console.log('oh shit', err);
+})
+
+express()
+  .use(TrackJS.Handlers.expressRequestHandler())
+
+  .get('/sync', (req, res, next) => {
+    TrackJS.addLogTelemetry('log', 'a message from /sync');
+    TrackJS.addMetadata('action', 'sync');
+    throw new Error('sync blew up');
   })
+
+  .get('/async', (req, res, next) => {
+    TrackJS.addLogTelemetry('log', 'a message from /async');
+    setTimeout(() => {
+      TrackJS.addMetadata('action', 'async');
+      throw new Error('async blew up');
+    }, 100);
+  })
+
+  .get('/reject', (req, res, next) => {
+    TrackJS.addLogTelemetry('log', 'a message from /reject');
+    new Promise((resolve, reject) => {
+      TrackJS.addMetadata('action', 'reject');
+      setTimeout(() => {
+        reject('rejected!');
+      }, 100);
+    })
+  })
+
+  .get('/ok', (req, res, next) => {
+    TrackJS.addLogTelemetry('log', 'a message from /ok');
+    TrackJS.addMetadata('action', 'ok');
+    res.status(200);
+    next();
+  })
+
   .use(TrackJS.Handlers.expressErrorHandler())
+
+  .use((error, req, res, next) => {
+    if (!error['__trackjs__']) {
+      console.error('UNCAUGHT ERROR', error);
+      process.exit(1);
+    }
+  })
+
   .listen(3001);
 
-http.get('http://localhost:3001/throw');
+
+http.get('http://localhost:3001/async');
+// http.get('http://localhost:3001/reject');
+http.get('http://localhost:3001/sync');
+http.get('http://localhost:3001/ok');

@@ -46,6 +46,13 @@ describe('TelemetryBuffer', () => {
       var buffer2 = telemetry.clone();
       expect(telemetry.get(key1)).toBe(buffer2.get(key1));
     });
+    it('has separate telemetry', () => {
+      telemetry.add('t', { 'foo': 'bar' });
+      let telemetry2 = telemetry.clone();
+      telemetry2.add('t', { 'bar': 'baz' });
+      expect(telemetry.getAllByCategory('t'))
+        .not.toEqual(telemetry2.getAllByCategory('t'));
+    });
   });
 
   describe('count()', () => {

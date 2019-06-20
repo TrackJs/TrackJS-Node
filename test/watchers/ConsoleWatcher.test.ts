@@ -17,7 +17,7 @@ describe('ConsoleWatcher', () => {
     });
 
     afterEach(() => {
-      AgentRegistrar.clear();
+      AgentRegistrar.close();
     });
 
     it('console patches add telemetry', () => {

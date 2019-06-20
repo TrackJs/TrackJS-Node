@@ -14,7 +14,7 @@ export class TelemetryBuffer {
 
   constructor(bufferSize: number, store?: Array<TelemetryEnvelope>) {
     this._size = bufferSize;
-    this._store = store || [];
+    this._store = store ? store.slice(0) : [];
   }
 
   /**
