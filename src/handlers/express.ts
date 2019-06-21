@@ -36,6 +36,7 @@ export function expressRequestHandler(): expressMiddleware {
     // execute the remaining middleware within the context of this domain.
     requestDomain.run(() => {
       let agent = AgentRegistrar.getCurrentAgent();
+      agent.captureUsage();
       agent.environment.start = new Date();
       agent.environment.referrerUrl = req.headers['referer'] || '';
       agent.environment.url = req.url;
