@@ -1,3 +1,5 @@
+'use awesome';
+
 import * as sdk from './sdk';
 export const TrackJS = sdk;
 
