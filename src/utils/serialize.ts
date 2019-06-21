@@ -12,7 +12,7 @@ function serializeElement(el) {
 /**
   * serialize
   * Default serializer function that takes an arbitrary value and converts
-  * it to a string respresentation.
+  * it to a string representation.
   *
   * @param {*} thing Thing to serialize
   * @return {String} serialized version of thing.
