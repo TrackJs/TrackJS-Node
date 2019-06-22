@@ -1,5 +1,9 @@
-import { Agent}  from '../src/Agent'
+import { Agent }  from '../src/Agent'
 import { ConsoleTelemetry } from '../src/telemetry';
+import { transmit } from '../src/Transmitter';
+
+jest.mock('../src/Transmitter');
+
 
 describe('Agent', () => {
 
@@ -213,6 +217,14 @@ describe('Agent', () => {
       }));
       agent.captureError(new Error('test message'));
       expect(handler).toHaveBeenCalled();
+    });
+
+    it('recovers from a handler that throws', () => {
+      let handler = jest.fn((payload) => { throw new Error('oops'); });
+      let agent = new Agent({ token: 'test' });
+      agent.onError(handler);
+      expect(agent.captureError(new Error('test'))).toBe(true);
+      expect(transmit).toHaveBeenCalled();
     });
 
   });

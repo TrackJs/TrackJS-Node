@@ -49,7 +49,18 @@ export class Agent {
 
     [deduplicate, truncate, ...this._onErrorFns].forEach((fn) => {
       if (!hasIgnored) {
-        hasIgnored = !fn(report);
+        try {
+          hasIgnored = !fn(report);
+        }
+        catch(e) {
+          // Error in user-provided callback. We want to proceed, but notify them
+          // that their code has failed.
+          report.console.push({
+            severity: 'error',
+            message: 'Your TrackJS Callback failed with Error: ' + e.message,
+            timestamp: new Date().toISOString()
+          });
+        }
       }
     });
     if (hasIgnored) {
