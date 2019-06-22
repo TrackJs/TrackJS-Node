@@ -1,7 +1,8 @@
 export {
   TrackJSCapturePayload,
   TrackJSConsole,
-  TrackJSMetadata
+  TrackJSMetadata,
+  TrackJSNetwork
 } from './TrackJSCapturePayload'
 
 export { TrackJSError } from './TrackJSError';

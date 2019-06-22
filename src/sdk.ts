@@ -1,7 +1,8 @@
-import { TrackJSInstallOptions, TrackJSOptions, TrackJSError, TrackJSCapturePayload } from './types';
+import http from 'http';
+import { TrackJSInstallOptions, TrackJSOptions, TrackJSError, TrackJSCapturePayload, TrackJSNetwork } from './types';
 import { Agent }  from './Agent';
 import { expressRequestHandler, expressErrorHandler } from './handlers/express';
-import { ConsoleTelemetry } from './telemetry';
+import { ConsoleTelemetry, NetworkTelemetry } from './telemetry';
 import { AgentRegistrar } from './AgentRegistrar';
 import { ConsoleWatcher, ExceptionWatcher, RejectionWatcher, Watcher } from './watchers';
 import { isError } from './utils/isType';
@@ -42,9 +43,26 @@ export function removeMetadata(meta: string | { [key: string]: string}): void {
   AgentRegistrar.getCurrentAgent().metadata.remove(meta);
 }
 
+/**
+ * Add a message to the Telemetry log.
+ *
+ * @param severity {String} "log","debug","info","warn","error"
+ * @param messages Any messages to be added to the log
+ */
 export function addLogTelemetry(severity: string, ...messages: any): void {
   if (!isInstalled) { throw new TrackJSError('not installed.'); }
   AgentRegistrar.getCurrentAgent().telemetry.add('c', new ConsoleTelemetry(severity, messages));
+}
+
+/**
+ * Add a network request to the Telemetry log.
+ *
+ * @param request {TrackJSNetwork|ClientRequest} The network request object to be logged
+ * or an object describing the relevant properties.
+ */
+export function addNetworkTelemetry(request: TrackJSNetwork | http.ClientRequest): void {
+  if (!isInstalled) { throw new TrackJSError('not installed.'); }
+  AgentRegistrar.getCurrentAgent().telemetry.add('n', new NetworkTelemetry(request));
 }
 
 export function onError(func: (payload: TrackJSCapturePayload) => boolean): void {

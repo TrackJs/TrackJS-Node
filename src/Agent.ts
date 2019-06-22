@@ -1,4 +1,4 @@
-import { TrackJSCapturePayload, TrackJSInstallOptions, TrackJSOptions, TrackJSConsole } from './types';
+import { TrackJSCapturePayload, TrackJSInstallOptions, TrackJSOptions, TrackJSConsole, TrackJSNetwork } from './types';
 import { isFunction } from './utils/isType';
 import { TelemetryBuffer } from './telemetry';
 import { Metadata } from './Metadata';
@@ -148,7 +148,7 @@ export class Agent {
       'message': error.message,
       'metadata': this.metadata.get(),
       'nav': [],
-      'network': this.telemetry.getAllByCategory('n'),
+      'network': this.telemetry.getAllByCategory('n') as Array<TrackJSNetwork>,
       'url': this.environment.url,
       'stack': error.stack,
       'throttled': 0,

@@ -26,7 +26,7 @@ export interface TrackJSCapturePayload {
   message: string
   metadata: Array<TrackJSMetadata>
   nav: Array<{}>
-  network: Array<{}>
+  network: Array<TrackJSNetwork>
   url: string
   stack: string
   throttled: number
@@ -44,4 +44,49 @@ export interface TrackJSConsole {
 export interface TrackJSMetadata {
   key: string,
   value: string
+}
+
+/**
+ * TrackJS Network Telemetry Item.
+ */
+export interface TrackJSNetwork {
+
+  /**
+   * Network Request complete time.
+   * @property {String ISO 8601}
+   * @example 2000-01-01T12:00:00.000Z
+   */
+  completedOn: string
+
+  /**
+   * HTTP Method of the request. "GET","POST","UPDATE","DELETE","..."
+   * @property {String}
+   */
+  method: string
+
+  /**
+   * Network Request start time.
+   * @property {String ISO 8601}
+   * @example 2000-01-01T12:00:00.000Z
+   */
+  startedOn: string
+
+  /**
+   * HTTP Status code of the completed request
+   * @property {Number}
+   */
+  statusCode: number
+
+  /**
+   * HTTP Status text of the completed request
+   * @property {String}
+   * @example "Not Found"
+   */
+  statusText: string
+
+  /**
+   * URL destination of the request.
+   * @property {String}
+   */
+  url: string
 }
