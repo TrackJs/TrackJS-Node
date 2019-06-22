@@ -4,7 +4,7 @@ import { TelemetryBuffer } from './telemetry';
 import { Metadata } from './Metadata';
 import { Environment } from './Environment';
 import { transmit } from './Transmitter';
-import { deduplicate } from './utils/deduplicate';
+import { deduplicate, truncate } from './agentHelpers';
 
 export class Agent {
 
@@ -47,7 +47,7 @@ export class Agent {
     let report = this.createErrorReport(error);
     let hasIgnored = false;
 
-    [deduplicate, /*truncator,*/ ...this._onErrorFns].forEach((fn) => {
+    [deduplicate, truncate, ...this._onErrorFns].forEach((fn) => {
       if (!hasIgnored) {
         hasIgnored = !fn(report);
       }

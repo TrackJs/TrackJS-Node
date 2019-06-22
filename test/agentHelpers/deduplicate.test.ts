@@ -1,4 +1,4 @@
-import { deduplicate } from '../../src/utils/deduplicate';
+import { deduplicate } from '../../src/agentHelpers/deduplicate';
 import { Agent } from "../../src/Agent";
 
 jest.useFakeTimers();
