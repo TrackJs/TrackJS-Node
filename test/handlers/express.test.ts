@@ -14,6 +14,7 @@ describe('expressRequestHandler', () => {
 
   beforeEach(() => {
     fakeReq = new http.IncomingMessage(new Socket());
+    fakeReq['get'] = jest.fn();
     fakeRes = new http.ServerResponse(fakeReq);
     fakeAgent = new Agent({ token: 'test' });
     AgentRegistrar.getCurrentAgent = jest.fn(() => fakeAgent);
@@ -29,7 +30,9 @@ describe('expressRequestHandler', () => {
 
   it('sets request environment parameters', () => {
     fakeReq.headers['referer'] = 'https://referer.com';
-    fakeReq.url = 'https://example.com/';
+    fakeReq['protocol'] = 'https';
+    fakeReq['get'] = jest.fn(() => 'example.com');
+    fakeReq['originalUrl'] = '/'
 
     expressRequestHandler()(fakeReq, fakeRes, () => {
       expect(fakeAgent.environment.referrerUrl).toBe('https://referer.com');

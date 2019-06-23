@@ -16,18 +16,18 @@ function testComplete() {
 }
 function assertStrictEqual(thing1, thing2) {
   if (thing1 !== thing2) {
-    console.log("Assertion strict equal failed", thing1, thing2);
+    console.log("Assertion strict equal failed", thing1, thing2, Error.captureStackTrace());
     process.exit(1);
   }
 }
 
 
 TrackJS.install({
-  token: 'test',
+  token: '8de4c78a3ec64020ab2ad15dea1ae9ff',
   onError: function(payload) {
     switch(payload.url) {
-      case '/sync':
-        assertStrictEqual(payload.url, '/sync');
+      case 'http://localhost:3001/sync':
+        assertStrictEqual(payload.url, 'http://localhost:3001/sync');
         assertStrictEqual(payload.message, 'sync blew up');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /sync');
@@ -37,8 +37,8 @@ TrackJS.install({
         assertStrictEqual(payload.metadata[1].key, 'action');
         assertStrictEqual(payload.metadata[1].value, 'sync');
         break;
-      case '/async':
-        assertStrictEqual(payload.url, '/async');
+      case 'http://localhost:3001/async':
+        assertStrictEqual(payload.url, 'http://localhost:3001/async');
         assertStrictEqual(payload.message, 'async blew up');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /async');
@@ -48,8 +48,8 @@ TrackJS.install({
         assertStrictEqual(payload.metadata[1].key, 'action');
         assertStrictEqual(payload.metadata[1].value, 'async');
         break;
-      case '/reject':
-        assertStrictEqual(payload.url, '/reject');
+      case 'http://localhost:3001/reject':
+        assertStrictEqual(payload.url, 'http://localhost:3001/reject');
         assertStrictEqual(payload.message, 'rejected!');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /reject');
@@ -59,8 +59,8 @@ TrackJS.install({
         assertStrictEqual(payload.metadata[1].key, 'action');
         assertStrictEqual(payload.metadata[1].value, 'reject');
         break;
-      case '/console':
-        assertStrictEqual(payload.url, '/console');
+      case 'http://localhost:3001/console':
+        assertStrictEqual(payload.url, 'http://localhost:3001/console');
         assertStrictEqual(payload.message, 'console blew up');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'console blew up');
@@ -126,9 +126,11 @@ express()
 
   .listen(3001);
 
-process.on('uncaughtException', (error) => {
-  console.log('UNCAUGHT PROCESS ERROR', error);
-  process.exit(1);
+process.on('uncaughtException', function(error) {
+  if (!error['__trackjs__']) {
+    console.log('UNCAUGHT PROCESS ERROR', error);
+    process.exit(1);
+  }
 });
 
 http.get('http://localhost:3001/async');

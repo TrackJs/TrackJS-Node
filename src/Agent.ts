@@ -1,6 +1,6 @@
 import { TrackJSCapturePayload, TrackJSInstallOptions, TrackJSOptions, TrackJSConsole, TrackJSNetwork } from './types';
 import { isFunction } from './utils/isType';
-import { TelemetryBuffer } from './telemetry';
+import { TelemetryBuffer, ConsoleTelemetry } from './telemetry';
 import { Metadata } from './Metadata';
 import { Environment } from './Environment';
 import { transmit } from './Transmitter';
@@ -22,9 +22,9 @@ export class Agent {
   }
 
   environment = new Environment();
-  metadata = new Metadata()
+  metadata = new Metadata();
   options:TrackJSOptions
-  telemetry = new TelemetryBuffer(30)
+  telemetry = new TelemetryBuffer(30);
 
   private _onErrorFns = [];
 
@@ -53,6 +53,10 @@ export class Agent {
    * @returns {Boolean} `false` if the error was ignored.
    */
   captureError(error: Error): boolean {
+    // bail out if we've already captured this error instance on another path.
+    if (error['__trackjs__']) { return false; }
+    Object.defineProperty(error, '__trackjs__', { value: true, enumerable: false });
+
     let report = this.createErrorReport(error);
     let hasIgnored = false;
 
@@ -75,6 +79,11 @@ export class Agent {
     if (hasIgnored) {
       return false;
     }
+
+    // Adding a record of this error to telemetry so that future errors have
+    // an easy reference.
+    // TODO replace with a better telemetry type
+    this.telemetry.add('c', new ConsoleTelemetry('error', [error]));
 
     transmit({
       url: this.options.captureURL,

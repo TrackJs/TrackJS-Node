@@ -20,13 +20,13 @@ function testComplete() {
 }
 function assertStrictEqual(thing1, thing2) {
   if (thing1 !== thing2) {
-    console.error("Assertion strict equal failed", thing1, thing2);
+    console.error("Assertion strict equal failed", thing1, thing2, Error.captureStackTrace());
     process.exit(1);
   }
 }
 
 let fakeTrackJSServer = express()
-  .use(express.json())
+  .use(express.json({ type: '*/*' }))
   .post('/capture', (req, res, next) => {
     assertStrictEqual(req.query.token, 'testtoken');
     assertStrictEqual(req.body.message, 'test');

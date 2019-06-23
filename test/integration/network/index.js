@@ -23,17 +23,17 @@ function assertStrictEqual(thing1, thing2) {
 }
 
 TrackJS.install({
-  token: 'test',
+  token: '8de4c78a3ec64020ab2ad15dea1ae9ff',
   onError: function(payload) {
     switch(payload.url) {
-      case '/http':
-        assertStrictEqual(payload.url, '/http');
+      case 'http://localhost:3001/http':
+        assertStrictEqual(payload.url, 'http://localhost:3001/http');
         assertStrictEqual(payload.message, '503 Service Unavailable: GET http://httpstat.us/503');
         assertStrictEqual(payload.console.length, 0);
         assertStrictEqual(payload.network.length, 3);
         break;
-      case '/https':
-        assertStrictEqual(payload.url, '/https');
+      case 'http://localhost:3001/https':
+        assertStrictEqual(payload.url, 'http://localhost:3001/https');
         assertStrictEqual(payload.message, '404 Not Found: GET https://httpstat.us/404');
         assertStrictEqual(payload.console.length, 0);
         assertStrictEqual(payload.network.length, 3);
@@ -74,6 +74,12 @@ express()
 
   .listen(3001);
 
+process.on('uncaughtException', function(error) {
+  if (!error['__trackjs__']) {
+    console.log('UNCAUGHT PROCESS ERROR', error);
+    process.exit(1);
+  }
+});
 
 http.get('http://localhost:3001/http');
 http.get('http://localhost:3001/https');

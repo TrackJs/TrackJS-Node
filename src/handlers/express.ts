@@ -40,7 +40,7 @@ export function expressRequestHandler(): expressMiddleware {
       agent.configure({ correlationId: uuid() }); // correlate all errors from this request together.
       agent.environment.start = new Date();
       agent.environment.referrerUrl = req.headers['referer'] || '';
-      agent.environment.url = req.url;
+      agent.environment.url = `${req['protocol']}://${req['get']('host')}${req['originalUrl']}`;
       agent.captureUsage();
       next();
     })
