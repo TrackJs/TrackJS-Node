@@ -16,7 +16,7 @@ function testComplete() {
 }
 function assertStrictEqual(thing1, thing2) {
   if (thing1 !== thing2) {
-    console.error("Assertion strict equal failed", thing1, thing2);
+    console.log("Assertion strict equal failed", thing1, thing2);
     process.exit(1);
   }
 }
@@ -66,7 +66,7 @@ TrackJS.install({
         assertStrictEqual(payload.console[0].message, 'console blew up');
         break;
       default:
-        console.error('unknown url error', payload);
+        console.log('unknown url error', payload);
         process.exit(1);
     }
 
@@ -107,21 +107,19 @@ express()
   .get('/console', (req, res, next) => {
     console.error('console blew up');
     res.status(200);
-    next();
   })
 
   .get('/ok', (req, res, next) => {
     TrackJS.addLogTelemetry('log', 'a message from /ok');
     TrackJS.addMetadata('action', 'ok');
     res.status(200);
-    next();
   })
 
   .use(TrackJS.Handlers.expressErrorHandler())
 
   .use((error, req, res, next) => {
     if (!error['__trackjs__']) {
-      console.error('UNCAUGHT ERROR', error);
+      console.log('UNCAUGHT ERROR', error);
       process.exit(1);
     }
   })

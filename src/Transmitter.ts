@@ -48,7 +48,8 @@ export function transmit(options: TransmitOptions) {
     hostname: url.hostname,
     port: url.port,
     path: `${url.pathname}${url.search}`,
-  });
+    '__trackjs__': true // prevent our requests from being observed by `NetworkWatcher`
+  } as https.RequestOptions);
 
   if (options.method === 'POST' && options.payload) {
     let body = JSON.stringify(options.payload);
