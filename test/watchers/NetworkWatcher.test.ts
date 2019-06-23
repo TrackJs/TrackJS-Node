@@ -6,6 +6,10 @@ import { AgentRegistrar } from '../../src/AgentRegistrar';
 
 let _NetworkWatcher = NetworkWatcher as any;
 
+beforeAll(() => {
+  Agent.defaults.dependencies = false;
+});
+
 jest.mock('net');
 
 describe('NetworkWatcher', () => {

@@ -1,6 +1,7 @@
 import domain from 'domain';
 import http from 'http';
 import { AgentRegistrar } from '../AgentRegistrar';
+import { uuid } from '../utils/uuid';
 
 type expressMiddleware = (req: http.IncomingMessage, res: http.ServerResponse, next: (error?: any) => void) => void;
 type expressErrorHandler = (error: Error, req: http.IncomingMessage, res: http.ServerResponse, next: (error?: any) => void) => void;
@@ -36,11 +37,11 @@ export function expressRequestHandler(): expressMiddleware {
     // execute the remaining middleware within the context of this domain.
     requestDomain.run(() => {
       let agent = AgentRegistrar.getCurrentAgent();
-      agent.captureUsage();
+      agent.configure({ correlationId: uuid() }); // correlate all errors from this request together.
       agent.environment.start = new Date();
       agent.environment.referrerUrl = req.headers['referer'] || '';
       agent.environment.url = req.url;
-      agent.environment.userAgent = req.headers['user-agent'] || '';
+      agent.captureUsage();
       next();
     })
   };

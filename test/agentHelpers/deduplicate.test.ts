@@ -3,6 +3,10 @@ import { Agent } from "../../src/Agent";
 
 jest.useFakeTimers();
 
+beforeAll(() => {
+  Agent.defaults.dependencies = false;
+});
+
 describe('deduplicate()', () => {
 
   test('it prevents duplicate errors', () => {

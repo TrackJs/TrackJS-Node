@@ -4,7 +4,6 @@ import { transmit } from '../src/Transmitter';
 
 jest.mock('../src/Transmitter');
 
-
 describe('Agent', () => {
 
   describe('constructor()', () => {
@@ -14,6 +13,7 @@ describe('Agent', () => {
         token: 'token',
         application: 'application',
         captureURL: 'https://mycapture.com/',
+        correlationId: 'correlation',
         dependencies: false,
         sessionId: 'session',
         usageURL: 'https://myusage.com/',
@@ -33,6 +33,7 @@ describe('Agent', () => {
         token: 'token',
         application: '',
         captureURL: 'https://dev-capture.trackjs.com/capture',
+        correlationId: expect.any(String),
         dependencies: true,
         sessionId: '',
         usageURL: 'https://dev-usage.trackjs.com/usage.gif',

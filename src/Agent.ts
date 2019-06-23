@@ -5,6 +5,7 @@ import { Metadata } from './Metadata';
 import { Environment } from './Environment';
 import { transmit } from './Transmitter';
 import { deduplicate, truncate } from './agentHelpers';
+import { uuid } from './utils/uuid';
 
 export class Agent {
 
@@ -12,6 +13,7 @@ export class Agent {
     token: '',
     application: '',
     captureURL: 'https://dev-capture.trackjs.com/capture',
+    correlationId: '',
     dependencies: true,
     sessionId: '',
     usageURL: 'https://dev-usage.trackjs.com/usage.gif',
@@ -32,6 +34,8 @@ export class Agent {
     if (this.options.dependencies) {
       this.environment.discoverDependencies();
     }
+
+    this.options.correlationId = this.options.correlationId || uuid();
 
     if (isFunction(options.onError)) {
       this.onError(options.onError);
@@ -84,13 +88,16 @@ export class Agent {
     return true;
   }
 
+  /**
+   * Capture a usage record.
+   */
   captureUsage(): void {
     transmit({
       url: this.options.usageURL,
       method: 'GET',
       queryParams: {
         token: this.options.token,
-        correlationId: 'TODO',
+        correlationId: this.options.correlationId,
         application: this.options.application
       }
     });
@@ -118,6 +125,15 @@ export class Agent {
   }
 
   /**
+   * Update the agent configuration options.
+   *
+   * @param options Option values to be updated.
+   */
+  configure(options: TrackJSOptions) {
+    this.options = Object.assign(this.options, options);
+  }
+
+  /**
    * Generate a full error report payload for a given error with the context logs
    * gathered by this agent.
    *
@@ -131,7 +147,7 @@ export class Agent {
       'console': this.telemetry.getAllByCategory('c') as Array<TrackJSConsole>,
       'customer': {
         'application': this.options.application,
-        'correlationId': '1234',
+        'correlationId': this.options.correlationId,
         'sessionId': this.options.sessionId,
         'token': this.options.token,
         'userId': this.options.userId,
@@ -157,7 +173,7 @@ export class Agent {
       'throttled': 0,
       'timestamp': now.toISOString(),
       'visitor': [],
-      'version': '3.0.0'
+      'version': '3.3.0'
     };
   }
 

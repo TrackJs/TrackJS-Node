@@ -4,6 +4,10 @@ import { expressErrorHandler, expressRequestHandler } from '../../src/handlers/e
 import { Socket } from 'net';import { Agent } from '../../src/Agent';
 import { AgentRegistrar } from '../../src/AgentRegistrar';
 
+beforeAll(() => {
+  Agent.defaults.dependencies = false;
+});
+
 describe('expressRequestHandler', () => {
   let fakeReq, fakeRes;
   let fakeAgent;
@@ -24,14 +28,12 @@ describe('expressRequestHandler', () => {
   });
 
   it('sets request environment parameters', () => {
-    fakeReq.headers['user-agent'] = 'user agent';
     fakeReq.headers['referer'] = 'https://referer.com';
     fakeReq.url = 'https://example.com/';
 
     expressRequestHandler()(fakeReq, fakeRes, () => {
       expect(fakeAgent.environment.referrerUrl).toBe('https://referer.com');
       expect(fakeAgent.environment.url).toBe('https://example.com/');
-      expect(fakeAgent.environment.userAgent).toBe('user agent');
     });
   });
 

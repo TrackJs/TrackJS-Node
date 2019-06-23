@@ -1,10 +1,8 @@
 import * as TrackJS from '../src/sdk';
 import { TrackJSError } from '../src/types/TrackJSError';
-import { Agent } from '../src/Agent';
 import { AgentRegistrar } from '../src/AgentRegistrar';
 
 describe('sdk', () => {
-
 
   describe('error checking', () => {
     it('install throws without options', () => {

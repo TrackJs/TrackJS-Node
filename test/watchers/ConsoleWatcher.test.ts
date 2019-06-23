@@ -5,6 +5,10 @@ import { AgentRegistrar } from '../../src/AgentRegistrar';
 
 let _ConsoleWatcher = ConsoleWatcher as any;
 
+beforeAll(() => {
+  Agent.defaults.dependencies = false;
+});
+
 describe('ConsoleWatcher', () => {
   describe('install()', () => {
     let fakeConsole = null;

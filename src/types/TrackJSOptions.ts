@@ -24,6 +24,13 @@ export interface TrackJSOptions {
   captureURL?: string,
 
   /**
+   * Identifier to correlate errors together share a common thread, session,
+   * or request.
+   * @property {String}
+   */
+  correlationId?: string,
+
+  /**
    * Whether to disable the discovery and inclusion of module dependencies with
    * error reports.
    * @default true

@@ -1,6 +1,7 @@
 import https from 'https';
 import { URL, URLSearchParams }  from 'url';
 import { TrackJSError } from './types';
+import { userAgent } from './utils/userAgent';
 
 export type TransmitOptions = {
 
@@ -49,12 +50,12 @@ export function transmit(options: TransmitOptions) {
     port: url.port,
     path: `${url.pathname}${url.search}`,
     '__trackjs__': true // prevent our requests from being observed by `NetworkWatcher`
-  } as https.RequestOptions);
+  } as https.RequestOptions, (resp) => null);
 
   if (options.method === 'POST' && options.payload) {
     let body = JSON.stringify(options.payload);
-    req.setHeader('Content-Length', Buffer.byteLength(body));
-    req.setHeader('Content-Type', 'application/json');
+    req.setHeader('Content-Type', 'text/plain');
+    req.setHeader('User-Agent', userAgent);
     req.write(body);
   }
 

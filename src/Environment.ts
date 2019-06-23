@@ -1,4 +1,5 @@
 import { cli } from "./utils/cli";
+import { userAgent } from './utils/userAgent';
 
 /**
  * Attributes about the current operating environment.
@@ -7,7 +8,7 @@ export class Environment {
   referrerUrl: string = '';
   start: Date = new Date();
   url: string = '';
-  userAgent: string = '';
+  userAgent: string = userAgent;
 
   /**
    * Returns a copy of the Environment.
