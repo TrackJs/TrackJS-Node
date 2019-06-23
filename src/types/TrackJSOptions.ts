@@ -24,6 +24,13 @@ export interface TrackJSOptions {
   captureURL?: string,
 
   /**
+   * Whether to disable the discovery and inclusion of module dependencies with
+   * error reports.
+   * @default true
+   */
+  dependencies?: boolean,
+
+  /**
    * Metadata Key-Value pairs
    */
   metadata?: { [key: string]: string },

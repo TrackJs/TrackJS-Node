@@ -9,10 +9,6 @@ export class Environment {
   url: string = '';
   userAgent: string = '';
 
-  constructor() {
-    Environment.discoverDependencies();
-  }
-
   /**
    * Returns a copy of the Environment.
    */
@@ -29,12 +25,12 @@ export class Environment {
 
   /**
    * Discover the environment modules and versions. This is expensive, so we
-   * should only do it on initial load.
+   * should only do it once.
    *
    * @param _bustCache {Boolean} Whether the existing dependency cache should be
    * discarded and rediscovered.
    */
-  static discoverDependencies(_bustCache?: boolean): Promise<void> {
+  discoverDependencies(_bustCache?: boolean): Promise<void> {
 
     if (Environment._dependencyCache && !_bustCache) {
       return Promise.resolve();
@@ -43,8 +39,8 @@ export class Environment {
       Environment._dependencyCache = {};
       Promise
         .all([
-          cli('npm ls --depth=0 --json --parseable'),
-          cli('npm ls --depth=0 --json --parseable --g')
+          cli('npm list --prod --depth=0 --json --parseable'),
+          cli('npm list --prod --depth=0 --json --parseable --g')
         ])
         .then((results) => {
           results.forEach((buf) => {

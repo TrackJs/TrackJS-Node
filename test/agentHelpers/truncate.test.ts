@@ -3,6 +3,10 @@ import { Agent } from '../../src/Agent';
 
 describe('truncate()', () => {
 
+  beforeAll(() => {
+    Agent.defaults.dependencies = false;
+  })
+
   function generateRandomString(length: number) {
     const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let result = '';

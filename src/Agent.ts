@@ -12,6 +12,7 @@ export class Agent {
     token: '',
     application: '',
     captureURL: 'https://dev-capture.trackjs.com/capture',
+    dependencies: true,
     sessionId: '',
     usageURL: 'https://dev-usage.trackjs.com/usage.gif',
     userId: '',
@@ -27,6 +28,10 @@ export class Agent {
 
   constructor(options: TrackJSInstallOptions) {
     this.options = Object.assign({}, Agent.defaults, options);
+
+    if (this.options.dependencies) {
+      this.environment.discoverDependencies();
+    }
 
     if (isFunction(options.onError)) {
       this.onError(options.onError);

@@ -10,15 +10,4 @@ describe('Environment', () => {
       expect(environment1).not.toBe(environment2);
     })
   });
-  describe('discoverDependencies()', () => {
-    it('discovers environment dependencies', () => {
-      expect.assertions(1);
-      let environment = new Environment();
-      return Environment.discoverDependencies(true).then(() => {
-        expect(environment.getDependencies()).toEqual(expect.objectContaining({
-          'jest': '24.8.0'
-        }));
-      });
-    })
-  });
 });
