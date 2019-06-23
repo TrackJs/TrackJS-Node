@@ -119,13 +119,17 @@ express()
 
   .use((error, req, res, next) => {
     if (!error['__trackjs__']) {
-      console.log('UNCAUGHT ERROR', error);
+      console.log('UNCAUGHT EXPRESS ERROR', error);
       process.exit(1);
     }
   })
 
   .listen(3001);
 
+process.on('uncaughtException', (error) => {
+  console.log('UNCAUGHT PROCESS ERROR', error);
+  process.exit(1);
+});
 
 http.get('http://localhost:3001/async');
 http.get('http://localhost:3001/reject');

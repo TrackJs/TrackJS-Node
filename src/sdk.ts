@@ -8,6 +8,7 @@ import { ConsoleWatcher, ExceptionWatcher, RejectionWatcher, Watcher, NetworkWat
 import { isError } from './utils/isType';
 import serialize from './utils/serialize';
 
+
 let isInstalled = false;
 let watchers: Array<Watcher> = [
   ConsoleWatcher,
@@ -21,9 +22,8 @@ export function install(options: TrackJSInstallOptions): void {
   if (!options) { throw new TrackJSError('install options are required.' )}
   if (!options.token) { throw new TrackJSError('install token is required.' )}
 
-  watchers.forEach((w) => w.install());
-
   AgentRegistrar.init(new Agent(options));
+  watchers.forEach((w) => w.install());
   isInstalled = true;
 }
 

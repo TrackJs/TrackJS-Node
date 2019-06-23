@@ -135,9 +135,7 @@ export class Agent {
       'entry': 'server',
       'environment': {
         'age': now.getTime() - this.environment.start.getTime(),
-        'dependencies': {
-          'name': '1.0.0'
-        },
+        'dependencies': this.environment.getDependencies(),
         'originalUrl': this.environment.url,
         'referrer': this.environment.referrerUrl,
         'userAgent': this.environment.userAgent,
