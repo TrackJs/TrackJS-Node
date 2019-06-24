@@ -1,7 +1,6 @@
-import { TrackJSNetwork } from '../types';
+import { TrackJSNetwork } from "../types";
 
 export class NetworkTelemetry implements TrackJSNetwork {
-
   /** @inheritdoc */
   completedOn: string;
   /** @inheritdoc */
@@ -14,5 +13,4 @@ export class NetworkTelemetry implements TrackJSNetwork {
   statusText: string;
   /** @inheritdoc */
   url: string;
-
 }

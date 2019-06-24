@@ -3,7 +3,7 @@ export {
   TrackJSConsole,
   TrackJSMetadata,
   TrackJSNetwork
-} from './TrackJSCapturePayload'
+} from "./TrackJSCapturePayload";
 
-export { TrackJSError } from './TrackJSError';
-export { TrackJSInstallOptions, TrackJSOptions } from './TrackJSOptions';
+export { TrackJSError } from "./TrackJSError";
+export { TrackJSInstallOptions, TrackJSOptions } from "./TrackJSOptions";

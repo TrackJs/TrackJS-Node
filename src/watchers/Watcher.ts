@@ -7,11 +7,11 @@ export interface Watcher {
    * Install the watcher into the environment.
    * @see uninstall
    */
-  install(): void
+  install(): void;
 
   /**
    * Removes the watcher from the environment.
    * @see install
    */
-  uninstall(): void
+  uninstall(): void;
 }

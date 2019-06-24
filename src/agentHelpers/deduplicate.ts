@@ -12,7 +12,9 @@ export function deduplicate(payload: TrackJSCapturePayload): boolean {
 
   if (!_history.has(fingerprint)) {
     _history.add(fingerprint);
-    setTimeout(() => { _history.delete(fingerprint) }, 1000);
+    setTimeout(() => {
+      _history.delete(fingerprint);
+    }, 1000);
     return true;
   }
 

@@ -1,10 +1,9 @@
-import domain, { Domain } from 'domain';
+import domain, { Domain } from "domain";
 import { Agent } from "./Agent";
 
 class _AgentRegistrar {
-
   private _masterAgent: Agent;
-  private _ref = Symbol('TrackJS Agent Registrar');
+  private _ref = Symbol("TrackJS Agent Registrar");
 
   init(masterAgent: Agent): void {
     this._masterAgent = masterAgent;
@@ -18,7 +17,7 @@ class _AgentRegistrar {
    * @see https://nodejs.org/api/domain.html
    */
   getCurrentAgent(activeDomain?: Domain): Agent {
-    activeDomain = activeDomain || domain['active'];
+    activeDomain = activeDomain || domain["active"];
     if (!activeDomain) {
       return this._masterAgent;
     }
@@ -40,7 +39,6 @@ class _AgentRegistrar {
      * attached to.
      */
   }
-
 }
 
 /**

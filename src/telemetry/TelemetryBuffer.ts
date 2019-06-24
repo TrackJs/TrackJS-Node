@@ -1,14 +1,13 @@
 interface TelemetryEnvelope {
-  key: Symbol
-  category: string
-  data: Object
+  key: Symbol;
+  category: string;
+  data: Object;
 }
 
 /**
  * Rotating log of Telemetry data.
  */
 export class TelemetryBuffer {
-
   private _store: Array<TelemetryEnvelope>;
   private _size: number;
 
@@ -18,19 +17,21 @@ export class TelemetryBuffer {
   }
 
   /**
-    * Add a log entry with the provided category.
-    *
-    * @method add
-    * @param {String} category The category of the log to be added.
-    * @param {Object} item The Item to be added to the log
-    * @returns {Symbol} Id of the item in the log.
-    */
+   * Add a log entry with the provided category.
+   *
+   * @method add
+   * @param {String} category The category of the log to be added.
+   * @param {Object} item The Item to be added to the log
+   * @returns {Symbol} Id of the item in the log.
+   */
   add(category: string, data: Object): Symbol {
     var key = Symbol();
     this._store.push({ key, category, data });
 
     if (this._store.length > this._size) {
-      this._store = this._store.slice(Math.max(this._store.length - this._size, 0));
+      this._store = this._store.slice(
+        Math.max(this._store.length - this._size, 0)
+      );
     }
     return key;
   }
@@ -72,20 +73,19 @@ export class TelemetryBuffer {
    * @returns {Object}
    */
   get(key: Symbol): Object {
-    let result = this._store.find((envelope) => envelope.key === key);
+    let result = this._store.find(envelope => envelope.key === key);
     return result ? result.data : null;
   }
 
   /**
-    * Returns all the Telemetry of a type.
-    *
-    * @method getAllByCategory
-    * @param {String} category The category of logs to return.
-    */
+   * Returns all the Telemetry of a type.
+   *
+   * @method getAllByCategory
+   * @param {String} category The category of logs to return.
+   */
   getAllByCategory(category: string): Array<Object> {
     return this._store
-      .filter((envelope) => envelope.category === category)
-      .map((envelope) => envelope.data);
+      .filter(envelope => envelope.category === category)
+      .map(envelope => envelope.data);
   }
-
 }

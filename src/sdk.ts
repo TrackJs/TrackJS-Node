@@ -1,12 +1,23 @@
-import { TrackJSInstallOptions, TrackJSOptions, TrackJSError, TrackJSCapturePayload } from './types';
-import { Agent }  from './Agent';
-import { expressRequestHandler, expressErrorHandler } from './handlers/express';
-import { ConsoleTelemetry } from './telemetry';
-import { AgentRegistrar } from './AgentRegistrar';
-import { ConsoleWatcher, ExceptionWatcher, RejectionWatcher, Watcher, NetworkWatcher } from './watchers';
-import { isError } from './utils/isType';
-import serialize from './utils/serialize';
-import { captureFault } from './Fault';
+import {
+  TrackJSInstallOptions,
+  TrackJSOptions,
+  TrackJSError,
+  TrackJSCapturePayload
+} from "./types";
+import { Agent } from "./Agent";
+import { expressRequestHandler, expressErrorHandler } from "./handlers/express";
+import { ConsoleTelemetry } from "./telemetry";
+import { AgentRegistrar } from "./AgentRegistrar";
+import {
+  ConsoleWatcher,
+  ExceptionWatcher,
+  RejectionWatcher,
+  Watcher,
+  NetworkWatcher
+} from "./watchers";
+import { isError } from "./utils/isType";
+import { serialize } from "./utils/serialize";
+import { captureFault } from "./Fault";
 
 let isInstalled = false;
 let watchers: Array<Watcher> = [
@@ -22,18 +33,23 @@ let watchers: Array<Watcher> = [
  * @param options Installation Options.
  */
 export function install(options: TrackJSInstallOptions): void {
-  if (isInstalled) { throw new TrackJSError('already installed.'); }
-  if (!options) { throw new TrackJSError('install options are required.' )}
-  if (!options.token) { throw new TrackJSError('install token is required.' )}
+  if (isInstalled) {
+    throw new TrackJSError("already installed.");
+  }
+  if (!options) {
+    throw new TrackJSError("install options are required.");
+  }
+  if (!options.token) {
+    throw new TrackJSError("install token is required.");
+  }
 
   try {
     AgentRegistrar.init(new Agent(options));
-    watchers.forEach((w) => w.install());
+    watchers.forEach(w => w.install());
     isInstalled = true;
-  }
-  catch(error) {
+  } catch (error) {
     captureFault(error);
-    throw new TrackJSError('error occurred during installation.', error);
+    throw new TrackJSError("error occurred during installation.", error);
   }
 }
 
@@ -41,16 +57,17 @@ export function install(options: TrackJSInstallOptions): void {
  * Remove the agent from the current environment.
  */
 export function uninstall(): void {
-  if (!isInstalled) { return; }
+  if (!isInstalled) {
+    return;
+  }
 
   try {
-    watchers.forEach((w) => w.uninstall());
+    watchers.forEach(w => w.uninstall());
     AgentRegistrar.close();
     isInstalled = false;
-  }
-  catch(error) {
+  } catch (error) {
     captureFault(error);
-    throw new TrackJSError('error occurred during uninstall.', error);
+    throw new TrackJSError("error occurred during uninstall.", error);
   }
 }
 
@@ -60,7 +77,9 @@ export function uninstall(): void {
  * @param options Options to be updated.
  */
 export function configure(options: TrackJSOptions): void {
-  if (!isInstalled) { throw new TrackJSError('not installed.'); }
+  if (!isInstalled) {
+    throw new TrackJSError("not installed.");
+  }
   AgentRegistrar.getCurrentAgent().configure(options);
 }
 
@@ -74,8 +93,13 @@ export function configure(options: TrackJSOptions): void {
  *   metadata.add('foo', 'bar')
  *   metadata.add({ 'foo': 'bar', 'bar': 'baz' })
  */
-export function addMetadata(meta: string | { [key: string]: string}, value?: string): void {
-  if (!isInstalled) { throw new TrackJSError('not installed.'); }
+export function addMetadata(
+  meta: string | { [key: string]: string },
+  value?: string
+): void {
+  if (!isInstalled) {
+    throw new TrackJSError("not installed.");
+  }
   AgentRegistrar.getCurrentAgent().metadata.add(meta, value);
 }
 
@@ -89,8 +113,10 @@ export function addMetadata(meta: string | { [key: string]: string}, value?: str
  *   metadata.remove('foo')
  *   metadata.remove({ 'foo': '', 'bar': '' })
  */
-export function removeMetadata(meta: string | { [key: string]: string}): void {
-  if (!isInstalled) { throw new TrackJSError('not installed.'); }
+export function removeMetadata(meta: string | { [key: string]: string }): void {
+  if (!isInstalled) {
+    throw new TrackJSError("not installed.");
+  }
   AgentRegistrar.getCurrentAgent().metadata.remove(meta);
 }
 
@@ -101,8 +127,13 @@ export function removeMetadata(meta: string | { [key: string]: string}): void {
  * @param messages Any messages to be added to the log
  */
 export function addLogTelemetry(severity: string, ...messages: any): void {
-  if (!isInstalled) { throw new TrackJSError('not installed.'); }
-  AgentRegistrar.getCurrentAgent().telemetry.add('c', new ConsoleTelemetry(severity, messages));
+  if (!isInstalled) {
+    throw new TrackJSError("not installed.");
+  }
+  AgentRegistrar.getCurrentAgent().telemetry.add(
+    "c",
+    new ConsoleTelemetry(severity, messages)
+  );
 }
 
 /**
@@ -116,8 +147,12 @@ export function addLogTelemetry(severity: string, ...messages: any): void {
  *     return (payload.message.indexOf('NSA') >= 0)
  *   })
  */
-export function onError(func: (payload: TrackJSCapturePayload) => boolean): void {
-  if (!isInstalled) { throw new TrackJSError('not installed.'); }
+export function onError(
+  func: (payload: TrackJSCapturePayload) => boolean
+): void {
+  if (!isInstalled) {
+    throw new TrackJSError("not installed.");
+  }
   AgentRegistrar.getCurrentAgent().onError(func);
 }
 
@@ -125,7 +160,9 @@ export function onError(func: (payload: TrackJSCapturePayload) => boolean): void
  * Sends a usage beacon for tracking error rates.
  */
 export function usage(): void {
-  if (!isInstalled) { throw new TrackJSError('not installed.'); }
+  if (!isInstalled) {
+    throw new TrackJSError("not installed.");
+  }
   AgentRegistrar.getCurrentAgent().captureUsage();
 }
 
@@ -136,19 +173,22 @@ export function usage(): void {
  * @param options {TrackJSOptions} Override the installation settings.
  */
 export function track(data: any, options?: TrackJSOptions): boolean {
-  if (!isInstalled) { throw new TrackJSError('not installed.'); }
+  if (!isInstalled) {
+    throw new TrackJSError("not installed.");
+  }
   let error = isError(data) ? data : new Error(serialize(data));
 
   // The user wants to do a one-off track() that overrides agent options
   if (options) {
-    return AgentRegistrar.getCurrentAgent().clone(options).captureError(error)
+    return AgentRegistrar.getCurrentAgent()
+      .clone(options)
+      .captureError(error);
   }
 
   return AgentRegistrar.getCurrentAgent().captureError(error);
 }
 
 export const Handlers = {
-
   /**
    * Returns an ExpressJS Error Handler that captures errors from processing.
    * Should be the *last* handler in the application.
@@ -160,7 +200,9 @@ export const Handlers = {
    *   .listen()
    */
   expressErrorHandler(): Function {
-    if (!isInstalled) { throw new TrackJSError('not installed.'); }
+    if (!isInstalled) {
+      throw new TrackJSError("not installed.");
+    }
     return expressErrorHandler();
   },
 
@@ -175,8 +217,9 @@ export const Handlers = {
    *   .listen()
    */
   expressRequestHandler(): Function {
-    if (!isInstalled) { throw new TrackJSError('not installed.'); }
+    if (!isInstalled) {
+      throw new TrackJSError("not installed.");
+    }
     return expressRequestHandler();
   }
-
-}
+};

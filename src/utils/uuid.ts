@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 /**
  * Creates a RFC-compliant v4 uuid string.
@@ -13,12 +13,28 @@ export function uuid(): string {
 
   let i = 0;
   // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
-  return ([
-    byteToHex[rng[i++]], byteToHex[rng[i++]],byteToHex[rng[i++]], byteToHex[rng[i++]], '-',
-    byteToHex[rng[i++]], byteToHex[rng[i++]], '-',
-    byteToHex[rng[i++]], byteToHex[rng[i++]], '-',
-    byteToHex[rng[i++]], byteToHex[rng[i++]], '-',
-    byteToHex[rng[i++]], byteToHex[rng[i++]],byteToHex[rng[i++]], byteToHex[rng[i++]],byteToHex[rng[i++]], byteToHex[rng[i++]]]).join('');
+  return [
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]],
+    "-",
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]],
+    "-",
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]],
+    "-",
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]],
+    "-",
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]],
+    byteToHex[rng[i++]]
+  ].join("");
 }
 
 var byteToHex = [];

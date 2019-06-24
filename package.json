@@ -6,6 +6,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
+    "fix": "prettier --write '{src,test}/**/*.ts'",
+    "lint": "prettier --check '{src,test}/**/*.ts'",
     "start": "run-s test:watch",
     "test": "run-s test:jest test:express test:network test:transmit",
     "test:express": "node ./test/integration/express",
@@ -30,6 +32,7 @@
     "express": "4.17.1",
     "jest": "24.8.0",
     "npm-run-all": "4.1.5",
+    "prettier": "1.18.2",
     "rimraf": "2.6.3",
     "ts-jest": "24.0.2",
     "typescript": "3.5.1"

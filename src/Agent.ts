@@ -1,30 +1,35 @@
-import { TrackJSCapturePayload, TrackJSInstallOptions, TrackJSOptions, TrackJSConsole, TrackJSNetwork } from './types';
-import { isFunction } from './utils/isType';
-import { TelemetryBuffer, ConsoleTelemetry } from './telemetry';
-import { Metadata } from './Metadata';
-import { Environment } from './Environment';
-import { transmit } from './Transmitter';
-import { deduplicate, truncate } from './agentHelpers';
-import { uuid } from './utils/uuid';
+import {
+  TrackJSCapturePayload,
+  TrackJSInstallOptions,
+  TrackJSOptions,
+  TrackJSConsole,
+  TrackJSNetwork
+} from "./types";
+import { isFunction } from "./utils/isType";
+import { TelemetryBuffer, ConsoleTelemetry } from "./telemetry";
+import { Metadata } from "./Metadata";
+import { Environment } from "./Environment";
+import { transmit } from "./Transmitter";
+import { deduplicate, truncate } from "./agentHelpers";
+import { uuid } from "./utils/uuid";
 
 export class Agent {
-
-  static defaults:TrackJSOptions = {
-    token: '',
-    application: '',
-    captureURL: 'https://dev-capture.trackjs.com/capture',
-    correlationId: '',
+  static defaults: TrackJSOptions = {
+    token: "",
+    application: "",
+    captureURL: "https://dev-capture.trackjs.com/capture",
+    correlationId: "",
     dependencies: true,
-    faultUrl: 'https://dev-usage.trackjs.com/fault.gif',
-    sessionId: '',
-    usageURL: 'https://dev-usage.trackjs.com/usage.gif',
-    userId: '',
-    version: ''
-  }
+    faultUrl: "https://dev-usage.trackjs.com/fault.gif",
+    sessionId: "",
+    usageURL: "https://dev-usage.trackjs.com/usage.gif",
+    userId: "",
+    version: ""
+  };
 
   environment = new Environment();
   metadata = new Metadata();
-  options:TrackJSOptions
+  options: TrackJSOptions;
   telemetry = new TelemetryBuffer(30);
 
   private _onErrorFns = [];
@@ -55,23 +60,27 @@ export class Agent {
    */
   captureError(error: Error): boolean {
     // bail out if we've already captured this error instance on another path.
-    if (error['__trackjs__']) { return false; }
-    Object.defineProperty(error, '__trackjs__', { value: true, enumerable: false });
+    if (error["__trackjs__"]) {
+      return false;
+    }
+    Object.defineProperty(error, "__trackjs__", {
+      value: true,
+      enumerable: false
+    });
 
     let report = this.createErrorReport(error);
     let hasIgnored = false;
 
-    [deduplicate, truncate, ...this._onErrorFns].forEach((fn) => {
+    [deduplicate, truncate, ...this._onErrorFns].forEach(fn => {
       if (!hasIgnored) {
         try {
           hasIgnored = !fn(report);
-        }
-        catch(e) {
+        } catch (e) {
           // Error in user-provided callback. We want to proceed, but notify them
           // that their code has failed.
           report.console.push({
-            severity: 'error',
-            message: 'Your TrackJS Callback failed with Error: ' + e.message,
+            severity: "error",
+            message: "Your TrackJS Callback failed with Error: " + e.message,
             timestamp: new Date().toISOString()
           });
         }
@@ -84,14 +93,14 @@ export class Agent {
     // Adding a record of this error to telemetry so that future errors have
     // an easy reference.
     // TODO replace with a better telemetry type
-    this.telemetry.add('c', new ConsoleTelemetry('error', [error]));
+    this.telemetry.add("c", new ConsoleTelemetry("error", [error]));
 
     transmit({
       url: this.options.captureURL,
-      method: 'POST',
+      method: "POST",
       queryParams: {
         token: this.options.token,
-        v: '3.3.0' //TODO
+        v: "3.3.0" //TODO
       },
       payload: report
     });
@@ -104,7 +113,7 @@ export class Agent {
   captureUsage(): void {
     transmit({
       url: this.options.usageURL,
-      method: 'GET',
+      method: "GET",
       queryParams: {
         token: this.options.token,
         correlationId: this.options.correlationId,
@@ -121,11 +130,15 @@ export class Agent {
    * @param options {TrackJSOptions} Override the installation settings.
    */
   clone(options?: TrackJSOptions): Agent {
-    let cloned = new Agent(Object.assign({}, this.options, options) as TrackJSInstallOptions);
+    let cloned = new Agent(Object.assign(
+      {},
+      this.options,
+      options
+    ) as TrackJSInstallOptions);
     cloned.metadata = this.metadata.clone();
     cloned.telemetry = this.telemetry.clone();
     cloned.environment = this.environment.clone();
-    this._onErrorFns.forEach((fn) => cloned.onError(fn));
+    this._onErrorFns.forEach(fn => cloned.onError(fn));
 
     if (options && options.metadata) {
       cloned.metadata.add(options.metadata);
@@ -152,38 +165,38 @@ export class Agent {
   createErrorReport(error: Error): TrackJSCapturePayload {
     let now = new Date();
     return {
-      'bindStack': null,
-      'bindTime': null,
-      'console': this.telemetry.getAllByCategory('c') as Array<TrackJSConsole>,
-      'customer': {
-        'application': this.options.application,
-        'correlationId': this.options.correlationId,
-        'sessionId': this.options.sessionId,
-        'token': this.options.token,
-        'userId': this.options.userId,
-        'version': this.options.version
+      bindStack: null,
+      bindTime: null,
+      console: this.telemetry.getAllByCategory("c") as Array<TrackJSConsole>,
+      customer: {
+        application: this.options.application,
+        correlationId: this.options.correlationId,
+        sessionId: this.options.sessionId,
+        token: this.options.token,
+        userId: this.options.userId,
+        version: this.options.version
       },
-      'entry': 'server',
-      'environment': {
-        'age': now.getTime() - this.environment.start.getTime(),
-        'dependencies': this.environment.getDependencies(),
-        'originalUrl': this.environment.url,
-        'referrer': this.environment.referrerUrl,
-        'userAgent': this.environment.userAgent,
-        'viewportHeight': 0,
-        'viewportWidth': 0
+      entry: "server",
+      environment: {
+        age: now.getTime() - this.environment.start.getTime(),
+        dependencies: this.environment.getDependencies(),
+        originalUrl: this.environment.url,
+        referrer: this.environment.referrerUrl,
+        userAgent: this.environment.userAgent,
+        viewportHeight: 0,
+        viewportWidth: 0
       },
-      'file': '',
-      'message': error.message,
-      'metadata': this.metadata.get(),
-      'nav': [],
-      'network': this.telemetry.getAllByCategory('n') as Array<TrackJSNetwork>,
-      'url': this.environment.url,
-      'stack': error.stack,
-      'throttled': 0,
-      'timestamp': now.toISOString(),
-      'visitor': [],
-      'version': '3.3.0'
+      file: "",
+      message: error.message,
+      metadata: this.metadata.get(),
+      nav: [],
+      network: this.telemetry.getAllByCategory("n") as Array<TrackJSNetwork>,
+      url: this.environment.url,
+      stack: error.stack,
+      throttled: 0,
+      timestamp: now.toISOString(),
+      visitor: [],
+      version: "3.3.0"
     };
   }
 
@@ -197,5 +210,4 @@ export class Agent {
   onError(func: (payload: TrackJSCapturePayload) => boolean): void {
     this._onErrorFns.push(func);
   }
-
 }

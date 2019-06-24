@@ -3,11 +3,10 @@ import {
   TrackJSCapturePayload,
   TrackJSError,
   TrackJSOptions
-} from '../src/index';
+} from "../src/index";
 
-describe('TrackJS', () => {
-
-  test('api exists', () => {
+describe("TrackJS", () => {
+  test("api exists", () => {
     expect(TrackJS.install).toEqual(expect.any(Function));
     expect(TrackJS.uninstall).toEqual(expect.any(Function));
     expect(TrackJS.addMetadata).toEqual(expect.any(Function));
@@ -20,5 +19,4 @@ describe('TrackJS', () => {
 
     expect(TrackJSError).toBeTruthy();
   });
-
 });

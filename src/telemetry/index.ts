@@ -1,3 +1,3 @@
-export * from './ConsoleTelemetry';
-export * from './NetworkTelemetry';
-export * from './TelemetryBuffer';
+export * from "./ConsoleTelemetry";
+export * from "./NetworkTelemetry";
+export * from "./TelemetryBuffer";

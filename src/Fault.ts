@@ -1,6 +1,6 @@
 import { transmit } from "./Transmitter";
 import { AgentRegistrar } from "./AgentRegistrar";
-import serialize from "./utils/serialize";
+import { serialize } from "./utils/serialize";
 import { isError } from "./utils/isType";
 import { Agent } from "./Agent";
 
@@ -11,15 +11,15 @@ export function captureFault(fault: any) {
 
   transmit({
     url: agentOptions.faultUrl,
-    method: 'GET',
+    method: "GET",
     queryParams: {
       token: agentOptions.token,
-      file: '',
+      file: "",
       msg: error.message,
-      stack: (error.stack || '').substr(0, 1000),
-      url: '',
-      v: 'TODO',
-      h: 'TODO'
+      stack: (error.stack || "").substr(0, 1000),
+      url: "",
+      v: "TODO",
+      h: "TODO"
     }
-  })
+  });
 }

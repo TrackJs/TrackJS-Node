@@ -1,13 +1,26 @@
-import domain from 'domain';
-import http from 'http';
-import { AgentRegistrar } from '../AgentRegistrar';
-import { uuid } from '../utils/uuid';
+import domain from "domain";
+import http from "http";
+import { AgentRegistrar } from "../AgentRegistrar";
+import { uuid } from "../utils/uuid";
 
-type expressMiddleware = (req: http.IncomingMessage, res: http.ServerResponse, next: (error?: any) => void) => void;
-type expressErrorHandler = (error: Error, req: http.IncomingMessage, res: http.ServerResponse, next: (error?: any) => void) => void;
+type expressMiddleware = (
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+  next: (error?: any) => void
+) => void;
+type expressErrorHandler = (
+  error: Error,
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+  next: (error?: any) => void
+) => void;
 
 function getStatusCode(error) {
-  const statusCode = error.status || error.statusCode || error.status_code || (error.output && error.output.statusCode);
+  const statusCode =
+    error.status ||
+    error.statusCode ||
+    error.status_code ||
+    (error.output && error.output.statusCode);
   return statusCode ? parseInt(statusCode, 10) : 500;
 }
 
@@ -32,18 +45,20 @@ export function expressRequestHandler(): expressMiddleware {
     // normal error handlers to manage the domain error event as well.
     requestDomain.add(req);
     requestDomain.add(res);
-    requestDomain.on('error', next);
+    requestDomain.on("error", next);
 
     // execute the remaining middleware within the context of this domain.
     requestDomain.run(() => {
       let agent = AgentRegistrar.getCurrentAgent();
       agent.configure({ correlationId: uuid() }); // correlate all errors from this request together.
       agent.environment.start = new Date();
-      agent.environment.referrerUrl = req.headers['referer'] || '';
-      agent.environment.url = `${req['protocol']}://${req['get']('host')}${req['originalUrl']}`;
+      agent.environment.referrerUrl = req.headers["referer"] || "";
+      agent.environment.url = `${req["protocol"]}://${req["get"]("host")}${
+        req["originalUrl"]
+      }`;
       agent.captureUsage();
       next();
-    })
+    });
   };
 }
 
@@ -59,15 +74,18 @@ export function expressRequestHandler(): expressMiddleware {
  */
 export function expressErrorHandler(): expressErrorHandler {
   return function trackjsExpressErrorHandler(error, req, res, next) {
-    if (error && !error['__trackjs__']) {
+    if (error && !error["__trackjs__"]) {
       var statusCode = getStatusCode(error);
       if (statusCode < 500) {
         next();
         return;
       }
       AgentRegistrar.getCurrentAgent().captureError(error);
-      Object.defineProperty(error, '__trackjs__', { value: true, enumerable: false });
+      Object.defineProperty(error, "__trackjs__", {
+        value: true,
+        enumerable: false
+      });
     }
     next(error);
-  }
+  };
 }

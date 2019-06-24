@@ -1,2 +1,2 @@
-export * from './deduplicate';
-export * from './truncate';
+export * from "./deduplicate";
+export * from "./truncate";

@@ -1,22 +1,21 @@
-import { AgentRegistrar } from '../AgentRegistrar';
-import { Watcher } from '.';
-import { isError } from '../utils/isType';
-import serialize from '../utils/serialize';
+import { AgentRegistrar } from "../AgentRegistrar";
+import { Watcher } from ".";
+import { isError } from "../utils/isType";
+import { serialize } from "../utils/serialize";
 
 class _RejectionWatcher implements Watcher {
-
   /**
    * @inheritdoc
    */
   install(): void {
-    process.on('unhandledRejection', this.rejectionHandler);
+    process.on("unhandledRejection", this.rejectionHandler);
   }
 
   /**
    * @inheritdoc
    */
   uninstall(): void {
-    process.off('unhandledRejection', this.rejectionHandler);
+    process.off("unhandledRejection", this.rejectionHandler);
   }
 
   rejectionHandler(reason: any, promise: any): void {
@@ -24,7 +23,6 @@ class _RejectionWatcher implements Watcher {
     let agent = AgentRegistrar.getCurrentAgent(promise && promise.domain);
     agent.captureError(error);
   }
-
 }
 
 /**

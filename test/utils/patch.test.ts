@@ -1,48 +1,50 @@
-import { patch, unpatch } from '../../src/utils/patch'
+import { patch, unpatch } from "../../src/utils/patch";
 
-describe('patch(obj, name, func)', () => {
-
-  test('replaces original function', () => {
+describe("patch(obj, name, func)", () => {
+  test("replaces original function", () => {
     var func = jest.fn();
     var obj = { func };
-    patch(obj, 'func', function() {
+    patch(obj, "func", function() {
       return function() {};
     });
     expect(obj.func).not.toBe(func);
   });
 
-  test('creates new function', () => {
+  test("creates new function", () => {
     var obj = {};
-    patch(obj, 'func2', function() {
+    patch(obj, "func2", function() {
       return function() {};
     });
-    expect(obj['func2']).toBeDefined();
+    expect(obj["func2"]).toBeDefined();
   });
 
-  test('calls through with original function', () => {
+  test("calls through with original function", () => {
     var func = jest.fn();
     var obj = { func };
-    patch(obj, 'func', function(original) {
+    patch(obj, "func", function(original) {
       return function() {
         original.apply(this, arguments);
       };
     });
-    obj.func('a', 'b');
-    expect(func).toHaveBeenCalledWith('a', 'b');
+    obj.func("a", "b");
+    expect(func).toHaveBeenCalledWith("a", "b");
   });
-
 });
 
-describe('unpatch(obj, name)', () => {
-
-  test('restores a patched function to original', () => {
+describe("unpatch(obj, name)", () => {
+  test("restores a patched function to original", () => {
     var func = jest.fn();
     var obj = { func };
-    patch(obj, 'func', (original) => function() { return original(); });
+    patch(
+      obj,
+      "func",
+      original =>
+        function() {
+          return original();
+        }
+    );
     expect(obj.func).not.toBe(func);
-    unpatch(obj, 'func');
+    unpatch(obj, "func");
     expect(obj.func).toBe(func);
   });
-
 });
-

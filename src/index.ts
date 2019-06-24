@@ -1,6 +1,6 @@
-'use awesome';
+"use awesome";
 
-import * as sdk from './sdk';
+import * as sdk from "./sdk";
 export const TrackJS = sdk;
 
 export {
@@ -8,4 +8,4 @@ export {
   TrackJSError,
   TrackJSInstallOptions,
   TrackJSOptions
-} from './types/index';
+} from "./types/index";
