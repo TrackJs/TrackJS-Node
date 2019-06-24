@@ -36,9 +36,7 @@ describe("TelemetryBuffer", () => {
       telemetry.add("test", {});
       telemetry.add("test", {});
       var buffer2 = telemetry.clone();
-      expect(telemetry.getAllByCategory("test")).toEqual(
-        buffer2.getAllByCategory("test")
-      );
+      expect(telemetry.getAllByCategory("test")).toEqual(buffer2.getAllByCategory("test"));
     });
     it("it can be cross-referenced", () => {
       let key1 = telemetry.add("test", {});
@@ -49,9 +47,7 @@ describe("TelemetryBuffer", () => {
       telemetry.add("t", { foo: "bar" });
       let telemetry2 = telemetry.clone();
       telemetry2.add("t", { bar: "baz" });
-      expect(telemetry.getAllByCategory("t")).not.toEqual(
-        telemetry2.getAllByCategory("t")
-      );
+      expect(telemetry.getAllByCategory("t")).not.toEqual(telemetry2.getAllByCategory("t"));
     });
   });
 
@@ -85,15 +81,8 @@ describe("TelemetryBuffer", () => {
       telemetry.add("test", telemetry4);
       telemetry.add("test", telemetry5);
 
-      expect(telemetry.getAllByCategory("test")).toEqual([
-        telemetry1,
-        telemetry4,
-        telemetry5
-      ]);
-      expect(telemetry.getAllByCategory("other")).toEqual([
-        telemetry2,
-        telemetry3
-      ]);
+      expect(telemetry.getAllByCategory("test")).toEqual([telemetry1, telemetry4, telemetry5]);
+      expect(telemetry.getAllByCategory("other")).toEqual([telemetry2, telemetry3]);
       expect(telemetry.getAllByCategory("empty")).toEqual([]);
     });
   });

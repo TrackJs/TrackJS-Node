@@ -1,10 +1,4 @@
-import {
-  TrackJSCapturePayload,
-  TrackJSInstallOptions,
-  TrackJSOptions,
-  TrackJSConsole,
-  TrackJSNetwork
-} from "./types";
+import { TrackJSCapturePayload, TrackJSInstallOptions, TrackJSOptions, TrackJSConsole, TrackJSNetwork } from "./types";
 import { isFunction } from "./utils/isType";
 import { TelemetryBuffer, ConsoleTelemetry } from "./telemetry";
 import { Metadata } from "./Metadata";
@@ -72,7 +66,7 @@ export class Agent {
     let report = this.createErrorReport(error);
     let hasIgnored = false;
 
-    [deduplicate, truncate, ...this._onErrorFns].forEach(fn => {
+    [deduplicate, truncate, ...this._onErrorFns].forEach((fn) => {
       if (!hasIgnored) {
         try {
           hasIgnored = !fn(report);
@@ -131,15 +125,11 @@ export class Agent {
    * @param options {TrackJSOptions} Override the installation settings.
    */
   clone(options?: TrackJSOptions): Agent {
-    let cloned = new Agent(Object.assign(
-      {},
-      this.options,
-      options
-    ) as TrackJSInstallOptions);
+    let cloned = new Agent(Object.assign({}, this.options, options) as TrackJSInstallOptions);
     cloned.metadata = this.metadata.clone();
     cloned.telemetry = this.telemetry.clone();
     cloned.environment = this.environment.clone();
-    this._onErrorFns.forEach(fn => cloned.onError(fn));
+    this._onErrorFns.forEach((fn) => cloned.onError(fn));
 
     if (options && options.metadata) {
       cloned.metadata.add(options.metadata);

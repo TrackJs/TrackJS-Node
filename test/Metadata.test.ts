@@ -61,10 +61,7 @@ describe("Metadata", () => {
         foo: "baz",
         bar: "baz"
       });
-      expect(m.get()).toEqual([
-        { key: "foo", value: "baz" },
-        { key: "bar", value: "baz" }
-      ]);
+      expect(m.get()).toEqual([{ key: "foo", value: "baz" }, { key: "bar", value: "baz" }]);
     });
     it("adds non-string values", () => {
       let m = new Metadata();

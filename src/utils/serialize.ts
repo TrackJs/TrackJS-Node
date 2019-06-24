@@ -4,8 +4,7 @@ function serializeElement(el) {
   var htmlTagResult = "<" + el.tagName.toLowerCase();
   var attributes = el["attributes"] || [];
   for (var idx = 0; idx < attributes.length; idx++) {
-    htmlTagResult +=
-      " " + attributes[idx].name + '="' + attributes[idx].value + '"';
+    htmlTagResult += " " + attributes[idx].name + '="' + attributes[idx].value + '"';
   }
   return htmlTagResult + ">";
 }
@@ -25,12 +24,7 @@ export function serialize(thing: any): string {
   if (thing === undefined) {
     return "undefined";
   }
-  if (
-    isType.isString(thing) ||
-    isType.isNumber(thing) ||
-    isType.isBoolean(thing) ||
-    isType.isFunction(thing)
-  ) {
+  if (isType.isString(thing) || isType.isNumber(thing) || isType.isBoolean(thing) || isType.isFunction(thing)) {
     return "" + thing;
   }
   if (isType.isElement(thing)) {
@@ -75,9 +69,7 @@ export function serialize(thing: any): string {
       }
       unserializableResult += ',"' + key + '":"' + thing[key] + '"';
     }
-    result = unserializableResult
-      ? "{" + unserializableResult.replace(",", "") + "}"
-      : "Unserializable Object";
+    result = unserializableResult ? "{" + unserializableResult.replace(",", "") + "}" : "Unserializable Object";
   }
 
   // NOTE [Todd Gardner] in order to correctly capture undefined and NaN,

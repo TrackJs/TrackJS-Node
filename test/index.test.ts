@@ -1,9 +1,4 @@
-import {
-  TrackJS,
-  TrackJSCapturePayload,
-  TrackJSError,
-  TrackJSOptions
-} from "../src/index";
+import { TrackJS, TrackJSCapturePayload, TrackJSError, TrackJSOptions } from "../src/index";
 
 describe("TrackJS", () => {
   test("api exists", () => {

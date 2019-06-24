@@ -1,9 +1,6 @@
 import domain from "domain";
 import http from "http";
-import {
-  expressErrorHandler,
-  expressRequestHandler
-} from "../../src/handlers/express";
+import { expressErrorHandler, expressRequestHandler } from "../../src/handlers/express";
 import { Socket } from "net";
 import { Agent } from "../../src/Agent";
 import { AgentRegistrar } from "../../src/AgentRegistrar";

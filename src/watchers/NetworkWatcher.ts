@@ -12,16 +12,11 @@ class _NetworkWatcher implements Watcher {
    */
   install(_agent?: any): void {
     let agentPrototype = _agent ? _agent.prototype : HttpAgent.Agent.prototype;
-    patch(agentPrototype, "addRequest", originalAddRequest => {
+    patch(agentPrototype, "addRequest", (originalAddRequest) => {
       return function addRequest(req, options, port, localAddress) {
         if (!(options || {})["__trackjs__"]) {
-          let networkTelemetry = _NetworkWatcher.createTelemetryFromRequest(
-            req
-          );
-          AgentRegistrar.getCurrentAgent(req["domain"]).telemetry.add(
-            "n",
-            networkTelemetry
-          );
+          let networkTelemetry = _NetworkWatcher.createTelemetryFromRequest(req);
+          AgentRegistrar.getCurrentAgent(req["domain"]).telemetry.add("n", networkTelemetry);
         }
 
         return originalAddRequest.apply(this, arguments);
@@ -38,15 +33,11 @@ class _NetworkWatcher implements Watcher {
     unpatch(agentPrototype, "addRequest");
   }
 
-  static createTelemetryFromRequest(
-    request: http.ClientRequest
-  ): NetworkTelemetry {
+  static createTelemetryFromRequest(request: http.ClientRequest): NetworkTelemetry {
     let networkTelemetry = new NetworkTelemetry();
     networkTelemetry.startedOn = new Date().toISOString();
     networkTelemetry.method = request["method"];
-    networkTelemetry.url = `${request["agent"].protocol}//${request.getHeader(
-      "host"
-    )}${request.path}`;
+    networkTelemetry.url = `${request["agent"].protocol}//${request.getHeader("host")}${request.path}`;
 
     request.once("socket", () => {
       networkTelemetry.startedOn = new Date().toISOString();

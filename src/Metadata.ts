@@ -31,7 +31,7 @@ export class Metadata {
     if (isString(meta)) {
       this._hash[meta as string] = value;
     } else {
-      Object.keys(meta).forEach(key => {
+      Object.keys(meta).forEach((key) => {
         this._hash[serialize(key)] = serialize(meta[key]);
       });
     }
@@ -55,7 +55,7 @@ export class Metadata {
    * Returns the contents of metadata as an Array of Objects.
    */
   get(): Array<{ key: string; value: string }> {
-    return Object.keys(this._hash).map(key => {
+    return Object.keys(this._hash).map((key) => {
       return { key, value: this._hash[key] };
     });
   }
@@ -74,7 +74,7 @@ export class Metadata {
     if (isString(meta)) {
       delete this._hash[meta as string];
     } else {
-      Object.keys(meta).forEach(key => {
+      Object.keys(meta).forEach((key) => {
         delete this._hash[serialize(key) as string];
       });
     }

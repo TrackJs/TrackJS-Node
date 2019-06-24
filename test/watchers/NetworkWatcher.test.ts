@@ -28,7 +28,7 @@ describe("NetworkWatcher", () => {
     it("http patched to intercept request", () => {
       fakeAgent.telemetry.add = jest.fn();
       _NetworkWatcher.install();
-      http.get("http://example.com/?foo=bar", response => {});
+      http.get("http://example.com/?foo=bar", (response) => {});
       expect(fakeAgent.telemetry.add).toHaveBeenCalledWith(
         "n",
         expect.objectContaining({

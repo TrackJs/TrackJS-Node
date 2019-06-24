@@ -23,17 +23,13 @@ describe("sdk", () => {
       expect(() => TrackJS.addMetadata("foo", "bar")).toThrow(TrackJSError);
     });
     it("addLogTelemetry throws when not installed", () => {
-      expect(() => TrackJS.addLogTelemetry("log", "test")).toThrow(
-        TrackJSError
-      );
+      expect(() => TrackJS.addLogTelemetry("log", "test")).toThrow(TrackJSError);
     });
     it("onError throws when not installed", () => {
-      expect(() => TrackJS.onError(payload => false)).toThrow(TrackJSError);
+      expect(() => TrackJS.onError((payload) => false)).toThrow(TrackJSError);
     });
     it("Handlers.expressErrorHandler throws when not installed", () => {
-      expect(() => TrackJS.Handlers.expressErrorHandler()).toThrow(
-        TrackJSError
-      );
+      expect(() => TrackJS.Handlers.expressErrorHandler()).toThrow(TrackJSError);
     });
   });
 
@@ -41,7 +37,7 @@ describe("sdk", () => {
     it("serializes non error data", () => {
       let errorTracked: Error;
       TrackJS.install({ token: "test" });
-      AgentRegistrar.getCurrentAgent().captureError = jest.fn(error => {
+      AgentRegistrar.getCurrentAgent().captureError = jest.fn((error) => {
         errorTracked = error;
         return true;
       });

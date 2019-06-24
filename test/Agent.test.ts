@@ -70,9 +70,7 @@ describe("Agent", () => {
       let agent1 = new Agent({ token: "test" });
       agent1.telemetry.add("t", new ConsoleTelemetry("log", ["message"]));
       let agent2 = agent1.clone();
-      expect(agent1.telemetry.getAllByCategory("t")).toEqual(
-        agent2.telemetry.getAllByCategory("t")
-      );
+      expect(agent1.telemetry.getAllByCategory("t")).toEqual(agent2.telemetry.getAllByCategory("t"));
     });
     it("has equal environment", () => {
       let agent1 = new Agent({ token: "test" });
@@ -83,8 +81,8 @@ describe("Agent", () => {
     });
     it("has same event handlers", () => {
       let agent1 = new Agent({ token: "test" });
-      let handler1 = jest.fn(payload => true);
-      let handler2 = jest.fn(payload => false);
+      let handler1 = jest.fn((payload) => true);
+      let handler2 = jest.fn((payload) => false);
       agent1.onError(handler1);
       agent1.onError(handler2);
       let agent2 = agent1.clone();
@@ -146,10 +144,7 @@ describe("Agent", () => {
     it("adds console telemetry to payload", () => {
       let agent = new Agent({ token: "test" });
       agent.telemetry.add("c", new ConsoleTelemetry("log", ["a log message"]));
-      agent.telemetry.add(
-        "c",
-        new ConsoleTelemetry("warn", ["a warning", { foo: "bar" }])
-      );
+      agent.telemetry.add("c", new ConsoleTelemetry("warn", ["a warning", { foo: "bar" }]));
       let payload = agent.createErrorReport(new Error("test error"));
       expect(payload.console).toEqual([
         {
@@ -170,7 +165,7 @@ describe("Agent", () => {
     it("receives error events", () => {
       let agent = new Agent({ token: "test " });
       expect.assertions(1);
-      agent.onError(payload => {
+      agent.onError((payload) => {
         expect(payload.message).toBe("test message");
         return false;
       });
@@ -180,7 +175,7 @@ describe("Agent", () => {
     it("can ignore error events", () => {
       let agent = new Agent({ token: "test " });
       expect.assertions(1);
-      agent.onError(payload => false);
+      agent.onError((payload) => false);
       expect(agent.captureError(new Error("test message"))).toBe(false);
     });
 
@@ -214,7 +209,7 @@ describe("Agent", () => {
     });
 
     it("adds handler from constructor", () => {
-      let handler = jest.fn(payload => false);
+      let handler = jest.fn((payload) => false);
       let options = {
         token: "token",
         onError: handler
@@ -230,7 +225,7 @@ describe("Agent", () => {
     });
 
     it("recovers from a handler that throws", () => {
-      let handler = jest.fn(payload => {
+      let handler = jest.fn((payload) => {
         throw new Error("oops");
       });
       let agent = new Agent({ token: "test" });

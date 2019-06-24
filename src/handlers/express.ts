@@ -3,11 +3,7 @@ import http from "http";
 import { AgentRegistrar } from "../AgentRegistrar";
 import { uuid } from "../utils/uuid";
 
-type expressMiddleware = (
-  req: http.IncomingMessage,
-  res: http.ServerResponse,
-  next: (error?: any) => void
-) => void;
+type expressMiddleware = (req: http.IncomingMessage, res: http.ServerResponse, next: (error?: any) => void) => void;
 type expressErrorHandler = (
   error: Error,
   req: http.IncomingMessage,
@@ -16,11 +12,7 @@ type expressErrorHandler = (
 ) => void;
 
 function getStatusCode(error) {
-  const statusCode =
-    error.status ||
-    error.statusCode ||
-    error.status_code ||
-    (error.output && error.output.statusCode);
+  const statusCode = error.status || error.statusCode || error.status_code || (error.output && error.output.statusCode);
   return statusCode ? parseInt(statusCode, 10) : 500;
 }
 
@@ -53,9 +45,7 @@ export function expressRequestHandler(): expressMiddleware {
       agent.configure({ correlationId: uuid() }); // correlate all errors from this request together.
       agent.environment.start = new Date();
       agent.environment.referrerUrl = req.headers["referer"] || "";
-      agent.environment.url = `${req["protocol"]}://${req["get"]("host")}${
-        req["originalUrl"]
-      }`;
+      agent.environment.url = `${req["protocol"]}://${req["get"]("host")}${req["originalUrl"]}`;
       agent.captureUsage();
       next();
     });

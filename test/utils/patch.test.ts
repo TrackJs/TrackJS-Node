@@ -38,7 +38,7 @@ describe("unpatch(obj, name)", () => {
     patch(
       obj,
       "func",
-      original =>
+      (original) =>
         function() {
           return original();
         }

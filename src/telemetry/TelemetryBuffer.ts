@@ -29,9 +29,7 @@ export class TelemetryBuffer {
     this._store.push({ key, category, data });
 
     if (this._store.length > this._size) {
-      this._store = this._store.slice(
-        Math.max(this._store.length - this._size, 0)
-      );
+      this._store = this._store.slice(Math.max(this._store.length - this._size, 0));
     }
     return key;
   }
@@ -73,7 +71,7 @@ export class TelemetryBuffer {
    * @returns {Object}
    */
   get(key: Symbol): Object {
-    let result = this._store.find(envelope => envelope.key === key);
+    let result = this._store.find((envelope) => envelope.key === key);
     return result ? result.data : null;
   }
 
@@ -84,8 +82,6 @@ export class TelemetryBuffer {
    * @param {String} category The category of logs to return.
    */
   getAllByCategory(category: string): Array<Object> {
-    return this._store
-      .filter(envelope => envelope.category === category)
-      .map(envelope => envelope.data);
+    return this._store.filter((envelope) => envelope.category === category).map((envelope) => envelope.data);
   }
 }

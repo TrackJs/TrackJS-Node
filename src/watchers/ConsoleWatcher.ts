@@ -12,7 +12,7 @@ class _ConsoleWatcher implements Watcher {
    */
   install(_console?: Object): void {
     let consoleObj = _console || console;
-    CONSOLE_FN_NAMES.forEach(name => {
+    CONSOLE_FN_NAMES.forEach((name) => {
       patch(consoleObj, name, function(originalFn) {
         return function(...messages: any) {
           let agent = AgentRegistrar.getCurrentAgent();
@@ -33,7 +33,7 @@ class _ConsoleWatcher implements Watcher {
    */
   uninstall(_console?: Object): void {
     let consoleObj = _console || console;
-    CONSOLE_FN_NAMES.forEach(name => unpatch(consoleObj, name));
+    CONSOLE_FN_NAMES.forEach((name) => unpatch(consoleObj, name));
   }
 }
 

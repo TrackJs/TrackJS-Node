@@ -51,7 +51,7 @@ export function transmit(options: TransmitOptions) {
       path: `${url.pathname}${url.search}`,
       __trackjs__: true // prevent our requests from being observed by `NetworkWatcher`
     } as https.RequestOptions,
-    resp => null
+    (resp) => null
   );
 
   if (options.method === "POST" && options.payload) {

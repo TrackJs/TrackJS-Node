@@ -13,7 +13,7 @@ export function cli(command: string): Promise<Buffer> {
     const action = spawn(exe, args);
     action.stdout.on("data", resolve);
     action.stderr.on("data", reject);
-    action.on("close", code => {
+    action.on("close", (code) => {
       if (code != 0) {
         reject(code);
       } else {

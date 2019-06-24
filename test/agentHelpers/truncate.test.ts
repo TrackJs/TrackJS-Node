@@ -7,11 +7,9 @@ describe("truncate()", () => {
   });
 
   function generateRandomString(length: number) {
-    const chars =
-      "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let result = "";
-    for (var i = length; i > 0; --i)
-      result += chars[Math.floor(Math.random() * chars.length)];
+    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
     return result;
   }
 
@@ -23,7 +21,7 @@ describe("truncate()", () => {
     let payload = agent.createErrorReport(new Error("test"));
     expect(truncate(payload)).toBe(true);
     expect(payload.console.length).toBe(10);
-    payload.console.forEach(c => {
+    payload.console.forEach((c) => {
       expect(c.message.length).toBe(1000);
     });
   });
@@ -36,7 +34,7 @@ describe("truncate()", () => {
     let payload = agent.createErrorReport(new Error("test"));
     expect(truncate(payload)).toBe(true);
     expect(payload.console.length).toBe(10);
-    payload.console.forEach(c => {
+    payload.console.forEach((c) => {
       expect(c.message.length).toBe(1010); // a bit more to handle the ...{n}
     });
   });

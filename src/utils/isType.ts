@@ -29,10 +29,7 @@ export function isArray(thing: any): boolean {
  * @return {Boolean} Whether the thing was a boolean
  */
 export function isBoolean(thing: any): boolean {
-  return (
-    typeof thing === "boolean" ||
-    (isObject(thing) && getTag(thing) === "[object Boolean]")
-  );
+  return typeof thing === "boolean" || (isObject(thing) && getTag(thing) === "[object Boolean]");
 }
 
 /**
@@ -87,10 +84,7 @@ export function isFunction(thing: any): boolean {
  * @return {Boolean} true if thing is an Number
  */
 export function isNumber(thing: any): boolean {
-  return (
-    typeof thing === "number" ||
-    (isObject(thing) && getTag(thing) === "[object Number]")
-  );
+  return typeof thing === "number" || (isObject(thing) && getTag(thing) === "[object Number]");
 }
 
 /**
@@ -112,8 +106,5 @@ export function isObject(thing: any): boolean {
  * @return {Boolean} true if thing is an String
  */
 export function isString(thing: any): boolean {
-  return (
-    typeof thing === "string" ||
-    (!isArray(thing) && isObject(thing) && getTag(thing) === "[object String]")
-  );
+  return typeof thing === "string" || (!isArray(thing) && isObject(thing) && getTag(thing) === "[object String]");
 }

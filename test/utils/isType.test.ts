@@ -58,9 +58,7 @@ describe("isType", () => {
       expect(isType.isError(new DOMException("test"))).toBe(true);
     });
     test("returns true for error-shaped objects", () => {
-      expect(isType.isError({ name: "TestError", message: "message" })).toBe(
-        true
-      );
+      expect(isType.isError({ name: "TestError", message: "message" })).toBe(true);
     });
     test("returns false for other things", () => {
       expect(isType.isError(new Object())).toBe(false); // eslint-disable-line

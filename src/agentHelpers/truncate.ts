@@ -27,10 +27,7 @@ export function truncate(payload: TrackJSCapturePayload): boolean {
   }
 
   let nextConsoleTruncationIdx = 0;
-  while (
-    isConsoleTelemetryTooBig(payload) &&
-    nextConsoleTruncationIdx < payload.console.length
-  ) {
+  while (isConsoleTelemetryTooBig(payload) && nextConsoleTruncationIdx < payload.console.length) {
     payload.console[nextConsoleTruncationIdx].message = truncateString(
       payload.console[nextConsoleTruncationIdx].message,
       1000
