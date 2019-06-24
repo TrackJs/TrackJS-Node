@@ -1,8 +1,9 @@
 {
   "name": "trackjs-node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TrackJS agent for NodeJS",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
@@ -21,12 +22,20 @@
     "type": "git",
     "url": "git+https://github.com/TrackJs/TrackJS-Node.git"
   },
-  "author": "TrackJS <hello@trackjs.com>",
+  "author": {
+    "name": "TrackJS",
+    "email": "hello@trackjs.com",
+    "url": "https://trackjs.com/"
+  },
+  "homepage": "https://trackjs.com/",
   "license": "SEE LICENSE IN LICENSE.md",
   "bugs": {
+    "email": "hello@trackjs.com",
     "url": "https://github.com/TrackJs/TrackJS-Node/issues"
   },
-  "homepage": "https://github.com/TrackJs/TrackJS-Node#readme",
+  "files": [
+    "dist/**/*"
+  ],
   "devDependencies": {
     "@types/jest": "24.0.13",
     "@types/node": "12.0.8",

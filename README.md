@@ -5,6 +5,8 @@
   <br />
 </p>
 
+**This Agent is in Beta, not recommended for production use until v1.0.0.**
+
 # TrackJS Agent for NodeJS
 
 ## Reference
