@@ -15,6 +15,7 @@ export class Agent {
     captureURL: 'https://dev-capture.trackjs.com/capture',
     correlationId: '',
     dependencies: true,
+    faultUrl: 'https://dev-usage.trackjs.com/fault.gif',
     sessionId: '',
     usageURL: 'https://dev-usage.trackjs.com/usage.gif',
     userId: '',

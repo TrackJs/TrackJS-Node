@@ -38,6 +38,11 @@ export interface TrackJSOptions {
   dependencies?: boolean,
 
   /**
+   * URL destination override for agent fault reports.
+   */
+  faultUrl?: string,
+
+  /**
    * Metadata Key-Value pairs
    */
   metadata?: { [key: string]: string },

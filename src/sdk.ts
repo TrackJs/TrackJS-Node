@@ -6,6 +6,7 @@ import { AgentRegistrar } from './AgentRegistrar';
 import { ConsoleWatcher, ExceptionWatcher, RejectionWatcher, Watcher, NetworkWatcher } from './watchers';
 import { isError } from './utils/isType';
 import serialize from './utils/serialize';
+import { captureFault } from './Fault';
 
 let isInstalled = false;
 let watchers: Array<Watcher> = [
@@ -25,9 +26,15 @@ export function install(options: TrackJSInstallOptions): void {
   if (!options) { throw new TrackJSError('install options are required.' )}
   if (!options.token) { throw new TrackJSError('install token is required.' )}
 
-  AgentRegistrar.init(new Agent(options));
-  watchers.forEach((w) => w.install());
-  isInstalled = true;
+  try {
+    AgentRegistrar.init(new Agent(options));
+    watchers.forEach((w) => w.install());
+    isInstalled = true;
+  }
+  catch(error) {
+    captureFault(error);
+    throw new TrackJSError('error occurred during installation.', error);
+  }
 }
 
 /**
@@ -35,9 +42,16 @@ export function install(options: TrackJSInstallOptions): void {
  */
 export function uninstall(): void {
   if (!isInstalled) { return; }
-  watchers.forEach((w) => w.uninstall());
-  AgentRegistrar.close();
-  isInstalled = false;
+
+  try {
+    watchers.forEach((w) => w.uninstall());
+    AgentRegistrar.close();
+    isInstalled = false;
+  }
+  catch(error) {
+    captureFault(error);
+    throw new TrackJSError('error occurred during uninstall.', error);
+  }
 }
 
 /**

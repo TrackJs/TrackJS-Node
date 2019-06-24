@@ -2,6 +2,7 @@ import https from 'https';
 import { URL, URLSearchParams }  from 'url';
 import { TrackJSError } from './types';
 import { userAgent } from './utils/userAgent';
+import { captureFault } from './Fault';
 
 export type TransmitOptions = {
 
@@ -59,6 +60,9 @@ export function transmit(options: TransmitOptions) {
     req.write(body);
   }
 
-  req.on('error', (err) => null) // TODO??
+  if (options.url.indexOf('fault.gif') < 0) {
+    req.on('error', captureFault);
+  }
+
   req.end();
 }

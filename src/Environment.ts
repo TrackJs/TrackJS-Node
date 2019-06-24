@@ -1,5 +1,6 @@
 import { cli } from "./utils/cli";
 import { userAgent } from './utils/userAgent';
+import { captureFault } from "./Fault";
 
 /**
  * Attributes about the current operating environment.
@@ -56,10 +57,7 @@ export class Environment {
           Environment._dependencyCache['node'] = process.versions['node'];
           resolve();
         })
-        .catch((error) => {
-          console.log('ERROR', error);
-          // TODO FAULT
-        });
+        .catch(captureFault);
     })
   }
   private static _dependencyCache: { [name: string]: string } = null;
