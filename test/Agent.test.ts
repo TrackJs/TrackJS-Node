@@ -31,12 +31,12 @@ describe("Agent", () => {
       expect(agent.options).toEqual({
         token: "token",
         application: "",
-        captureURL: "https://dev-capture.trackjs.com/capture",
+        captureURL: "https://capture.trackjs.com/capture",
         correlationId: expect.any(String),
-        faultUrl: "https://dev-usage.trackjs.com/fault.gif",
+        faultUrl: "https://usage.trackjs.com/fault.gif",
         dependencies: true,
         sessionId: "",
-        usageURL: "https://dev-usage.trackjs.com/usage.gif",
+        usageURL: "https://usage.trackjs.com/usage.gif",
         userId: "",
         version: ""
       });
