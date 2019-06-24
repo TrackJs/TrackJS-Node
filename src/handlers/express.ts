@@ -1,18 +1,18 @@
 import domain from "domain";
-import http from "http";
 import { AgentRegistrar } from "../AgentRegistrar";
 import { uuid } from "../utils/uuid";
+import { EventEmitter } from "events";
 
 export type expressMiddleware = (
-  req: http.IncomingMessage,
-  res: http.ServerResponse,
+  req: any,
+  res: any,
   next: (error?: any) => void
 ) => void;
 
 export type expressErrorMiddleware = (
   error: Error,
-  req: http.IncomingMessage,
-  res: http.ServerResponse,
+  req: any,
+  res: any,
   next: (error?: any) => void
 ) => void;
 
@@ -40,8 +40,8 @@ export function expressRequestHandler(): expressMiddleware {
 
     // Adding the req/res as handlers for domain events. This allows the
     // normal error handlers to manage the domain error event as well.
-    requestDomain.add(req);
-    requestDomain.add(res);
+    requestDomain.add(req as EventEmitter);
+    requestDomain.add(res as EventEmitter);
     requestDomain.on("error", next);
 
     // execute the remaining middleware within the context of this domain.
@@ -49,7 +49,7 @@ export function expressRequestHandler(): expressMiddleware {
       let agent = AgentRegistrar.getCurrentAgent();
       agent.configure({ correlationId: uuid() }); // correlate all errors from this request together.
       agent.environment.start = new Date();
-      agent.environment.referrerUrl = req.headers["referer"] || "";
+      agent.environment.referrerUrl = req["headers"]["referer"] || "";
       agent.environment.url = `${req["protocol"]}://${req["get"]("host")}${req["originalUrl"]}`;
       agent.captureUsage();
       next();
