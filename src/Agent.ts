@@ -18,12 +18,12 @@ export class Agent {
   static defaults: TrackJSOptions = {
     token: "",
     application: "",
-    captureURL: "https://dev-capture.trackjs.com/capture",
+    captureURL: "https://capture.trackjs.com/capture",
     correlationId: "",
     dependencies: true,
-    faultUrl: "https://dev-usage.trackjs.com/fault.gif",
+    faultUrl: "https://usage.trackjs.com/fault.gif",
     sessionId: "",
-    usageURL: "https://dev-usage.trackjs.com/usage.gif",
+    usageURL: "https://usage.trackjs.com/usage.gif",
     userId: "",
     version: ""
   };
