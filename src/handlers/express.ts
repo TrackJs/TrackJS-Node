@@ -71,10 +71,6 @@ export function expressErrorHandler(): expressErrorHandler {
         return;
       }
       AgentRegistrar.getCurrentAgent().captureError(error);
-      Object.defineProperty(error, "__trackjs__", {
-        value: true,
-        enumerable: false
-      });
     }
     next(error);
   };
