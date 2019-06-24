@@ -1,6 +1,6 @@
 import { TrackJSInstallOptions, TrackJSOptions, TrackJSError, TrackJSCapturePayload } from "./types";
 import { Agent } from "./Agent";
-import { expressRequestHandler, expressErrorHandler } from "./handlers/express";
+import { expressRequestHandler, expressErrorHandler, expressMiddleware, expressErrorMiddleware } from "./handlers/express";
 import { ConsoleTelemetry } from "./telemetry";
 import { AgentRegistrar } from "./AgentRegistrar";
 import { ConsoleWatcher, ExceptionWatcher, RejectionWatcher, Watcher, NetworkWatcher } from "./watchers";
@@ -175,7 +175,7 @@ export const Handlers = {
    *   .use(TrackJS.expressErrorHandler())
    *   .listen()
    */
-  expressErrorHandler(): Function {
+  expressErrorHandler(): expressErrorMiddleware {
     if (!isInstalled) {
       throw new TrackJSError("not installed.");
     }
@@ -192,7 +192,7 @@ export const Handlers = {
    *   .use({ all other handlers })
    *   .listen()
    */
-  expressRequestHandler(): Function {
+  expressRequestHandler(): expressMiddleware {
     if (!isInstalled) {
       throw new TrackJSError("not installed.");
     }

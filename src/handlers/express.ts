@@ -3,8 +3,13 @@ import http from "http";
 import { AgentRegistrar } from "../AgentRegistrar";
 import { uuid } from "../utils/uuid";
 
-type expressMiddleware = (req: http.IncomingMessage, res: http.ServerResponse, next: (error?: any) => void) => void;
-type expressErrorHandler = (
+export type expressMiddleware = (
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+  next: (error?: any) => void
+) => void;
+
+export type expressErrorMiddleware = (
   error: Error,
   req: http.IncomingMessage,
   res: http.ServerResponse,
@@ -62,7 +67,7 @@ export function expressRequestHandler(): expressMiddleware {
  *   .use(TrackJS.expressErrorHandler())
  *   .listen()
  */
-export function expressErrorHandler(): expressErrorHandler {
+export function expressErrorHandler(): expressErrorMiddleware {
   return function trackjsExpressErrorHandler(error, req, res, next) {
     if (error && !error["__trackjs__"]) {
       var statusCode = getStatusCode(error);

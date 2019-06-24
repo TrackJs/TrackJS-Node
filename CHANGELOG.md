@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.1
+## Unreleased Changes
 
 Initial creation of the NodeJS Agent. Key differences with the Browser Agent:
 
