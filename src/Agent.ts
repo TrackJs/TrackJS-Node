@@ -75,7 +75,7 @@ export class Agent {
           // that their code has failed.
           report.console.push({
             severity: "error",
-            message: "Your TrackJS Callback failed with Error: " + e.message,
+            message: "Your TrackJS onError handler failed: " + e.message,
             timestamp: new Date().toISOString()
           });
         }
