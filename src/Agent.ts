@@ -12,6 +12,7 @@ import { Environment } from "./Environment";
 import { transmit } from "./Transmitter";
 import { deduplicate, truncate } from "./agentHelpers";
 import { uuid } from "./utils/uuid";
+import { RELEASE_VERSION } from "./version";
 
 export class Agent {
   static defaults: TrackJSOptions = {
@@ -100,7 +101,7 @@ export class Agent {
       method: "POST",
       queryParams: {
         token: this.options.token,
-        v: "3.3.0" //TODO
+        v: RELEASE_VERSION
       },
       payload: report
     });
@@ -196,7 +197,7 @@ export class Agent {
       throttled: 0,
       timestamp: now.toISOString(),
       visitor: [],
-      version: "3.3.0"
+      version: RELEASE_VERSION
     };
   }
 
