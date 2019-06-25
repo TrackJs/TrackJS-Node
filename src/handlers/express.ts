@@ -79,6 +79,8 @@ export function expressErrorHandler(options: { next: boolean } = { next: false }
       }
       AgentRegistrar.getCurrentAgent().captureError(error);
     }
-    options.next && next(error);
+    if (options.next) {
+      next(error);
+    }
   };
 }
