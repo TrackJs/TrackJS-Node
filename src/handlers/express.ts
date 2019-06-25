@@ -61,13 +61,15 @@ export function expressRequestHandler(): expressMiddleware {
  * Returns an ExpressJS Error Handler that captures errors from processing.
  * Should be the *last* handler in the application.
  *
+ * @param options.next {Boolean} True if you want the error passed through to the
+ * next handler. Default false.
  * @example
  * let app = express()
  *   .use({ all other handlers })
- *   .use(TrackJS.expressErrorHandler())
+ *   .use(TrackJS.expressErrorHandler({ next: false })) // true if you want to have your own handler after
  *   .listen()
  */
-export function expressErrorHandler(): expressErrorMiddleware {
+export function expressErrorHandler(options: { next: boolean } = { next: false }): expressErrorMiddleware {
   return function trackjsExpressErrorHandler(error, req, res, next) {
     if (error && !error["__trackjs__"]) {
       var statusCode = getStatusCode(error);
@@ -77,6 +79,6 @@ export function expressErrorHandler(): expressErrorMiddleware {
       }
       AgentRegistrar.getCurrentAgent().captureError(error);
     }
-    next(error);
+    options.next && next(error);
   };
 }
