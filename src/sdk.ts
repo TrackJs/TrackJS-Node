@@ -31,6 +31,7 @@ export function install(options: TrackJSInstallOptions): void {
   try {
     AgentRegistrar.init(new Agent(options));
     watchers.forEach((w) => w.install());
+    AgentRegistrar.getCurrentAgent().captureUsage();
     isInstalled = true;
   } catch (error) {
     captureFault(error);
