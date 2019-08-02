@@ -176,7 +176,7 @@ export class Agent {
         dependencies: this.environment.getDependencies(),
         originalUrl: this.environment.url,
         referrer: this.environment.referrerUrl,
-        userAgent: this.environment.userAgent,
+        userAgent: this.environment.userAgent
       },
       file: "",
       message: error.message,

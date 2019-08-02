@@ -54,7 +54,8 @@ class _NetworkWatcher implements Watcher {
         AgentRegistrar.getCurrentAgent(request["domain"]).captureError(
           new Error(
             `${networkTelemetry.statusCode} ${networkTelemetry.statusText}: ${networkTelemetry.method} ${networkTelemetry.url}`
-          ), TrackJSEntry.Network
+          ),
+          TrackJSEntry.Network
         );
       }
     });
