@@ -12,7 +12,7 @@ export class Agent {
   static defaults: TrackJSOptions = {
     token: "",
     application: "",
-    captureURL: "https://capture.trackjs.com/capture",
+    captureURL: "https://capture.trackjs.com/capture/node",
     correlationId: "",
     dependencies: true,
     faultUrl: "https://usage.trackjs.com/fault.gif",
@@ -156,6 +156,7 @@ export class Agent {
   createErrorReport(error: Error): TrackJSCapturePayload {
     let now = new Date();
     return {
+      agentPlatform: "node",
       bindStack: null,
       bindTime: null,
       console: this.telemetry.getAllByCategory("c") as Array<TrackJSConsole>,
@@ -174,8 +175,6 @@ export class Agent {
         originalUrl: this.environment.url,
         referrer: this.environment.referrerUrl,
         userAgent: this.environment.userAgent,
-        viewportHeight: 0,
-        viewportWidth: 0
       },
       file: "",
       message: error.message,

@@ -31,7 +31,7 @@ describe("Agent", () => {
       expect(agent.options).toEqual({
         token: "token",
         application: "",
-        captureURL: "https://capture.trackjs.com/capture",
+        captureURL: "https://capture.trackjs.com/capture/node",
         correlationId: expect.any(String),
         faultUrl: "https://usage.trackjs.com/fault.gif",
         dependencies: true,
