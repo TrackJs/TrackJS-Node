@@ -65,7 +65,7 @@ describe("expressErrorHandler", () => {
   it("passes error to next", () => {
     let error = new Error("test");
     let next = jest.fn();
-    expressErrorHandler()(error, fakeReq, fakeRes, next);
+    expressErrorHandler({ next: true })(error, fakeReq, fakeRes, next);
     expect(next).toHaveBeenCalledWith(error);
   });
 
