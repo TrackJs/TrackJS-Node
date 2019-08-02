@@ -1,6 +1,7 @@
 import { Agent } from "../src/Agent";
 import { ConsoleTelemetry } from "../src/telemetry";
 import { transmit } from "../src/Transmitter";
+import { TrackJSEntry } from "../src/types/TrackJSCapturePayload";
 
 jest.mock("../src/Transmitter");
 
@@ -86,7 +87,7 @@ describe("Agent", () => {
       agent1.onError(handler1);
       agent1.onError(handler2);
       let agent2 = agent1.clone();
-      agent2.captureError(new Error("test"));
+      agent2.captureError(new Error("test"), TrackJSEntry.Direct);
       expect(handler1).toHaveBeenCalled();
       expect(handler2).toHaveBeenCalled();
     });
@@ -114,7 +115,7 @@ describe("Agent", () => {
       agent.environment.url = "http://example.com/path?foo=bar";
       agent.environment.referrerUrl = "http://test.com/path?bar=baz";
       agent.environment.userAgent = "user agent";
-      let report = agent.createErrorReport(new Error("test"));
+      let report = agent.createErrorReport(new Error("test"), TrackJSEntry.Direct);
       expect(report).toEqual(
         expect.objectContaining({
           environment: expect.objectContaining({
@@ -133,7 +134,7 @@ describe("Agent", () => {
     it("adds metadata to payloads", () => {
       let agent = new Agent({ token: "test" });
       agent.metadata.add("foo", "bar");
-      let report = agent.createErrorReport(new Error("test"));
+      let report = agent.createErrorReport(new Error("test"), TrackJSEntry.Direct);
       expect(report).toEqual(
         expect.objectContaining({
           metadata: [{ key: "foo", value: "bar" }]
@@ -145,7 +146,7 @@ describe("Agent", () => {
       let agent = new Agent({ token: "test" });
       agent.telemetry.add("c", new ConsoleTelemetry("log", ["a log message"]));
       agent.telemetry.add("c", new ConsoleTelemetry("warn", ["a warning", { foo: "bar" }]));
-      let payload = agent.createErrorReport(new Error("test error"));
+      let payload = agent.createErrorReport(new Error("test error"), TrackJSEntry.Direct);
       expect(payload.console).toEqual([
         {
           severity: "log",
@@ -169,14 +170,14 @@ describe("Agent", () => {
         expect(payload.message).toBe("test message");
         return false;
       });
-      agent.captureError(new Error("test message"));
+      agent.captureError(new Error("test message"), TrackJSEntry.Direct);
     });
 
     it("can ignore error events", () => {
       let agent = new Agent({ token: "test " });
       expect.assertions(1);
       agent.onError((payload) => false);
-      expect(agent.captureError(new Error("test message"))).toBe(false);
+      expect(agent.captureError(new Error("test message"), TrackJSEntry.Direct)).toBe(false);
     });
 
     it("handles multiple callbacks", () => {
@@ -186,7 +187,7 @@ describe("Agent", () => {
 
       agent.onError(cb1);
       agent.onError(cb2);
-      agent.captureError(new Error("test message"));
+      agent.captureError(new Error("test message"), TrackJSEntry.Direct);
 
       expect(cb1).toHaveBeenCalled();
       expect(cb2).toHaveBeenCalled();
@@ -201,7 +202,7 @@ describe("Agent", () => {
       agent.onError(cb1);
       agent.onError(cb2);
       agent.onError(cb3);
-      agent.captureError(new Error("test message"));
+      agent.captureError(new Error("test message"), TrackJSEntry.Direct);
 
       expect(cb1).toHaveBeenCalled();
       expect(cb2).toHaveBeenCalled();
@@ -220,7 +221,7 @@ describe("Agent", () => {
           onError: handler
         })
       );
-      agent.captureError(new Error("test message"));
+      agent.captureError(new Error("test message"), TrackJSEntry.Direct);
       expect(handler).toHaveBeenCalled();
     });
 
@@ -230,7 +231,7 @@ describe("Agent", () => {
       });
       let agent = new Agent({ token: "test" });
       agent.onError(handler);
-      expect(agent.captureError(new Error("test"))).toBe(true);
+      expect(agent.captureError(new Error("test"), TrackJSEntry.Direct)).toBe(true);
       expect(transmit).toHaveBeenCalled();
     });
   });

@@ -2,6 +2,7 @@ import { patch, unpatch } from "../utils/patch";
 import { ConsoleTelemetry } from "../telemetry";
 import { AgentRegistrar } from "../AgentRegistrar";
 import { Watcher } from "./Watcher";
+import { TrackJSEntry } from "../types/TrackJSCapturePayload";
 
 const CONSOLE_FN_NAMES = ["debug", "info", "warn", "error", "log"];
 
@@ -19,7 +20,7 @@ class _ConsoleWatcher implements Watcher {
           let data = new ConsoleTelemetry(name, messages);
           agent.telemetry.add("c", data);
           if (name === "error") {
-            agent.captureError(new Error(data.message));
+            agent.captureError(new Error(data.message), TrackJSEntry.Console);
           }
           return originalFn.apply(consoleObj, arguments);
         };

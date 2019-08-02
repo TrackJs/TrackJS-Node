@@ -7,6 +7,7 @@ import { ConsoleWatcher, ExceptionWatcher, RejectionWatcher, Watcher, NetworkWat
 import { isError } from "./utils/isType";
 import { serialize } from "./utils/serialize";
 import { captureFault } from "./Fault";
+import { TrackJSEntry } from "./types/TrackJSCapturePayload";
 
 let isInstalled = false;
 let watchers: Array<Watcher> = [ConsoleWatcher, ExceptionWatcher, NetworkWatcher, RejectionWatcher];
@@ -158,10 +159,10 @@ export function track(data: any, options?: TrackJSOptions): boolean {
   if (options) {
     return AgentRegistrar.getCurrentAgent()
       .clone(options)
-      .captureError(error);
+      .captureError(error, TrackJSEntry.Direct);
   }
 
-  return AgentRegistrar.getCurrentAgent().captureError(error);
+  return AgentRegistrar.getCurrentAgent().captureError(error, TrackJSEntry.Direct);
 }
 
 export const Handlers = {

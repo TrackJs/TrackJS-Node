@@ -59,7 +59,7 @@ describe("expressErrorHandler", () => {
     let next = jest.fn();
     jest.spyOn(fakeAgent, "captureError");
     expressErrorHandler()(error, fakeReq, fakeRes, next);
-    expect(fakeAgent.captureError).toHaveBeenCalledWith(error);
+    expect(fakeAgent.captureError).toHaveBeenCalledWith(error, "express");
   });
 
   it("passes error to next", () => {

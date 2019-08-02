@@ -11,7 +11,7 @@ export interface TrackJSCapturePayload {
     userId: string;
     version: string;
   };
-  entry: string;
+  entry: TrackJSEntry;
   environment: {
     age: number;
     dependencies: {
@@ -88,7 +88,21 @@ export interface TrackJSNetwork {
   statusText: string;
 
   /**
+   * Network API type watched.
+   */
+  type: string;
+
+  /**
    * URL destination of the request.
    */
   url: string;
+}
+
+export enum TrackJSEntry {
+  Console = "console",
+  Direct = "direct",
+  Express = "express",
+  Global = "global",
+  Network = "ajax",
+  Promise = "promise"
 }

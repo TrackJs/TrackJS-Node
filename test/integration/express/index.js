@@ -33,6 +33,7 @@ TrackJS.install({
       case 'http://localhost:3001/sync':
         assertStrictEqual(payload.url, 'http://localhost:3001/sync');
         assertStrictEqual(payload.message, 'sync blew up');
+        assertStrictEqual(payload.entry, 'express');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /sync');
         assertStrictEqual(payload.metadata.length, 3);
@@ -45,6 +46,7 @@ TrackJS.install({
       case 'http://localhost:3001/async':
         assertStrictEqual(payload.url, 'http://localhost:3001/async');
         assertStrictEqual(payload.message, 'async blew up');
+        assertStrictEqual(payload.entry, 'express');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /async');
         assertStrictEqual(payload.metadata.length, 3);
@@ -57,6 +59,7 @@ TrackJS.install({
       case 'http://localhost:3001/reject':
         assertStrictEqual(payload.url, 'http://localhost:3001/reject');
         assertStrictEqual(payload.message, 'rejected!');
+        assertStrictEqual(payload.entry, 'promise');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /reject');
         assertStrictEqual(payload.metadata.length, 3);
@@ -69,12 +72,14 @@ TrackJS.install({
       case 'http://localhost:3001/console':
         assertStrictEqual(payload.url, 'http://localhost:3001/console');
         assertStrictEqual(payload.message, 'console blew up');
+        assertStrictEqual(payload.entry, 'console');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'console blew up');
         break;
       case 'http://localhost:3001/headers':
           assertStrictEqual(payload.url, 'http://localhost:3001/headers');
           assertStrictEqual(payload.message, 'checking headers');
+          assertStrictEqual(payload.entry, 'express');
           assertStrictEqual(payload.metadata.length, 2);
           assertStrictEqual(payload.metadata[1].key, '__TRACKJS_REQUEST_USER_AGENT');
           assertStrictEqual(payload.metadata[1].value, 'test user agent');

@@ -2,6 +2,7 @@ import domain from "domain";
 import { AgentRegistrar } from "../AgentRegistrar";
 import { uuid } from "../utils/uuid";
 import { EventEmitter } from "events";
+import { TrackJSEntry } from "../types/TrackJSCapturePayload";
 
 export type expressMiddleware = (
   req: any,
@@ -78,7 +79,7 @@ export function expressErrorHandler(options: { next: boolean } = { next: false }
         next();
         return;
       }
-      AgentRegistrar.getCurrentAgent().captureError(error);
+      AgentRegistrar.getCurrentAgent().captureError(error, TrackJSEntry.Express);
     }
     if (options.next) {
       next(error);

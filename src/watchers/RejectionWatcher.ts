@@ -2,6 +2,7 @@ import { AgentRegistrar } from "../AgentRegistrar";
 import { Watcher } from ".";
 import { isError } from "../utils/isType";
 import { serialize } from "../utils/serialize";
+import { TrackJSEntry } from "../types/TrackJSCapturePayload";
 
 class _RejectionWatcher implements Watcher {
   /**
@@ -21,7 +22,7 @@ class _RejectionWatcher implements Watcher {
   rejectionHandler(reason: any, promise: any): void {
     let error = isError(reason) ? reason : new Error(serialize(reason));
     let agent = AgentRegistrar.getCurrentAgent(promise && promise.domain);
-    agent.captureError(error);
+    agent.captureError(error, TrackJSEntry.Promise);
   }
 }
 

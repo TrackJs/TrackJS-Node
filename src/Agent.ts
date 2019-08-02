@@ -7,6 +7,7 @@ import { transmit } from "./Transmitter";
 import { deduplicate, truncate } from "./agentHelpers";
 import { uuid } from "./utils/uuid";
 import { RELEASE_VERSION } from "./version";
+import { TrackJSEntry } from "./types/TrackJSCapturePayload";
 
 export class Agent {
   static defaults: TrackJSOptions = {
@@ -51,9 +52,10 @@ export class Agent {
    * Capture an error report.
    *
    * @param error {Error} Error to be captured to the TrackJS Service.
+   * @param entry {TrackJSEntry} Source type of the error.
    * @returns {Boolean} `false` if the error was ignored.
    */
-  captureError(error: Error): boolean {
+  captureError(error: Error, entry: TrackJSEntry): boolean {
     // bail out if we've already captured this error instance on another path.
     if (error["__trackjs__"]) {
       return false;
@@ -63,7 +65,7 @@ export class Agent {
       enumerable: false
     });
 
-    let report = this.createErrorReport(error);
+    let report = this.createErrorReport(error, entry);
     let hasIgnored = false;
 
     [deduplicate, truncate, ...this._onErrorFns].forEach((fn) => {
@@ -153,7 +155,7 @@ export class Agent {
    *
    * @param error {Error} Error to base for the report.
    */
-  createErrorReport(error: Error): TrackJSCapturePayload {
+  createErrorReport(error: Error, entry: TrackJSEntry): TrackJSCapturePayload {
     let now = new Date();
     return {
       agentPlatform: "node",
@@ -168,7 +170,7 @@ export class Agent {
         userId: this.options.userId,
         version: this.options.version
       },
-      entry: "server",
+      entry: entry,
       environment: {
         age: now.getTime() - this.environment.start.getTime(),
         dependencies: this.environment.getDependencies(),
