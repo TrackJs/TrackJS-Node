@@ -40,7 +40,7 @@ export interface TrackJSOptions {
   /**
    * URL destination override for agent fault reports.
    */
-  faultUrl?: string;
+  faultURL?: string;
 
   /**
    * Metadata Key-Value pairs
