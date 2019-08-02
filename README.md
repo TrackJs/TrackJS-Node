@@ -56,4 +56,3 @@ TrackJS.addLogTelemetry("warn", [
 
 TrackJS.track(new Error("everything has gone wrong!"));
 ```
-
