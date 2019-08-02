@@ -4,7 +4,7 @@ const { TrackJS } = require('../../../dist');
 
 console.log('Starting ExpressJS Test...');
 
-const TESTS_EXPECTED = 4;
+const TESTS_EXPECTED = 5;
 let testsComplete = 0;
 
 function testComplete() {
@@ -16,11 +16,15 @@ function testComplete() {
 }
 function assertStrictEqual(thing1, thing2) {
   if (thing1 !== thing2) {
-    console.log("Assertion strict equal failed", thing1, thing2, Error.captureStackTrace());
+    console.log("Assertion strict equal failed", thing1, thing2, new Error().stack);
     process.exit(1);
   }
 }
 
+setTimeout(() => {
+  console.log("Test timed out");
+  process.exit(1);
+}, 1000*15);
 
 TrackJS.install({
   token: '8de4c78a3ec64020ab2ad15dea1ae9ff',
@@ -31,33 +35,36 @@ TrackJS.install({
         assertStrictEqual(payload.message, 'sync blew up');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /sync');
-        assertStrictEqual(payload.metadata.length, 2);
+        assertStrictEqual(payload.metadata.length, 3);
         assertStrictEqual(payload.metadata[0].key, 'test');
         assertStrictEqual(payload.metadata[0].value, 'express');
-        assertStrictEqual(payload.metadata[1].key, 'action');
-        assertStrictEqual(payload.metadata[1].value, 'sync');
+        // metadata[1] is client headers key
+        assertStrictEqual(payload.metadata[2].key, 'action');
+        assertStrictEqual(payload.metadata[2].value, 'sync');
         break;
       case 'http://localhost:3001/async':
         assertStrictEqual(payload.url, 'http://localhost:3001/async');
         assertStrictEqual(payload.message, 'async blew up');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /async');
-        assertStrictEqual(payload.metadata.length, 2);
+        assertStrictEqual(payload.metadata.length, 3);
         assertStrictEqual(payload.metadata[0].key, 'test');
         assertStrictEqual(payload.metadata[0].value, 'express');
-        assertStrictEqual(payload.metadata[1].key, 'action');
-        assertStrictEqual(payload.metadata[1].value, 'async');
+        // metadata[1] is client headers key
+        assertStrictEqual(payload.metadata[2].key, 'action');
+        assertStrictEqual(payload.metadata[2].value, 'async');
         break;
       case 'http://localhost:3001/reject':
         assertStrictEqual(payload.url, 'http://localhost:3001/reject');
         assertStrictEqual(payload.message, 'rejected!');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /reject');
-        assertStrictEqual(payload.metadata.length, 2);
+        assertStrictEqual(payload.metadata.length, 3);
         assertStrictEqual(payload.metadata[0].key, 'test');
         assertStrictEqual(payload.metadata[0].value, 'express');
-        assertStrictEqual(payload.metadata[1].key, 'action');
-        assertStrictEqual(payload.metadata[1].value, 'reject');
+        // metadata[1] is client headers key
+        assertStrictEqual(payload.metadata[2].key, 'action');
+        assertStrictEqual(payload.metadata[2].value, 'reject');
         break;
       case 'http://localhost:3001/console':
         assertStrictEqual(payload.url, 'http://localhost:3001/console');
@@ -65,6 +72,13 @@ TrackJS.install({
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'console blew up');
         break;
+      case 'http://localhost:3001/headers':
+          assertStrictEqual(payload.url, 'http://localhost:3001/headers');
+          assertStrictEqual(payload.message, 'checking headers');
+          assertStrictEqual(payload.metadata.length, 2);
+          assertStrictEqual(payload.metadata[1].key, '__TRACKJS_REQUEST_USER_AGENT');
+          assertStrictEqual(payload.metadata[1].value, 'test user agent');
+          break;
       default:
         console.log('unknown url error', payload);
         process.exit(1);
@@ -109,13 +123,17 @@ express()
     res.status(200);
   })
 
+  .get('/headers', (req, res, next) => {
+    throw new Error('checking headers');
+  })
+
   .get('/ok', (req, res, next) => {
     TrackJS.addLogTelemetry('log', 'a message from /ok');
     TrackJS.addMetadata('action', 'ok');
     res.status(200);
   })
 
-  .use(TrackJS.Handlers.expressErrorHandler())
+  .use(TrackJS.Handlers.expressErrorHandler({ next: true }))
 
   .use((error, req, res, next) => {
     if (!error['__trackjs__']) {
@@ -137,4 +155,12 @@ http.get('http://localhost:3001/async');
 http.get('http://localhost:3001/reject');
 http.get('http://localhost:3001/sync');
 http.get('http://localhost:3001/console');
+http.get({
+  hostname: 'localhost',
+  port: 3001,
+  path: '/headers',
+  headers: {
+    'user-agent': 'test user agent'
+  }
+});
 http.get('http://localhost:3001/ok');

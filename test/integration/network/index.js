@@ -21,7 +21,7 @@ function testComplete() {
 }
 function assertStrictEqual(thing1, thing2) {
   if (thing1 !== thing2) {
-    console.log("Assertion strict equal failed", thing1, thing2);
+    console.log("Assertion strict equal failed", thing1, thing2, new Error().stack);
     process.exit(1);
   }
 }
