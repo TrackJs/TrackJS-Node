@@ -23,7 +23,7 @@ function getStatusCode(error) {
  *   .use({ all other handlers })
  *   .listen()
  */
-export function expressRequestHandler(): expressMiddleware {
+export function expressRequestHandler(options: { correlationHeader: boolean } = { correlationHeader: true }): expressMiddleware {
   return function trackjsExpressRequestHandler(req, res, next) {
     // Creating a NodeJS Error domain for this request, which will allow the
     // `AgentRegistrar` the ability to create child agents specific to the
@@ -50,9 +50,11 @@ export function expressRequestHandler(): expressMiddleware {
         agent.metadata.add("__TRACKJS_REQUEST_USER_AGENT", req["headers"]["user-agent"]);
       }
 
-      // We push the current correlationId out as a header so that a TrackJS
-      // agent on the client-side of the request can link up with us.
-      res.setHeader("__trackjs-correlation-id__", correlationId);
+      if (options.correlationHeader)  {
+        // We push the current correlationId out as a header so that a TrackJS
+        // agent on the client-side of the request can link up with us.
+        res.setHeader("__trackjs-correlation-id__", correlationId);
+      }
 
       next();
     });
