@@ -56,7 +56,6 @@ export function transmit(options: TransmitOptions) {
 
   if (options.method === "POST" && options.payload) {
     let body = JSON.stringify(options.payload);
-    req.setHeader("Content-Type", "text/plain");
     req.setHeader("User-Agent", userAgent);
     req.write(body);
   }
