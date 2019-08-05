@@ -1,3 +1,4 @@
+import os from "os";
 import { TrackJSCapturePayload, TrackJSInstallOptions, TrackJSOptions, TrackJSConsole, TrackJSNetwork } from "./types";
 import { isFunction } from "./utils/isType";
 import { TelemetryBuffer, ConsoleTelemetry } from "./telemetry";
@@ -15,6 +16,7 @@ export class Agent {
     application: "",
     captureURL: "https://capture.trackjs.com/capture/node",
     correlationId: "",
+    defaultMetadata: true,
     dependencies: true,
     faultURL: "https://usage.trackjs.com/fault.gif",
     sessionId: "",
@@ -46,6 +48,15 @@ export class Agent {
 
     this.metadata = new Metadata(this.options.metadata);
     delete this.options.metadata;
+
+    if (this.options.defaultMetadata) {
+      this.metadata.add("hostname", os.hostname());
+      this.metadata.add("username", os.userInfo().username);
+      this.metadata.add("cwd", process.cwd());
+      if (process.mainModule) {
+        this.metadata.add("filename", process.mainModule.filename)
+      }
+    }
   }
 
   /**

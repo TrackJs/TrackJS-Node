@@ -31,7 +31,14 @@ export interface TrackJSOptions {
   correlationId?: string;
 
   /**
-   * Whether to disable the discovery and inclusion of module dependencies with
+   * The discovery and inclusion of default environment
+   * metadata, such as hostname and username.
+   * @default true
+   */
+  defaultMetadata?: boolean;
+
+  /**
+   * The discovery and inclusion of module dependencies with
    * error reports.
    * @default true
    */

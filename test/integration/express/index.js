@@ -28,6 +28,7 @@ setTimeout(() => {
 
 TrackJS.install({
   token: '8de4c78a3ec64020ab2ad15dea1ae9ff',
+  defaultMetadata: false,
   onError: function(payload) {
     switch(payload.url) {
       case 'http://localhost:3001/sync':
@@ -36,12 +37,11 @@ TrackJS.install({
         assertStrictEqual(payload.entry, 'express');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /sync');
-        assertStrictEqual(payload.metadata.length, 3);
+        assertStrictEqual(payload.metadata.length, 2);
         assertStrictEqual(payload.metadata[0].key, 'test');
         assertStrictEqual(payload.metadata[0].value, 'express');
-        // metadata[1] is client headers key
-        assertStrictEqual(payload.metadata[2].key, 'action');
-        assertStrictEqual(payload.metadata[2].value, 'sync');
+        assertStrictEqual(payload.metadata[1].key, 'action');
+        assertStrictEqual(payload.metadata[1].value, 'sync');
         break;
       case 'http://localhost:3001/async':
         assertStrictEqual(payload.url, 'http://localhost:3001/async');
@@ -49,12 +49,11 @@ TrackJS.install({
         assertStrictEqual(payload.entry, 'express');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /async');
-        assertStrictEqual(payload.metadata.length, 3);
+        assertStrictEqual(payload.metadata.length, 2);
         assertStrictEqual(payload.metadata[0].key, 'test');
         assertStrictEqual(payload.metadata[0].value, 'express');
-        // metadata[1] is client headers key
-        assertStrictEqual(payload.metadata[2].key, 'action');
-        assertStrictEqual(payload.metadata[2].value, 'async');
+        assertStrictEqual(payload.metadata[1].key, 'action');
+        assertStrictEqual(payload.metadata[1].value, 'async');
         break;
       case 'http://localhost:3001/reject':
         assertStrictEqual(payload.url, 'http://localhost:3001/reject');
@@ -62,12 +61,11 @@ TrackJS.install({
         assertStrictEqual(payload.entry, 'promise');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /reject');
-        assertStrictEqual(payload.metadata.length, 3);
+        assertStrictEqual(payload.metadata.length, 2);
         assertStrictEqual(payload.metadata[0].key, 'test');
         assertStrictEqual(payload.metadata[0].value, 'express');
-        // metadata[1] is client headers key
-        assertStrictEqual(payload.metadata[2].key, 'action');
-        assertStrictEqual(payload.metadata[2].value, 'reject');
+        assertStrictEqual(payload.metadata[1].key, 'action');
+        assertStrictEqual(payload.metadata[1].value, 'reject');
         break;
       case 'http://localhost:3001/console':
         assertStrictEqual(payload.url, 'http://localhost:3001/console');

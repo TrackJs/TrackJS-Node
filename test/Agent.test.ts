@@ -1,3 +1,4 @@
+import os from "os";
 import { Agent } from "../src/Agent";
 import { ConsoleTelemetry } from "../src/telemetry";
 import { transmit } from "../src/Transmitter";
@@ -13,8 +14,9 @@ describe("Agent", () => {
         application: "application",
         captureURL: "https://mycapture.com/",
         correlationId: "correlation",
+        defaultMetadata: false,
         dependencies: false,
-        faultUrl: "https://myfault.com/",
+        faultURL: "https://myfault.com/",
         sessionId: "session",
         usageURL: "https://myusage.com/",
         userId: "user",
@@ -34,7 +36,8 @@ describe("Agent", () => {
         application: "",
         captureURL: "https://capture.trackjs.com/capture/node",
         correlationId: expect.any(String),
-        faultUrl: "https://usage.trackjs.com/fault.gif",
+        faultURL: "https://usage.trackjs.com/fault.gif",
+        defaultMetadata: true,
         dependencies: true,
         sessionId: "",
         usageURL: "https://usage.trackjs.com/usage.gif",
@@ -44,8 +47,17 @@ describe("Agent", () => {
     });
 
     it("initializes metadata", () => {
-      let agent = new Agent({ token: "test", metadata: { foo: "bar" } });
+      let agent = new Agent({ token: "test", defaultMetadata: false, metadata: { foo: "bar" } });
       expect(agent.metadata.get()).toEqual([{ key: "foo", value: "bar" }]);
+    });
+
+    it("initializes default metadata", () => {
+      let agent = new Agent({ token: "test", defaultMetadata: true });
+      expect(agent.metadata.get()).toEqual(expect.arrayContaining([
+        { key: "hostname", value: os.hostname() },
+        { key: "username", value: os.userInfo().username },
+        { key: "cwd", value: process.cwd() }
+      ]));
     });
   });
 
@@ -102,7 +114,7 @@ describe("Agent", () => {
       );
     });
     it("clones with metadata", () => {
-      let agent1 = new Agent({ token: "test" });
+      let agent1 = new Agent({ token: "test", defaultMetadata: false });
       let agent2 = agent1.clone({ metadata: { foo: "bar" } });
       expect(agent2.metadata.get()).toEqual([{ key: "foo", value: "bar" }]);
     });
@@ -132,7 +144,7 @@ describe("Agent", () => {
     });
 
     it("adds metadata to payloads", () => {
-      let agent = new Agent({ token: "test" });
+      let agent = new Agent({ token: "test", defaultMetadata: false });
       agent.metadata.add("foo", "bar");
       let report = agent.createErrorReport(new Error("test"), TrackJSEntry.Direct);
       expect(report).toEqual(

@@ -43,7 +43,9 @@ export function expressRequestHandler(): expressMiddleware {
       agent.environment.start = new Date();
       agent.environment.referrerUrl = req["headers"]["referer"] || "";
       agent.environment.url = `${req["protocol"]}://${req["get"]("host")}${req["originalUrl"]}`;
-      agent.metadata.add("__TRACKJS_REQUEST_USER_AGENT", req["headers"]["user-agent"]);
+      if (req["headers"]["user-agent"]) {
+        agent.metadata.add("__TRACKJS_REQUEST_USER_AGENT", req["headers"]["user-agent"]);
+      }
       next();
     });
   };
