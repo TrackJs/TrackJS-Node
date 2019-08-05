@@ -39,6 +39,9 @@ export function expressRequestHandler(): expressMiddleware {
     // execute the remaining middleware within the context of this domain.
     requestDomain.run(() => {
       let agent = AgentRegistrar.getCurrentAgent();
+      let correlationId = uuid();
+
+      // Configure the agent to handle the details of this request.
       agent.configure({ correlationId: uuid() }); // correlate all errors from this request together.
       agent.environment.start = new Date();
       agent.environment.referrerUrl = req["headers"]["referer"] || "";
@@ -46,6 +49,11 @@ export function expressRequestHandler(): expressMiddleware {
       if (req["headers"]["user-agent"]) {
         agent.metadata.add("__TRACKJS_REQUEST_USER_AGENT", req["headers"]["user-agent"]);
       }
+
+      // We push the current correlationId out as a header so that a TrackJS
+      // agent on the client-side of the request can link up with us.
+      res.setHeader("__trackjs-correlation-id__", correlationId);
+
       next();
     });
   };

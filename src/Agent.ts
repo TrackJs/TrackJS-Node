@@ -112,6 +112,15 @@ export class Agent {
       },
       payload: report
     });
+
+    // Tag the error with our information so that if the user is logging elsewhere,
+    // they can cross-reference with our data.
+    error["TrackJS"] = {
+      correlationId: report.customer.correlationId,
+      entry: report.entry,
+      url: "https://my.trackjs.com/details/correlationid/" + report.customer.correlationId
+    }
+
     return true;
   }
 

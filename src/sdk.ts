@@ -154,8 +154,9 @@ export function usage(): void {
  *
  * @param data {*} Data to be tracked to the TrackJS service.
  * @param options {TrackJSOptions} Override the installation settings.
+ * @returns {Error} passed or generated error object.
  */
-export function track(data: any, options?: TrackJSOptions): boolean {
+export function track(data: any, options?: TrackJSOptions): Error {
   if (!isInstalled) {
     throw new TrackJSError("not installed.");
   }
@@ -163,12 +164,15 @@ export function track(data: any, options?: TrackJSOptions): boolean {
 
   // The user wants to do a one-off track() that overrides agent options
   if (options) {
-    return AgentRegistrar.getCurrentAgent()
+    AgentRegistrar.getCurrentAgent()
       .clone(options)
       .captureError(error, TrackJSEntry.Direct);
   }
+  else {
+    AgentRegistrar.getCurrentAgent().captureError(error, TrackJSEntry.Direct);
+  }
 
-  return AgentRegistrar.getCurrentAgent().captureError(error, TrackJSEntry.Direct);
+  return error;
 }
 
 export const Handlers = {
