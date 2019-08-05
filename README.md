@@ -11,7 +11,7 @@
 
 ## Reference
 
-- [TrackJS Documentation](https://docs.trackjs.com/)
+- [TrackJS Node Documentation](https://docs.trackjs.com/node-agent/installation/)
 
 ## Usage
 
