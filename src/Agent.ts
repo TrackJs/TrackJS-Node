@@ -39,7 +39,7 @@ export class Agent {
       this.environment.discoverDependencies();
     }
 
-    this.options.correlationId = this.options.correlationId || uuid();
+    this.options.correlationId = this.options.correlationId;
 
     if (isFunction(options.onError)) {
       this.onError(options.onError);
