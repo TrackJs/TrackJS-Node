@@ -1,6 +1,17 @@
 # Changelog
 
-## Unreleased Changes
+## 0.0.6
+
+Updates from initial beta and configuring UI.
+
+- Updated capture URLs
+- Sending `applicationPlatform`
+- Using "real" entry values
+- Default metadata for hostname, username, and cwd
+- Stamping captured errors with a `TrackJS` key so customer can cross-reference
+- Optionally send correlation header to client-side
+
+## 0.0.5
 
 Initial creation of the NodeJS Agent. Key differences with the Browser Agent:
 
