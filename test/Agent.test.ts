@@ -53,11 +53,13 @@ describe("Agent", () => {
 
     it("initializes default metadata", () => {
       let agent = new Agent({ token: "test", defaultMetadata: true });
-      expect(agent.metadata.get()).toEqual(expect.arrayContaining([
-        { key: "hostname", value: os.hostname() },
-        { key: "username", value: os.userInfo().username },
-        { key: "cwd", value: process.cwd() }
-      ]));
+      expect(agent.metadata.get()).toEqual(
+        expect.arrayContaining([
+          { key: "hostname", value: os.hostname() },
+          { key: "username", value: os.userInfo().username },
+          { key: "cwd", value: process.cwd() }
+        ])
+      );
     });
   });
 

@@ -167,8 +167,7 @@ export function track(data: any, options?: TrackJSOptions): Error {
     AgentRegistrar.getCurrentAgent()
       .clone(options)
       .captureError(error, TrackJSEntry.Direct);
-  }
-  else {
+  } else {
     AgentRegistrar.getCurrentAgent().captureError(error, TrackJSEntry.Direct);
   }
 

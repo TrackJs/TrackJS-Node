@@ -54,7 +54,7 @@ export class Agent {
       this.metadata.add("username", os.userInfo().username);
       this.metadata.add("cwd", process.cwd());
       if (process.mainModule) {
-        this.metadata.add("filename", process.mainModule.filename)
+        this.metadata.add("filename", process.mainModule.filename);
       }
     }
   }
@@ -119,7 +119,7 @@ export class Agent {
       correlationId: report.customer.correlationId,
       entry: report.entry,
       url: "https://my.trackjs.com/details/correlationid/" + report.customer.correlationId
-    }
+    };
 
     return true;
   }
