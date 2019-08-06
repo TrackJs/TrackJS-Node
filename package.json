@@ -7,9 +7,10 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
-    "fix": "prettier --write '{src,test}/**/*.ts'",
-    "lint": "prettier --check '{src,test}/**/*.ts'",
+    "fix": "prettier --write \"{src,test}/**/*.ts\"",
+    "lint": "prettier --check \"{src,test}/**/*.ts\"",
     "start": "run-s test:watch",
+    "teamcity": "node ./tools/teamcity",
     "test": "run-s test:jest test:express test:network test:transmit",
     "test:express": "node ./test/integration/express",
     "test:network": "node ./test/integration/network",
