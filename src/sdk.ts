@@ -1,6 +1,11 @@
 import { TrackJSInstallOptions, TrackJSOptions, TrackJSError, TrackJSCapturePayload } from "./types";
 import { Agent } from "./Agent";
-import { expressRequestHandler, expressErrorHandler, expressMiddleware, expressErrorMiddleware } from "./handlers/express";
+import {
+  expressRequestHandler,
+  expressErrorHandler,
+  expressMiddleware,
+  expressErrorMiddleware
+} from "./handlers/express";
 import { ConsoleTelemetry } from "./telemetry";
 import { AgentRegistrar } from "./AgentRegistrar";
 import { ConsoleWatcher, ExceptionWatcher, RejectionWatcher, Watcher, NetworkWatcher } from "./watchers";

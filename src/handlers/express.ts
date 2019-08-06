@@ -3,18 +3,9 @@ import { AgentRegistrar } from "../AgentRegistrar";
 import { uuid } from "../utils/uuid";
 import { EventEmitter } from "events";
 
-export type expressMiddleware = (
-  req: any,
-  res: any,
-  next: (error?: any) => void
-) => void;
+export type expressMiddleware = (req: any, res: any, next: (error?: any) => void) => void;
 
-export type expressErrorMiddleware = (
-  error: Error,
-  req: any,
-  res: any,
-  next: (error?: any) => void
-) => void;
+export type expressErrorMiddleware = (error: Error, req: any, res: any, next: (error?: any) => void) => void;
 
 function getStatusCode(error) {
   const statusCode = error.status || error.statusCode || error.status_code || (error.output && error.output.statusCode);
