@@ -169,7 +169,7 @@ http.get({
 
 // test that our correlation headers are attached
 http.get('http://localhost:3001/ok', (res) => {
-  console.log('returned correlationId header', res.headers['__trackjs-correlation-id__']);
-  assertStrictEqual(!!res.headers['__trackjs-correlation-id__'], true);
+  console.log('returned correlationId header', res.headers['trackjs-correlation-id']);
+  assertStrictEqual(!!res.headers['trackjs-correlation-id'], true);
   testComplete();
 });
