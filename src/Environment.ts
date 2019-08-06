@@ -43,8 +43,8 @@ export class Environment {
         cli("npm list --prod --depth=0 --json --parseable --g")
       ])
         .then((results) => {
-          results.forEach((buf) => {
-            let jsonResult = JSON.parse(buf.toString());
+          results.forEach((result) => {
+            let jsonResult = JSON.parse(result);
 
             if (jsonResult && jsonResult.dependencies) {
               Object.keys(jsonResult.dependencies).forEach((key) => {
