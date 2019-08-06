@@ -26,20 +26,20 @@ if (-Not (Get-Command npm)) {
 
 
 try {
-  Write-Output "TrackJS-Node Beta Release Starting..."
+  Write-Output "TrackJS-Node Canary Release Starting..."
 
   # Publish to npm
   #############################################################################
   Write-Output "Publishing to npm"
   cd $Root/publish
-  & npm publish --tag beta
+  & npm publish --tag canary
   if ($lastExitCode -ne 0) {
     Write-Error "Failed to publish to npm"
     exit 1;
   }
   cd $Root
 
-  Write-Output "TrackJS-Node Beta Release Complete."
+  Write-Output "TrackJS-Node Canary Release Complete."
 } catch {
   Write-Error $_.Exception.Message
   exit 1
