@@ -5,7 +5,7 @@ export interface TrackJSCapturePayload {
   console: Array<TrackJSConsole>;
   customer: {
     application: string;
-    correlationId: string;
+    correlationId?: string;
     sessionId: string;
     token: string;
     userId: string;

@@ -15,7 +15,6 @@ export class Agent {
     token: "",
     application: "",
     captureURL: "https://capture.trackjs.com/capture/node",
-    correlationId: "",
     defaultMetadata: true,
     dependencies: true,
     faultURL: "https://usage.trackjs.com/fault.gif",
