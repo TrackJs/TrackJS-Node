@@ -4,7 +4,7 @@ const { TrackJS } = require('../../../dist');
 
 console.log('Starting ExpressJS Test...');
 
-const TESTS_EXPECTED = 4;
+const TESTS_EXPECTED = 6;
 let testsComplete = 0;
 
 function testComplete() {
@@ -16,19 +16,25 @@ function testComplete() {
 }
 function assertStrictEqual(thing1, thing2) {
   if (thing1 !== thing2) {
-    console.log("Assertion strict equal failed", thing1, thing2, Error.captureStackTrace());
+    console.log("Assertion strict equal failed", thing1, thing2, new Error().stack);
     process.exit(1);
   }
 }
 
+setTimeout(() => {
+  console.log("Test timed out");
+  process.exit(1);
+}, 1000*15);
 
 TrackJS.install({
   token: '8de4c78a3ec64020ab2ad15dea1ae9ff',
+  defaultMetadata: false,
   onError: function(payload) {
     switch(payload.url) {
       case 'http://localhost:3001/sync':
         assertStrictEqual(payload.url, 'http://localhost:3001/sync');
         assertStrictEqual(payload.message, 'sync blew up');
+        assertStrictEqual(payload.entry, 'express');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /sync');
         assertStrictEqual(payload.metadata.length, 2);
@@ -40,6 +46,7 @@ TrackJS.install({
       case 'http://localhost:3001/async':
         assertStrictEqual(payload.url, 'http://localhost:3001/async');
         assertStrictEqual(payload.message, 'async blew up');
+        assertStrictEqual(payload.entry, 'express');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /async');
         assertStrictEqual(payload.metadata.length, 2);
@@ -51,6 +58,7 @@ TrackJS.install({
       case 'http://localhost:3001/reject':
         assertStrictEqual(payload.url, 'http://localhost:3001/reject');
         assertStrictEqual(payload.message, 'rejected!');
+        assertStrictEqual(payload.entry, 'promise');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'a message from /reject');
         assertStrictEqual(payload.metadata.length, 2);
@@ -62,8 +70,17 @@ TrackJS.install({
       case 'http://localhost:3001/console':
         assertStrictEqual(payload.url, 'http://localhost:3001/console');
         assertStrictEqual(payload.message, 'console blew up');
+        assertStrictEqual(payload.entry, 'console');
         assertStrictEqual(payload.console.length, 1);
         assertStrictEqual(payload.console[0].message, 'console blew up');
+        break;
+      case 'http://localhost:3001/headers':
+        assertStrictEqual(payload.url, 'http://localhost:3001/headers');
+        assertStrictEqual(payload.message, 'checking headers');
+        assertStrictEqual(payload.entry, 'express');
+        assertStrictEqual(payload.metadata.length, 2);
+        assertStrictEqual(payload.metadata[1].key, '__TRACKJS_REQUEST_USER_AGENT');
+        assertStrictEqual(payload.metadata[1].value, 'test user agent');
         break;
       default:
         console.log('unknown url error', payload);
@@ -106,16 +123,20 @@ express()
 
   .get('/console', (req, res, next) => {
     console.error('console blew up');
-    res.status(200);
+    res.sendStatus(200);
+  })
+
+  .get('/headers', (req, res, next) => {
+    throw new Error('checking headers');
   })
 
   .get('/ok', (req, res, next) => {
     TrackJS.addLogTelemetry('log', 'a message from /ok');
     TrackJS.addMetadata('action', 'ok');
-    res.status(200);
+    res.sendStatus(200);
   })
 
-  .use(TrackJS.Handlers.expressErrorHandler())
+  .use(TrackJS.Handlers.expressErrorHandler({ next: true }))
 
   .use((error, req, res, next) => {
     if (!error['__trackjs__']) {
@@ -137,4 +158,18 @@ http.get('http://localhost:3001/async');
 http.get('http://localhost:3001/reject');
 http.get('http://localhost:3001/sync');
 http.get('http://localhost:3001/console');
-http.get('http://localhost:3001/ok');
+http.get({
+  hostname: 'localhost',
+  port: 3001,
+  path: '/headers',
+  headers: {
+    'user-agent': 'test user agent'
+  }
+});
+
+// test that our correlation headers are attached
+http.get('http://localhost:3001/ok', (res) => {
+  console.log('returned correlationId header', res.headers['trackjs-correlation-id']);
+  assertStrictEqual(!!res.headers['trackjs-correlation-id'], true);
+  testComplete();
+});

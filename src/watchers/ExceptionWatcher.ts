@@ -1,5 +1,6 @@
 import { AgentRegistrar } from "../AgentRegistrar";
 import { Watcher } from ".";
+import { TrackJSEntry } from "../types/TrackJSCapturePayload";
 
 class _ExceptionWatcher implements Watcher {
   /**
@@ -17,7 +18,7 @@ class _ExceptionWatcher implements Watcher {
   }
 
   handleException(error: Error): void {
-    AgentRegistrar.getCurrentAgent().captureError(error);
+    AgentRegistrar.getCurrentAgent().captureError(error, TrackJSEntry.Global);
   }
 }
 

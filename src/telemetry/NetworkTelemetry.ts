@@ -12,5 +12,7 @@ export class NetworkTelemetry implements TrackJSNetwork {
   /** @inheritdoc */
   statusText: string;
   /** @inheritdoc */
+  type: string;
+  /** @inheritdoc */
   url: string;
 }

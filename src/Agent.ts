@@ -1,3 +1,4 @@
+import os from "os";
 import { TrackJSCapturePayload, TrackJSInstallOptions, TrackJSOptions, TrackJSConsole, TrackJSNetwork } from "./types";
 import { isFunction } from "./utils/isType";
 import { TelemetryBuffer, ConsoleTelemetry } from "./telemetry";
@@ -7,15 +8,16 @@ import { transmit } from "./Transmitter";
 import { deduplicate, truncate } from "./agentHelpers";
 import { uuid } from "./utils/uuid";
 import { RELEASE_VERSION } from "./version";
+import { TrackJSEntry } from "./types/TrackJSCapturePayload";
 
 export class Agent {
   static defaults: TrackJSOptions = {
     token: "",
     application: "",
-    captureURL: "https://capture.trackjs.com/capture",
-    correlationId: "",
+    defaultMetadata: true,
     dependencies: true,
-    faultUrl: "https://usage.trackjs.com/fault.gif",
+    errorURL: "https://capture.trackjs.com/capture/node",
+    faultURL: "https://usage.trackjs.com/fault.gif",
     sessionId: "",
     usageURL: "https://usage.trackjs.com/usage.gif",
     userId: "",
@@ -36,7 +38,7 @@ export class Agent {
       this.environment.discoverDependencies();
     }
 
-    this.options.correlationId = this.options.correlationId || uuid();
+    this.options.correlationId = this.options.correlationId;
 
     if (isFunction(options.onError)) {
       this.onError(options.onError);
@@ -45,15 +47,25 @@ export class Agent {
 
     this.metadata = new Metadata(this.options.metadata);
     delete this.options.metadata;
+
+    if (this.options.defaultMetadata) {
+      this.metadata.add("hostname", os.hostname());
+      this.metadata.add("username", os.userInfo().username);
+      this.metadata.add("cwd", process.cwd());
+      if (process.mainModule) {
+        this.metadata.add("filename", process.mainModule.filename);
+      }
+    }
   }
 
   /**
    * Capture an error report.
    *
    * @param error {Error} Error to be captured to the TrackJS Service.
+   * @param entry {TrackJSEntry} Source type of the error.
    * @returns {Boolean} `false` if the error was ignored.
    */
-  captureError(error: Error): boolean {
+  captureError(error: Error, entry: TrackJSEntry): boolean {
     // bail out if we've already captured this error instance on another path.
     if (error["__trackjs__"]) {
       return false;
@@ -63,7 +75,7 @@ export class Agent {
       enumerable: false
     });
 
-    let report = this.createErrorReport(error);
+    let report = this.createErrorReport(error, entry);
     let hasIgnored = false;
 
     [deduplicate, truncate, ...this._onErrorFns].forEach((fn) => {
@@ -91,7 +103,7 @@ export class Agent {
     this.telemetry.add("c", new ConsoleTelemetry("error", [error]));
 
     transmit({
-      url: this.options.captureURL,
+      url: this.options.errorURL,
       method: "POST",
       queryParams: {
         token: this.options.token,
@@ -99,6 +111,15 @@ export class Agent {
       },
       payload: report
     });
+
+    // Tag the error with our information so that if the user is logging elsewhere,
+    // they can cross-reference with our data.
+    error["TrackJS"] = {
+      correlationId: report.customer.correlationId,
+      entry: report.entry,
+      url: "https://my.trackjs.com/details/correlationid/" + report.customer.correlationId
+    };
+
     return true;
   }
 
@@ -153,9 +174,10 @@ export class Agent {
    *
    * @param error {Error} Error to base for the report.
    */
-  createErrorReport(error: Error): TrackJSCapturePayload {
+  createErrorReport(error: Error, entry: TrackJSEntry): TrackJSCapturePayload {
     let now = new Date();
     return {
+      agentPlatform: "node",
       bindStack: null,
       bindTime: null,
       console: this.telemetry.getAllByCategory("c") as Array<TrackJSConsole>,
@@ -167,15 +189,13 @@ export class Agent {
         userId: this.options.userId,
         version: this.options.version
       },
-      entry: "server",
+      entry: entry,
       environment: {
         age: now.getTime() - this.environment.start.getTime(),
         dependencies: this.environment.getDependencies(),
         originalUrl: this.environment.url,
         referrer: this.environment.referrerUrl,
-        userAgent: this.environment.userAgent,
-        viewportHeight: 0,
-        viewportWidth: 0
+        userAgent: this.environment.userAgent
       },
       file: "",
       message: error.message,

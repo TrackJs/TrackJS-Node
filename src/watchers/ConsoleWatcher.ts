@@ -2,6 +2,8 @@ import { patch, unpatch } from "../utils/patch";
 import { ConsoleTelemetry } from "../telemetry";
 import { AgentRegistrar } from "../AgentRegistrar";
 import { Watcher } from "./Watcher";
+import { TrackJSEntry } from "../types/TrackJSCapturePayload";
+import { isError } from "../utils/isType";
 
 const CONSOLE_FN_NAMES = ["debug", "info", "warn", "error", "log"];
 
@@ -19,7 +21,14 @@ class _ConsoleWatcher implements Watcher {
           let data = new ConsoleTelemetry(name, messages);
           agent.telemetry.add("c", data);
           if (name === "error") {
-            agent.captureError(new Error(data.message));
+            // When a framework duplicates an error out into `console.error`, we
+            // don't want to mangle that to allow it to get managed by
+            // deduplicate.
+            if (messages.length === 1 && isError(messages[0])) {
+              agent.captureError(messages[0], TrackJSEntry.Console);
+            } else {
+              agent.captureError(new Error(data.message), TrackJSEntry.Console);
+            }
           }
           return originalFn.apply(consoleObj, arguments);
         };

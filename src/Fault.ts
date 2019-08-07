@@ -11,7 +11,7 @@ export function captureFault(fault: any) {
   let agentOptions = agent ? agent.options : Agent.defaults;
 
   transmit({
-    url: agentOptions.faultUrl,
+    url: agentOptions.faultURL,
     method: "GET",
     queryParams: {
       token: agentOptions.token,

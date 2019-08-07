@@ -21,7 +21,7 @@ function testComplete() {
 }
 function assertStrictEqual(thing1, thing2) {
   if (thing1 !== thing2) {
-    console.log("Assertion strict equal failed", thing1, thing2);
+    console.log("Assertion strict equal failed", thing1, thing2, new Error().stack);
     process.exit(1);
   }
 }
@@ -32,27 +32,35 @@ TrackJS.install({
     switch(payload.customer.userId) {
       case 'http':
         assertStrictEqual(payload.message, '503 Service Unavailable: GET http://httpstat.us/503');
+        assertStrictEqual(payload.entry, 'ajax');
         assertStrictEqual(payload.console.length, 0);
         assertStrictEqual(payload.network.length, 1);
         assertStrictEqual(payload.network[0].statusCode, 503);
+        assertStrictEqual(payload.network[0].type, 'http');
         break;
       case 'https':
         assertStrictEqual(payload.message, '404 Not Found: GET https://httpstat.us/404');
+        assertStrictEqual(payload.entry, 'ajax');
         assertStrictEqual(payload.console.length, 0);
         assertStrictEqual(payload.network.length, 1);
         assertStrictEqual(payload.network[0].statusCode, 404);
+        assertStrictEqual(payload.network[0].type, 'http');
         break;
       case 'request':
         assertStrictEqual(payload.message, '501 Not Implemented: GET https://httpstat.us/501');
+        assertStrictEqual(payload.entry, 'ajax');
         assertStrictEqual(payload.console.length, 0);
         assertStrictEqual(payload.network.length, 1);
         assertStrictEqual(payload.network[0].statusCode, 501);
+        assertStrictEqual(payload.network[0].type, 'http');
         break;
       case 'axios':
         assertStrictEqual(payload.message, '401 Unauthorized: GET https://httpstat.us/401');
+        assertStrictEqual(payload.entry, 'ajax');
         assertStrictEqual(payload.console.length, 0);
         assertStrictEqual(payload.network.length, 1);
         assertStrictEqual(payload.network[0].statusCode, 401);
+        assertStrictEqual(payload.network[0].type, 'http');
         break;
       default:
         console.log('unknown userId error', payload);

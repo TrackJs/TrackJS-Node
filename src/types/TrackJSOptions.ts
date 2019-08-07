@@ -19,11 +19,6 @@ export interface TrackJSOptions {
   application?: string;
 
   /**
-   * URL destination override for capturing errors.
-   */
-  captureURL?: string;
-
-  /**
    * Identifier to correlate errors together share a common thread, session,
    * or request.
    * @property {String}
@@ -31,16 +26,28 @@ export interface TrackJSOptions {
   correlationId?: string;
 
   /**
-   * Whether to disable the discovery and inclusion of module dependencies with
+   * The discovery and inclusion of default environment
+   * metadata, such as hostname and username.
+   * @default true
+   */
+  defaultMetadata?: boolean;
+
+  /**
+   * The discovery and inclusion of module dependencies with
    * error reports.
    * @default true
    */
   dependencies?: boolean;
 
   /**
+   * URL destination override for capturing errors.
+   */
+  errorURL?: string;
+
+  /**
    * URL destination override for agent fault reports.
    */
-  faultUrl?: string;
+  faultURL?: string;
 
   /**
    * Metadata Key-Value pairs

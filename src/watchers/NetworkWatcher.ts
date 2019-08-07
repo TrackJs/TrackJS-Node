@@ -3,6 +3,7 @@ import { patch, unpatch } from "../utils/patch";
 import { NetworkTelemetry } from "../telemetry";
 import { AgentRegistrar } from "../AgentRegistrar";
 import { Watcher } from "./Watcher";
+import { TrackJSEntry } from "../types/TrackJSCapturePayload";
 const HttpAgent = require("_http_agent");
 
 class _NetworkWatcher implements Watcher {
@@ -35,6 +36,7 @@ class _NetworkWatcher implements Watcher {
 
   static createTelemetryFromRequest(request: http.ClientRequest): NetworkTelemetry {
     let networkTelemetry = new NetworkTelemetry();
+    networkTelemetry.type = "http";
     networkTelemetry.startedOn = new Date().toISOString();
     networkTelemetry.method = request["method"];
     networkTelemetry.url = `${request["agent"].protocol}//${request.getHeader("host")}${request.path}`;
@@ -52,7 +54,8 @@ class _NetworkWatcher implements Watcher {
         AgentRegistrar.getCurrentAgent(request["domain"]).captureError(
           new Error(
             `${networkTelemetry.statusCode} ${networkTelemetry.statusText}: ${networkTelemetry.method} ${networkTelemetry.url}`
-          )
+          ),
+          TrackJSEntry.Network
         );
       }
     });

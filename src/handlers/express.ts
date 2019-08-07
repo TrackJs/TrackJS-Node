@@ -2,6 +2,7 @@ import domain from "domain";
 import { AgentRegistrar } from "../AgentRegistrar";
 import { uuid } from "../utils/uuid";
 import { EventEmitter } from "events";
+import { TrackJSEntry } from "../types/TrackJSCapturePayload";
 
 export type expressMiddleware = (req: any, res: any, next: (error?: any) => void) => void;
 
@@ -22,7 +23,9 @@ function getStatusCode(error) {
  *   .use({ all other handlers })
  *   .listen()
  */
-export function expressRequestHandler(): expressMiddleware {
+export function expressRequestHandler(
+  options: { correlationHeader: boolean } = { correlationHeader: true }
+): expressMiddleware {
   return function trackjsExpressRequestHandler(req, res, next) {
     // Creating a NodeJS Error domain for this request, which will allow the
     // `AgentRegistrar` the ability to create child agents specific to the
@@ -38,11 +41,23 @@ export function expressRequestHandler(): expressMiddleware {
     // execute the remaining middleware within the context of this domain.
     requestDomain.run(() => {
       let agent = AgentRegistrar.getCurrentAgent();
+      let correlationId = uuid();
+
+      // Configure the agent to handle the details of this request.
       agent.configure({ correlationId: uuid() }); // correlate all errors from this request together.
       agent.environment.start = new Date();
       agent.environment.referrerUrl = req["headers"]["referer"] || "";
       agent.environment.url = `${req["protocol"]}://${req["get"]("host")}${req["originalUrl"]}`;
-      agent.captureUsage();
+      if (req["headers"]["user-agent"]) {
+        agent.metadata.add("__TRACKJS_REQUEST_USER_AGENT", req["headers"]["user-agent"]);
+      }
+
+      if (options.correlationHeader) {
+        // We push the current correlationId out as a header so that a TrackJS
+        // agent on the client-side of the request can link up with us.
+        res.setHeader("trackjs-correlation-id", correlationId);
+      }
+
       next();
     });
   };
@@ -68,7 +83,7 @@ export function expressErrorHandler(options: { next: boolean } = { next: false }
         next();
         return;
       }
-      AgentRegistrar.getCurrentAgent().captureError(error);
+      AgentRegistrar.getCurrentAgent().captureError(error, TrackJSEntry.Express);
     }
     if (options.next) {
       next(error);

@@ -2,11 +2,11 @@ import domain, { Domain } from "domain";
 import { Agent } from "./Agent";
 
 class _AgentRegistrar {
-  private _masterAgent: Agent;
+  private _primaryAgent: Agent;
   private _ref = Symbol("TrackJS Agent Registrar");
 
-  init(masterAgent: Agent): void {
-    this._masterAgent = masterAgent;
+  init(primaryAgent: Agent): void {
+    this._primaryAgent = primaryAgent;
   }
 
   /**
@@ -19,11 +19,11 @@ class _AgentRegistrar {
   getCurrentAgent(activeDomain?: Domain): Agent {
     activeDomain = activeDomain || domain["active"];
     if (!activeDomain) {
-      return this._masterAgent;
+      return this._primaryAgent;
     }
 
     if (!activeDomain[this._ref]) {
-      let domainAgent = this._masterAgent.clone();
+      let domainAgent = this._primaryAgent.clone();
       activeDomain[this._ref] = domainAgent;
     }
 
@@ -31,7 +31,7 @@ class _AgentRegistrar {
   }
 
   close(): void {
-    this._masterAgent = null;
+    this._primaryAgent = null;
     /**
      * NOTE [Todd Gardner] We don't cleanup the "child" agents that have been
      * attached to domains, because we cannot hold a reference to them without

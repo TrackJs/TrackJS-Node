@@ -1,16 +1,17 @@
 export interface TrackJSCapturePayload {
+  agentPlatform?: string;
   bindStack?: string;
   bindTime?: string;
   console: Array<TrackJSConsole>;
   customer: {
     application: string;
-    correlationId: string;
+    correlationId?: string;
     sessionId: string;
     token: string;
     userId: string;
     version: string;
   };
-  entry: string;
+  entry: TrackJSEntry;
   environment: {
     age: number;
     dependencies: {
@@ -19,8 +20,8 @@ export interface TrackJSCapturePayload {
     originalUrl: string;
     referrer: string;
     userAgent: string;
-    viewportHeight: number;
-    viewportWidth: number;
+    viewportHeight?: number;
+    viewportWidth?: number;
   };
   file: string;
   message: string;
@@ -59,9 +60,14 @@ export interface TrackJSNetwork {
 
   /**
    * HTTP Method of the request. "GET","POST","UPDATE","DELETE","..."
-   * @property {String}
    */
   method: string;
+
+  /**
+   * TrackJS CorrelationId from the agent on the other side of the request. This
+   * used to link data between client and server agents.
+   */
+  requestCorrelationId?: string;
 
   /**
    * Network Request start time.
@@ -72,20 +78,31 @@ export interface TrackJSNetwork {
 
   /**
    * HTTP Status code of the completed request
-   * @property {Number}
    */
   statusCode: number;
 
   /**
    * HTTP Status text of the completed request
-   * @property {String}
    * @example "Not Found"
    */
   statusText: string;
 
   /**
+   * Network API type watched.
+   */
+  type: string;
+
+  /**
    * URL destination of the request.
-   * @property {String}
    */
   url: string;
+}
+
+export enum TrackJSEntry {
+  Console = "console",
+  Direct = "direct",
+  Express = "express",
+  Global = "global",
+  Network = "ajax",
+  Promise = "promise"
 }
