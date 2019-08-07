@@ -18,7 +18,6 @@ export interface TrackJSOptions {
    */
   application?: string;
 
-
   /**
    * Identifier to correlate errors together share a common thread, session,
    * or request.

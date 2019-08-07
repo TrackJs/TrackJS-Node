@@ -15,7 +15,7 @@ import { captureFault } from "./Fault";
 import { TrackJSEntry } from "./types/TrackJSCapturePayload";
 
 let watchers: Array<Watcher> = [ConsoleWatcher, ExceptionWatcher, NetworkWatcher, RejectionWatcher];
-let hasInstalled:boolean = false;
+let hasInstalled: boolean = false;
 
 /**
  * Whether the agent has been installed into the current environment
