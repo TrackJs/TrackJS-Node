@@ -18,10 +18,6 @@ export interface TrackJSOptions {
    */
   application?: string;
 
-  /**
-   * URL destination override for capturing errors.
-   */
-  captureURL?: string;
 
   /**
    * Identifier to correlate errors together share a common thread, session,
@@ -43,6 +39,11 @@ export interface TrackJSOptions {
    * @default true
    */
   dependencies?: boolean;
+
+  /**
+   * URL destination override for capturing errors.
+   */
+  errorURL?: string;
 
   /**
    * URL destination override for agent fault reports.

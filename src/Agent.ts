@@ -14,9 +14,9 @@ export class Agent {
   static defaults: TrackJSOptions = {
     token: "",
     application: "",
-    captureURL: "https://capture.trackjs.com/capture/node",
     defaultMetadata: true,
     dependencies: true,
+    errorURL: "https://capture.trackjs.com/capture/node",
     faultURL: "https://usage.trackjs.com/fault.gif",
     sessionId: "",
     usageURL: "https://usage.trackjs.com/usage.gif",
@@ -103,7 +103,7 @@ export class Agent {
     this.telemetry.add("c", new ConsoleTelemetry("error", [error]));
 
     transmit({
-      url: this.options.captureURL,
+      url: this.options.errorURL,
       method: "POST",
       queryParams: {
         token: this.options.token,

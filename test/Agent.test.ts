@@ -12,10 +12,10 @@ describe("Agent", () => {
       let options = {
         token: "token",
         application: "application",
-        captureURL: "https://mycapture.com/",
         correlationId: "correlation",
         defaultMetadata: false,
         dependencies: false,
+        errorURL: "https://mycapture.com/",
         faultURL: "https://myfault.com/",
         sessionId: "session",
         usageURL: "https://myusage.com/",
@@ -34,9 +34,8 @@ describe("Agent", () => {
       expect(agent.options).toEqual({
         token: "token",
         application: "",
-        captureURL: "https://capture.trackjs.com/capture/node",
-        correlationId: expect.any(String),
         faultURL: "https://usage.trackjs.com/fault.gif",
+        errorURL: "https://capture.trackjs.com/capture/node",
         defaultMetadata: true,
         dependencies: true,
         sessionId: "",
