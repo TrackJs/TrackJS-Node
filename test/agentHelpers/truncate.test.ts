@@ -1,5 +1,6 @@
 import { truncate } from "../../src/agentHelpers";
 import { Agent } from "../../src/Agent";
+import { TrackJSEntry } from "../../src/types/TrackJSCapturePayload";
 
 describe("truncate()", () => {
   beforeAll(() => {
@@ -18,7 +19,7 @@ describe("truncate()", () => {
     for (var i = 0; i < 10; i++) {
       agent.telemetry.add("c", { message: generateRandomString(1000) });
     }
-    let payload = agent.createErrorReport(new Error("test"));
+    let payload = agent.createErrorReport(new Error("test"), TrackJSEntry.Direct);
     expect(truncate(payload)).toBe(true);
     expect(payload.console.length).toBe(10);
     payload.console.forEach((c) => {
@@ -31,7 +32,7 @@ describe("truncate()", () => {
     for (var i = 0; i < 10; i++) {
       agent.telemetry.add("c", { message: generateRandomString(100000) });
     }
-    let payload = agent.createErrorReport(new Error("test"));
+    let payload = agent.createErrorReport(new Error("test"), TrackJSEntry.Direct);
     expect(truncate(payload)).toBe(true);
     expect(payload.console.length).toBe(10);
     payload.console.forEach((c) => {
