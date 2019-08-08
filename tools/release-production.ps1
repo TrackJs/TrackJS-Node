@@ -15,12 +15,8 @@ Param (
 
 # Check if the environment is compatible with the script
 #############################################################################
-if (-Not (Get-ChildItem -Path $Root\dist -Name package.json)) {
+if (-Not (Get-ChildItem -Path $Root -Name package.json)) {
   Write-Error "package.json configuration missing from $Path"
-  exit 1
-}
-if (-Not (Get-Command git)) {
-  Write-Error "Environment missing required command: git"
   exit 1
 }
 if (-Not (Get-Command npm)) {
@@ -35,13 +31,11 @@ try {
   # Publish to npm
   #############################################################################
   Write-Output "Publishing to npm"
-  cd $Root
-  & npm publish
+  & npm publish $Root
   if ($lastExitCode -ne 0) {
     Write-Error "Failed to publish to npm"
     exit 1;
   }
-  cd $Root
 
   Write-Output "TrackJS-Node Production Release Complete."
 } catch {

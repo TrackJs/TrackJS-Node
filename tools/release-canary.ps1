@@ -14,7 +14,7 @@ Param (
 
 # Check if the environment is compatible with the script
 #############################################################################
-if (-Not (Get-ChildItem -Path $Root\dist -Name package.json)) {
+if (-Not (Get-ChildItem -Path $Root -Name package.json)) {
   Write-Error "package.json configuration missing from $Path"
   exit 1
 }
@@ -30,13 +30,11 @@ try {
   # Publish to npm
   #############################################################################
   Write-Output "Publishing to npm"
-  cd $Root
-  & npm publish --tag canary
+  & npm publish $Root --tag canary
   if ($lastExitCode -ne 0) {
     Write-Error "Failed to publish to npm"
     exit 1;
   }
-  cd $Root
 
   Write-Output "TrackJS-Node Canary Release Complete."
 } catch {
