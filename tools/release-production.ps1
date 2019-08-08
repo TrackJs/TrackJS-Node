@@ -35,7 +35,6 @@ try {
   # Publish to npm
   #############################################################################
   Write-Output "Publishing to npm"
-  cd $Root/publish
   & npm publish
   if ($lastExitCode -ne 0) {
     Write-Error "Failed to publish to npm"
