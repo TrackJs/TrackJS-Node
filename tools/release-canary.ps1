@@ -8,8 +8,7 @@
 
 Param (
   [string] $Root = $pwd,
-  [Parameter(Mandatory)][string] $BuildNumber,
-  [Parameter(Mandatory)][string] $RepositoryURL
+  [Parameter(Mandatory)][string] $BuildNumber
 )
 
 
