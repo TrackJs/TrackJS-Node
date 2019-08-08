@@ -30,6 +30,7 @@ try {
   # Publish to npm
   #############################################################################
   Write-Output "Publishing to npm"
+  cd $Root
   & npm publish --tag canary
   if ($lastExitCode -ne 0) {
     Write-Error "Failed to publish to npm"
