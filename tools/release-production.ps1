@@ -30,7 +30,9 @@ try {
   # Get package.json build information for release
   #############################################################################
   $Package = Get-Content "$Root/package.json" -raw | ConvertFrom-Json
-  Write-Output "##teamcity[buildNumber '$Package.version']"
+  $PackageVersion = $Package.version
+  Write-Output "Updating package version to $PackageVersion"
+  Write-Output "##teamcity[buildNumber '$PackageVersion']"
 
   # Publish to npm
   #############################################################################

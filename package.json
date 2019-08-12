@@ -1,6 +1,6 @@
 {
   "name": "trackjs-node",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "TrackJS Error Monitoring agent for NodeJS",
   "keywords": [
     "javascript",
