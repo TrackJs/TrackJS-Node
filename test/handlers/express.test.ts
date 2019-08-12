@@ -40,6 +40,13 @@ describe("expressRequestHandler", () => {
       expect(fakeAgent.environment.url).toBe("https://example.com/");
     });
   });
+
+  it("sets correlation headers on response", () => {
+    expressRequestHandler({ correlationHeader: true })(fakeReq, fakeRes, () => {
+      expect(fakeRes.hasHeader("TrackJS-Correlation-Id")).toBe(true);
+      expect(fakeRes.getHeader("Access-Control-Expose-Headers")).toBe("TrackJS-Correlation-Id");
+    });
+  });
 });
 
 describe("expressErrorHandler", () => {
