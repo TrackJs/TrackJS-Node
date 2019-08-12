@@ -19,7 +19,7 @@ To use the Agent, call `TrackJS.install(options)` as soon as possible in your co
 
 ```javascript
 // ES5
-const TrackJS = require("trackjs-node");
+const TrackJS = require("trackjs-node").TrackJS;
 // ES6
 import { TrackJS } from "trackjs-node";
 
