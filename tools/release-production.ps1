@@ -28,10 +28,15 @@ if (-Not (Get-Command npm)) {
 try {
   Write-Output "TrackJS-Node Production Release Starting..."
 
+  # Get package.json build information for release
+  #############################################################################
+  $Package = Get-Content "$Root/package.json" -raw | ConvertFrom-Json
+  Write-Output "##teamcity[buildNumber '$Package.version']"
+
   # Publish to npm
   #############################################################################
   Write-Output "Publishing to npm"
-  & npm publish $Root
+  & npm publish $Root --tag latest
   if ($lastExitCode -ne 0) {
     Write-Error "Failed to publish to npm"
     exit 1;

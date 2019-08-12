@@ -27,6 +27,14 @@ if (-Not (Get-Command npm)) {
 try {
   Write-Output "TrackJS-Node Canary Release Starting..."
 
+  # Update package.json with build information for release
+  #############################################################################
+  $Package = Get-Content "$Root/package.json" -raw | ConvertFrom-Json
+  $Package.version = $PackageVersion = $Package.version + "-canary.$BuildNumber"
+  Write-Output "Updating package version to $PackageVersion"
+  Write-Output "##teamcity[buildNumber '$PackageVersion']"
+  $Package | ConvertTo-Json | Set-Content "$Root/package.json"
+
   # Publish to npm
   #############################################################################
   Write-Output "Publishing to npm"
