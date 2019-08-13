@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.11
+
+- Added `Access-Control-Expose-Headers` header for correlation header sharing.
+
 ## 0.0.6
 
 Updates from initial beta and configuring UI.
