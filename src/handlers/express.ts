@@ -56,6 +56,7 @@ export function expressRequestHandler(
         // We push the current correlationId out as a header so that a TrackJS
         // agent on the client-side of the request can link up with us.
         res.setHeader("TrackJS-Correlation-Id", correlationId);
+        res.setHeader("Access-Control-Expose-Headers", "TrackJS-Correlation-Id");
       }
 
       next();
