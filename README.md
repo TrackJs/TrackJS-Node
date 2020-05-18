@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://trackjs.com/" target="_blank" align="center">
-    <img src="https://trackjs.com/assets/images/brand/logo_full_charcoal_red.svg" width="280">
+    <img src="https://trackjs.com/assets/external/github_readme.svg" width="280">
   </a>
   <br />
 </p>
