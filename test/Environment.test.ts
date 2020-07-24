@@ -14,19 +14,13 @@ describe("Environment", () => {
     it("reuses dependencies between instances", () => {
       let environment1 = new Environment();
       let environment2 = new Environment();
-      let environment3 = environment2.clone();
-      return environment1.discoverDependencies().then(() => {
-        expect(Environment.dependencyCache).not.toBeUndefined();
-        let dependencyCache = Environment.dependencyCache;
 
-        return environment2.discoverDependencies().then(() => {
-          expect(Environment.dependencyCache).toStrictEqual(dependencyCache);
+      environment1.discoverDependencies();
+      expect(Environment.dependencyCache).not.toBeUndefined();
+      let dependencyCache = Environment.dependencyCache;
 
-          return environment3.discoverDependencies().then(() => {
-            expect(Environment.dependencyCache).toStrictEqual(dependencyCache);
-          });
-        });
-      });
+      environment2.discoverDependencies();
+      expect(Environment.dependencyCache).toStrictEqual(dependencyCache);
     });
   });
 });

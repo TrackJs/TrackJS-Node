@@ -1,6 +1,6 @@
 {
   "name": "trackjs-node",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "TrackJS Error Monitoring agent for NodeJS",
   "keywords": [
     "javascript",
@@ -19,9 +19,10 @@
     "lint": "prettier --check \"{src,test}/**/*.ts\"",
     "start": "run-s test:watch",
     "teamcity": "node ./tools/teamcity",
-    "test": "run-s test:jest test:express test:network test:transmit",
+    "test": "run-s test:jest test:express test:network test:require test:transmit",
     "test:express": "node ./test/integration/express",
     "test:network": "node ./test/integration/network",
+    "test:require": "node ./test/integration/require",
     "test:transmit": "node ./test/integration/transmit",
     "test:jest": "jest",
     "test:watch": "jest --watch",

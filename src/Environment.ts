@@ -1,6 +1,6 @@
-import { cli } from "./utils/cli";
 import { userAgent } from "./utils/userAgent";
-import { captureFault } from "./Fault";
+import { dirname, join } from "path";
+import { existsSync, readFileSync } from "fs";
 
 /**
  * Attributes about the current operating environment.
@@ -10,7 +10,7 @@ export class Environment {
   start: Date = new Date();
   url: string = "";
   userAgent: string = userAgent;
-  static dependencyCache: object = null;
+  static dependencyCache: { [name: string]: string } = null;
 
   /**
    * Returns a copy of the Environment.
@@ -33,31 +33,41 @@ export class Environment {
    * @param _bustCache {Boolean} Whether the existing dependency cache should be
    * discarded and rediscovered.
    */
-  discoverDependencies(_bustCache?: boolean): Promise<void> {
+  discoverDependencies(_bustCache?: boolean): void {
     if (Environment.dependencyCache && !_bustCache) {
-      return Promise.resolve();
+      return;
     }
-    return new Promise((resolve) => {
-      Environment.dependencyCache = {};
-      Promise.all([
-        cli("npm list --prod --depth=0 --json --parseable"),
-        cli("npm list --prod --depth=0 --json --parseable --g")
-      ])
-        .then((results) => {
-          results.forEach((result) => {
-            let jsonResult = JSON.parse(result);
 
-            if (jsonResult && jsonResult.dependencies) {
-              Object.keys(jsonResult.dependencies).forEach((key) => {
-                Environment.dependencyCache[key] = jsonResult.dependencies[key].version;
-              });
-            }
-          });
-          Environment.dependencyCache["node"] = process.versions["node"];
-          resolve();
-        })
-        .catch(captureFault);
+    Environment.dependencyCache = {};
+
+    let pathCache = {};
+    let rootPaths = (require.main && require.main.paths) || [];
+    let moduleFiles = (require.cache ? Object.keys(require.cache as {}) : []);
+
+    function recurseUpDirTree(dir: string, roots: string[] = [], maxDepth = 10) {
+      if (maxDepth === 0 || !dir || pathCache[dir] || roots.indexOf(dir) >= 0) {
+        return;
+      }
+
+      pathCache[dir] = 1;
+      let packageFile = join(dir, "package.json");
+
+      if (existsSync(packageFile)) {
+        try {
+          let packageInfo = JSON.parse(readFileSync(packageFile, "utf8"));
+          Environment.dependencyCache[packageInfo.name] = packageInfo.version;
+        }
+        catch(err) {/* bad json */}
+      }
+      else {
+        // Recursion!
+        return recurseUpDirTree(dirname(dir), roots, maxDepth--);
+      }
+    }
+
+    moduleFiles.forEach((moduleFile) => {
+      let modulePath = dirname(moduleFile);
+      recurseUpDirTree(modulePath, rootPaths);
     });
   }
-  private static _dependencyCache: { [name: string]: string } = null;
 }
