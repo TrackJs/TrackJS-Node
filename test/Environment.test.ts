@@ -10,4 +10,23 @@ describe("Environment", () => {
       expect(environment1).not.toBe(environment2);
     });
   });
+  describe("discoverDependencies()", () => {
+    it("reuses dependencies between instances", () => {
+      let environment1 = new Environment();
+      let environment2 = new Environment();
+      let environment3 = environment2.clone();
+      return environment1.discoverDependencies().then(() => {
+        expect(Environment.dependencyCache).not.toBeUndefined();
+        let dependencyCache = Environment.dependencyCache;
+
+        return environment2.discoverDependencies().then(() => {
+          expect(Environment.dependencyCache).toStrictEqual(dependencyCache);
+
+          return environment3.discoverDependencies().then(() => {
+            expect(Environment.dependencyCache).toStrictEqual(dependencyCache);
+          });
+        });
+      });
+    });
+  });
 });

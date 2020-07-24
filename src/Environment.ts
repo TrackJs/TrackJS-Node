@@ -10,6 +10,7 @@ export class Environment {
   start: Date = new Date();
   url: string = "";
   userAgent: string = userAgent;
+  static dependencyCache: object = null;
 
   /**
    * Returns a copy of the Environment.
@@ -22,7 +23,7 @@ export class Environment {
    * Get the current environmental dependencies.
    */
   getDependencies(): { [name: string]: string } {
-    return Object.assign({}, Environment._dependencyCache);
+    return Object.assign({}, Environment.dependencyCache);
   }
 
   /**
@@ -33,11 +34,11 @@ export class Environment {
    * discarded and rediscovered.
    */
   discoverDependencies(_bustCache?: boolean): Promise<void> {
-    if (Environment._dependencyCache && !_bustCache) {
+    if (Environment.dependencyCache && !_bustCache) {
       return Promise.resolve();
     }
     return new Promise((resolve) => {
-      Environment._dependencyCache = {};
+      Environment.dependencyCache = {};
       Promise.all([
         cli("npm list --prod --depth=0 --json --parseable"),
         cli("npm list --prod --depth=0 --json --parseable --g")
@@ -48,11 +49,11 @@ export class Environment {
 
             if (jsonResult && jsonResult.dependencies) {
               Object.keys(jsonResult.dependencies).forEach((key) => {
-                Environment._dependencyCache[key] = jsonResult.dependencies[key].version;
+                Environment.dependencyCache[key] = jsonResult.dependencies[key].version;
               });
             }
           });
-          Environment._dependencyCache["node"] = process.versions["node"];
+          Environment.dependencyCache["node"] = process.versions["node"];
           resolve();
         })
         .catch(captureFault);
