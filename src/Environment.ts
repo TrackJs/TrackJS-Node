@@ -23,6 +23,9 @@ export class Environment {
    * Get the current environmental dependencies.
    */
   getDependencies(): { [name: string]: string } {
+    if (!Environment.dependencyCache) {
+      this.discoverDependencies();
+    }
     return Object.assign({}, Environment.dependencyCache);
   }
 

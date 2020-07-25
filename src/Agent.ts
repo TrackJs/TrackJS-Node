@@ -33,11 +33,6 @@ export class Agent {
 
   constructor(options: TrackJSInstallOptions) {
     this.options = Object.assign({}, Agent.defaults, options);
-
-    if (this.options.dependencies) {
-      this.environment.discoverDependencies();
-    }
-
     this.options.correlationId = this.options.correlationId;
 
     if (isFunction(options.onError)) {
@@ -192,7 +187,7 @@ export class Agent {
       entry: entry,
       environment: {
         age: now.getTime() - this.environment.start.getTime(),
-        dependencies: this.environment.getDependencies(),
+        dependencies: (this.options.dependencies ? this.environment.getDependencies() : {}),
         originalUrl: this.environment.url,
         referrer: this.environment.referrerUrl,
         userAgent: this.environment.userAgent
