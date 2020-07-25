@@ -45,7 +45,7 @@ export class Environment {
 
     let pathCache = {};
     let rootPaths = (require.main && require.main.paths) || [];
-    let moduleFiles = (require.cache ? Object.keys(require.cache as {}) : []);
+    let moduleFiles = require.cache ? Object.keys(require.cache as {}) : [];
 
     function recurseUpDirTree(dir: string, roots: string[] = [], maxDepth = 10) {
       if (maxDepth === 0 || !dir || pathCache[dir] || roots.indexOf(dir) >= 0) {
@@ -59,10 +59,10 @@ export class Environment {
         try {
           let packageInfo = JSON.parse(readFileSync(packageFile, "utf8"));
           Environment.dependencyCache[packageInfo.name] = packageInfo.version;
+        } catch (err) {
+          /* bad json */
         }
-        catch(err) {/* bad json */}
-      }
-      else {
+      } else {
         // Recursion!
         return recurseUpDirTree(dirname(dir), roots, maxDepth--);
       }

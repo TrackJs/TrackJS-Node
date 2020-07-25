@@ -187,7 +187,7 @@ export class Agent {
       entry: entry,
       environment: {
         age: now.getTime() - this.environment.start.getTime(),
-        dependencies: (this.options.dependencies ? this.environment.getDependencies() : {}),
+        dependencies: this.options.dependencies ? this.environment.getDependencies() : {},
         originalUrl: this.environment.url,
         referrer: this.environment.referrerUrl,
         userAgent: this.environment.userAgent
