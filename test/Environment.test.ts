@@ -10,4 +10,17 @@ describe("Environment", () => {
       expect(environment1).not.toBe(environment2);
     });
   });
+  describe("discoverDependencies()", () => {
+    it("reuses dependencies between instances", () => {
+      let environment1 = new Environment();
+      let environment2 = new Environment();
+
+      environment1.discoverDependencies();
+      expect(Environment.dependencyCache).not.toBeUndefined();
+      let dependencyCache = Environment.dependencyCache;
+
+      environment2.discoverDependencies();
+      expect(Environment.dependencyCache).toStrictEqual(dependencyCache);
+    });
+  });
 });
