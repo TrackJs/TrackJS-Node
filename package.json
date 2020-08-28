@@ -1,14 +1,21 @@
 {
   "name": "trackjs-node",
-  "version": "0.0.12",
+  "version": "1.0.0",
   "description": "TrackJS Error Monitoring agent for NodeJS",
   "keywords": [
+    "error-monitoring",
+    "error-reporting",
+    "error-handling",
+    "logging",
     "javascript",
-    "node",
+    "nodejs",
+    "debugging",
+    "debugger",
+    "debugging-tool",
     "error",
-    "debug",
-    "monitoring",
-    "logging"
+    "trackjs",
+    "trackjs-node",
+    "trackjs-agent"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

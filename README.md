@@ -5,13 +5,12 @@
   <br />
 </p>
 
-**This Agent is in Beta, not recommended for production use until v1.0.0.**
-
 # TrackJS Agent for NodeJS
 
 ## Reference
 
-- [TrackJS Node Documentation](https://docs.trackjs.com/node-agent/installation/)
+<!-- - [TrackJS for NodeJS](https://trackjs.com/for/nodejs) -->
+- [TrackJS NodeJS Documentation](https://docs.trackjs.com/node-agent/installation/)
 
 ## Usage
 

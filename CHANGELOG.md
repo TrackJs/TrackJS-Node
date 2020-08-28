@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0
+
+- Stable Release.
+
+## 0.0.12
+
+- Fixed issue where we could not discover modules (dependencies) in restrictive cloud environments.
+
 ## 0.0.11
 
 - Added `Access-Control-Expose-Headers` header for correlation header sharing.
