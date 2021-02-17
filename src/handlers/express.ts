@@ -8,6 +8,8 @@ export type expressMiddleware = (req: any, res: any, next: (error?: any) => void
 
 export type expressErrorMiddleware = (error: Error, req: any, res: any, next: (error?: any) => void) => void;
 
+const DOMAIN_CARRIER_KEY = "__trackjs_domain__";
+
 function getStatusCode(error) {
   const statusCode = error.status || error.statusCode || error.status_code || (error.output && error.output.statusCode);
   return statusCode ? parseInt(statusCode, 10) : 500;
@@ -36,15 +38,18 @@ export function expressRequestHandler(
     // normal error handlers to manage the domain error event as well.
     requestDomain.add(req as EventEmitter);
     requestDomain.add(res as EventEmitter);
+    // We could catch the error here, but it would prevent the user from handling
+    // it themselves. We let it pass and catch using the errorHandler function.
     requestDomain.on("error", next);
 
     // execute the remaining middleware within the context of this domain.
     requestDomain.run(() => {
       let agent = AgentRegistrar.getCurrentAgent();
+      req[DOMAIN_CARRIER_KEY] = requestDomain;
       let correlationId = uuid();
 
       // Configure the agent to handle the details of this request.
-      agent.configure({ correlationId: uuid() }); // correlate all errors from this request together.
+      agent.configure({ correlationId: correlationId }); // correlate all errors from this request together.
       agent.environment.start = new Date();
       agent.environment.referrerUrl = req["headers"]["referer"] || "";
       agent.environment.url = `${req["protocol"]}://${req["get"]("host")}${req["originalUrl"]}`;
@@ -84,7 +89,7 @@ export function expressErrorHandler(options: { next: boolean } = { next: false }
         next();
         return;
       }
-      AgentRegistrar.getCurrentAgent().captureError(error, TrackJSEntry.Express);
+      AgentRegistrar.getCurrentAgent(req[DOMAIN_CARRIER_KEY]).captureError(error, TrackJSEntry.Express);
     }
     if (options.next) {
       next(error);
