@@ -7,8 +7,9 @@ console.log('Starting ExpressJS Test...');
 const TESTS_EXPECTED = 5;
 let testsComplete = 0;
 
-function testComplete() {
+function testComplete(name) {
   testsComplete++;
+  console.log(`Test ${name} PASSED`);
   if (testsComplete >= TESTS_EXPECTED) {
     console.log('ExpressJS Tests PASSED');
     process.exit(0);
@@ -55,23 +56,18 @@ TrackJS.install({
         assertStrictEqual(payload.metadata[1].key, 'action');
         assertStrictEqual(payload.metadata[1].value, 'async');
         break;
-      // NOTE [Todd] Rejected promises lose their context of what request was running since Node 12.0.0
-      //    due to a bug in unhandledRejection. This prevents the agent from finding the active context,
-      //    and defaults through to the primaryAgent.
-      //    @see https://github.com/nodejs/node/issues/26794
-      //    @see https://github.com/nodejs/node/issues/29051
-      // case 'http://localhost:3001/reject':
-      //   assertStrictEqual(payload.url, 'http://localhost:3001/reject');
-      //   assertStrictEqual(payload.message, 'rejected!');
-      //   assertStrictEqual(payload.entry, 'promise');
-      //   assertStrictEqual(payload.console.length, 1);
-      //   assertStrictEqual(payload.console[0].message, 'a message from /reject');
-      //   assertStrictEqual(payload.metadata.length, 2);
-      //   assertStrictEqual(payload.metadata[0].key, 'test');
-      //   assertStrictEqual(payload.metadata[0].value, 'express');
-      //   assertStrictEqual(payload.metadata[1].key, 'action');
-      //   assertStrictEqual(payload.metadata[1].value, 'reject');
-      //   break;
+      case 'http://localhost:3001/reject':
+        assertStrictEqual(payload.url, 'http://localhost:3001/reject');
+        assertStrictEqual(payload.message, 'rejected!');
+        assertStrictEqual(payload.entry, 'express');
+        assertStrictEqual(payload.console.length, 1);
+        assertStrictEqual(payload.console[0].message, 'a message from /reject');
+        assertStrictEqual(payload.metadata.length, 2);
+        assertStrictEqual(payload.metadata[0].key, 'test');
+        assertStrictEqual(payload.metadata[0].value, 'express');
+        assertStrictEqual(payload.metadata[1].key, 'action');
+        assertStrictEqual(payload.metadata[1].value, 'reject');
+        break;
       case 'http://localhost:3001/console':
         assertStrictEqual(payload.url, 'http://localhost:3001/console');
         assertStrictEqual(payload.message, 'console blew up');
@@ -92,7 +88,7 @@ TrackJS.install({
         process.exit(1);
     }
 
-    testComplete();
+    testComplete(payload.url);
     return false;
   }
 });
@@ -116,15 +112,15 @@ express()
     }, 100);
   })
 
-  // .get('/reject', (req, res, next) => {
-  //   TrackJS.addLogTelemetry('log', 'a message from /reject');
-  //   new Promise((resolve, reject) => {
-  //     TrackJS.addMetadata('action', 'reject');
-  //     setTimeout(() => {
-  //       reject('rejected!');
-  //     }, 100);
-  //   })
-  // })
+  .get('/reject', (req, res, next) => {
+    TrackJS.addLogTelemetry('log', 'a message from /reject');
+    new Promise((resolve, reject) => {
+      TrackJS.addMetadata('action', 'reject');
+      setTimeout(() => {
+        reject('rejected!');
+      }, 100);
+    })
+  })
 
   .get('/console', (req, res, next) => {
     console.error('console blew up');
@@ -159,8 +155,17 @@ process.on('uncaughtException', function(error) {
   }
 });
 
+// TESTS
+
 http.get('http://localhost:3001/async');
+
+// NOTE [Todd] Rejected promises lose their context of what request was running since Node 12.0.0
+//    due to a bug in unhandledRejection. This prevents the agent from finding the active context,
+//    and defaults through to the primaryAgent. Fixed in version 15.3
+//    @see https://github.com/nodejs/node/issues/26794
+//    @see https://github.com/nodejs/node/issues/29051
 // http.get('http://localhost:3001/reject');
+
 http.get('http://localhost:3001/sync');
 http.get('http://localhost:3001/console');
 http.get({
@@ -176,5 +181,5 @@ http.get({
 http.get('http://localhost:3001/ok', (res) => {
   console.log('returned correlationId header', res.headers['trackjs-correlation-id']);
   assertStrictEqual(!!res.headers['trackjs-correlation-id'], true);
-  testComplete();
+  testComplete("correlation headers");
 });
