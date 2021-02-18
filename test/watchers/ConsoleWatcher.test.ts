@@ -15,7 +15,7 @@ describe("ConsoleWatcher", () => {
     let fakeAgent = null;
 
     beforeEach(() => {
-      fakeConsole = jest.genMockFromModule("console");
+      fakeConsole = jest.mock("console");
       fakeAgent = new Agent({ token: "test" });
       AgentRegistrar.init(fakeAgent);
     });
@@ -32,10 +32,10 @@ describe("ConsoleWatcher", () => {
     });
 
     it("calls through to console", () => {
-      let originalConsoleLog = fakeConsole.log;
+      let consoleLogSpy = jest.spyOn(fakeConsole, "log");
       _ConsoleWatcher.install(fakeConsole);
       fakeConsole.log("a log message", 2, 3, 4);
-      expect(originalConsoleLog).toHaveBeenCalledWith("a log message", 2, 3, 4);
+      expect(consoleLogSpy).toHaveBeenCalledWith("a log message", 2, 3, 4);
     });
 
     it("captures on console error", () => {
