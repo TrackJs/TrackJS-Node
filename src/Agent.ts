@@ -65,7 +65,7 @@ export class Agent {
     if (error["__trackjs__"]) {
       return false;
     }
-    if (!(error as any instanceof Error)) {
+    if (!((error as any) instanceof Error)) {
       error = new Error("" + error);
     }
     Object.defineProperty(error, "__trackjs__", {
