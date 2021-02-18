@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1
+
+Fixes required for Node 14 and 15.
+
+- Fixed express errors in async code would not be attributed to the request.
+- Fixed rejected promises not recorded in Node 15 due to serialization of strings.
+- Fixed error correlation was always being reset.
+
 ## 1.0.0
 
 - Stable Release.
