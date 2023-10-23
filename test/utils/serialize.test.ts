@@ -33,7 +33,7 @@ describe("serialize()", () => {
       .toBe("{}");
   });
   test("serializes functions", () => {
-    expect(serialize(function () { })).toBe("function () { }");
+    expect(serialize(function() {})).toBe("function () { }");
     // prettier-ignore
     expect(serialize(function xxx(foo, bar) { return foo + bar; }))
       .toBe("function xxx(foo, bar) { return foo + bar; }");
