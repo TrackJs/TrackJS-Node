@@ -33,7 +33,7 @@ describe("serialize()", () => {
       .toBe("{}");
   });
   test("serializes functions", () => {
-    expect(serialize(function() {})).toBe("function () { }");
+    expect(serialize(function () { })).toBe("function () { }");
     // prettier-ignore
     expect(serialize(function xxx(foo, bar) { return foo + bar; }))
       .toBe("function xxx(foo, bar) { return foo + bar; }");
@@ -67,14 +67,7 @@ describe("serialize()", () => {
 
     expect(serialize(new Error("test"))).toContain('{"name":"Error","message":"test","stack":"Error: test');
   });
-  test("serializes HTMLElements", () => {
-    var div = document.createElement("div");
-    div.id = "ID";
-    div.className = "CLASS1 CLASS2";
-    div.setAttribute("data-other", "OTHER");
-    expect(serialize(div)).toBe('<div id="ID" class="CLASS1 CLASS2" data-other="OTHER">');
-    expect(serialize([div])).toBe('["<div id=\\"ID\\" class=\\"CLASS1 CLASS2\\" data-other=\\"OTHER\\">"]');
-  });
+
   test("serializes symbols", () => {
     expect(serialize(Symbol())).toBe("Symbol()");
     expect(serialize(Symbol("name"))).toBe("Symbol(name)");

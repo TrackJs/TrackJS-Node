@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.2
+
+Update packages and verify new node version
+
+- Upgraded internal dev tools
+- Upgraded Typescript
+- Verified compatibility with node 18 LTS
+
 ## 1.0.1
 
 Fixes required for Node 14 and 15.
