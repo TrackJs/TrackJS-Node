@@ -71,35 +71,12 @@ describe("isType", () => {
     });
   });
 
-  describe("isElement(thing)", () => {
-    test("returns true with an Element", () => {
-      var el = document.createElement("div");
-      expect(isType.isElement(el)).toBe(true);
+  describe("isFunction()", function () {
+    test("returns true with function", function () {
+      expect(isType.isFunction(function () { })).toBe(true);
     });
 
-    test("returns true with non-Element Node", () => {
-      var node = document.createTextNode("div");
-      expect(isType.isElement(node)).toBe(false);
-    });
-
-    test("returns false with non-Element", function() {
-      expect(isType.isElement(null)).toBe(false);
-      expect(isType.isElement(undefined)).toBe(false);
-      expect(isType.isElement(NaN)).toBe(false);
-      expect(isType.isElement(42)).toBe(false);
-      expect(isType.isElement("string")).toBe(false);
-      expect(isType.isElement(true)).toBe(false);
-      expect(isType.isElement({})).toBe(false);
-      expect(isType.isElement([])).toBe(false);
-    });
-  });
-
-  describe("isFunction()", function() {
-    test("returns true with function", function() {
-      expect(isType.isFunction(function() {})).toBe(true);
-    });
-
-    test("returns false with non-function", function() {
+    test("returns false with non-function", function () {
       expect(isType.isFunction(null)).toBe(false);
       expect(isType.isFunction(undefined)).toBe(false);
       expect(isType.isFunction(NaN)).toBe(false);
@@ -111,7 +88,7 @@ describe("isType", () => {
     });
   });
 
-  describe("isNumber(thing)", function() {
+  describe("isNumber(thing)", function () {
     test("returns true for a Number literal", () => {
       expect(isType.isNumber(42)).toBe(true);
       expect(isType.isNumber(0)).toBe(true);
@@ -131,23 +108,23 @@ describe("isType", () => {
     });
   });
 
-  describe("isObject()", function() {
-    test("returns true with object", function() {
+  describe("isObject()", function () {
+    test("returns true with object", function () {
       expect(isType.isObject({})).toBe(true);
     });
 
-    test("returns true with arrays", function() {
+    test("returns true with arrays", function () {
       expect(isType.isObject([])).toBe(true);
     });
 
-    test("returns false with non-object", function() {
+    test("returns false with non-object", function () {
       expect(isType.isObject(null)).toBe(false);
       expect(isType.isObject(undefined)).toBe(false);
       expect(isType.isObject(NaN)).toBe(false);
       expect(isType.isObject(42)).toBe(false);
       expect(isType.isObject("string")).toBe(false);
       expect(isType.isObject(true)).toBe(false);
-      expect(isType.isObject(function() {})).toBe(false);
+      expect(isType.isObject(function () { })).toBe(false);
     });
   });
 

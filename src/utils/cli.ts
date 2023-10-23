@@ -23,7 +23,7 @@ export function cli(command: string): Promise<string> {
       if (code != 0) {
         reject(code);
       } else {
-        resolve();
+        resolve("code 0");
       }
     });
   });
