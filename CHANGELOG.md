@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- Update NetworkWatcher to instrument the `request` method instead of the private `_http_agent` method, which breaks on some platforms.
+
 ## 1.0.2
 
 Update packages and verify new node version

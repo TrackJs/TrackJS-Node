@@ -1,37 +1,39 @@
 import http from "http";
+import https from "https";
 import { patch, unpatch } from "../utils/patch";
 import { NetworkTelemetry } from "../telemetry";
 import { AgentRegistrar } from "../AgentRegistrar";
 import { Watcher } from "./Watcher";
 import { TrackJSEntry } from "../types/TrackJSCapturePayload";
-const HttpAgent = require("_http_agent");
 
 class _NetworkWatcher implements Watcher {
   /**
    * @inheritdoc
-   * @param _agent {http.Agent} override of the global http agent.
    */
-  install(_agent?: any): void {
-    let agentPrototype = _agent ? _agent.prototype : HttpAgent.Agent.prototype;
-    patch(agentPrototype, "addRequest", (originalAddRequest) => {
-      return function addRequest(req, options, port, localAddress) {
-        if (!(options || {})["__trackjs__"]) {
-          let networkTelemetry = _NetworkWatcher.createTelemetryFromRequest(req);
-          AgentRegistrar.getCurrentAgent(req["domain"]).telemetry.add("n", networkTelemetry);
-        }
+  install(): void {
+    [http, https].forEach((module) => {
+      patch(module, "request", (original) => {
+        return function request(outgoing) {
+          let req = original.apply(this, arguments)
 
-        return originalAddRequest.apply(this, arguments);
-      };
+          if (!(outgoing || {})["__trackjs__"]) {
+            let networkTelemetry = _NetworkWatcher.createTelemetryFromRequest(req);
+            AgentRegistrar.getCurrentAgent(req["domain"]).telemetry.add("n", networkTelemetry);
+          }
+
+          return req;
+        }
+      });
     });
   }
 
   /**
    * @inheritdoc
-   * @param _agent {http.Agent} override of the global http agent.
    */
-  uninstall(_agent?: any): void {
-    let agentPrototype = _agent ? _agent.prototype : HttpAgent.Agent.prototype;
-    unpatch(agentPrototype, "addRequest");
+  uninstall(): void {
+    [http, https].forEach((module) => {
+      unpatch(module, "request");
+    });
   }
 
   static createTelemetryFromRequest(request: http.ClientRequest): NetworkTelemetry {
