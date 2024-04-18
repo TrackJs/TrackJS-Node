@@ -14,7 +14,7 @@ class _NetworkWatcher implements Watcher {
     [http, https].forEach((module) => {
       patch(module, "request", (original) => {
         return function request(outgoing) {
-          let req = original.apply(this, arguments)
+          let req = original.apply(this, arguments);
 
           if (!(outgoing || {})["__trackjs__"]) {
             let networkTelemetry = _NetworkWatcher.createTelemetryFromRequest(req);
@@ -22,7 +22,7 @@ class _NetworkWatcher implements Watcher {
           }
 
           return req;
-        }
+        };
       });
     });
   }
