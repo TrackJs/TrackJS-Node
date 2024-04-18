@@ -1,10 +1,10 @@
 import http from "http";
 import https from "https";
-import { NetworkWatcher } from "../../src/watchers";
+import { NetworkWatcher, Watcher } from "../../src/watchers";
 import { Agent } from "../../src/Agent";
 import { AgentRegistrar } from "../../src/AgentRegistrar";
 
-let _NetworkWatcher = NetworkWatcher as any;
+let _NetworkWatcher = NetworkWatcher as Watcher;
 
 beforeAll(() => {
   Agent.defaults.dependencies = false;
@@ -14,21 +14,21 @@ jest.mock("net");
 
 describe("NetworkWatcher", () => {
   describe("install()", () => {
-    let fakeAgent = null;
+    let fakeAgent: Agent;
 
     beforeEach(() => {
       fakeAgent = new Agent({ token: "test" });
       AgentRegistrar.init(fakeAgent);
+      _NetworkWatcher.install();
     });
 
     afterEach(() => {
-      NetworkWatcher.uninstall();
+      _NetworkWatcher.uninstall();
     });
 
-    it("http patched to intercept request", () => {
+    it("http patched to intercept request", async () => {
       fakeAgent.telemetry.add = jest.fn();
-      _NetworkWatcher.install();
-      http.get("http://example.com/?foo=bar", (response) => {});
+      await http.request("http://example.com/?foo=bar");
       expect(fakeAgent.telemetry.add).toHaveBeenCalledWith(
         "n",
         expect.objectContaining({
@@ -39,10 +39,9 @@ describe("NetworkWatcher", () => {
       );
     });
 
-    it("https patched to intercept request", () => {
+    it("https patched to intercept request", async () => {
       fakeAgent.telemetry.add = jest.fn();
-      _NetworkWatcher.install();
-      https.get("https://example.com/?foo=bar");
+      await https.request("https://example.com/?foo=bar");
       expect(fakeAgent.telemetry.add).toHaveBeenCalledWith(
         "n",
         expect.objectContaining({
