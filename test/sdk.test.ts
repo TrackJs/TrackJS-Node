@@ -33,6 +33,56 @@ describe("sdk", () => {
     });
   });
 
+  describe("console", () => {
+    beforeEach(() => {
+      TrackJS.install({ token: "test" });
+    });
+    afterEach(() => {
+      TrackJS.uninstall();
+    });
+
+    it("can capture a log message to telemetry", () => {
+      TrackJS.console.log("a log message", 42, {});
+      expect(AgentRegistrar.getCurrentAgent().telemetry.getAllByCategory("c")).toEqual([
+        expect.objectContaining({
+          message: '["a log message",42,{}]',
+          severity: "log",
+          timestamp: expect.any(String)
+        })
+      ]);
+    });
+
+    it("can capture a log message to telemetry with different severity", () => {
+      TrackJS.console.info("a info message");
+      TrackJS.console.warn("a warn message");
+      expect(AgentRegistrar.getCurrentAgent().telemetry.getAllByCategory("c")).toEqual([
+        expect.objectContaining({
+          message: "a info message",
+          severity: "info",
+          timestamp: expect.any(String)
+        }),
+        expect.objectContaining({
+          message: "a warn message",
+          severity: "warn",
+          timestamp: expect.any(String)
+        })
+      ]);
+    });
+
+    it("can capture a console error message", () => {
+      let errorTracked;
+      AgentRegistrar.getCurrentAgent().captureError = jest.fn((error) => {
+        errorTracked = error;
+        return true;
+      });
+
+      TrackJS.console.error("a console error", 42, {});
+      expect(AgentRegistrar.getCurrentAgent().telemetry.getAllByCategory("c")).toEqual([]);
+      expect(errorTracked.message).toEqual('["a console error",42,{}]');
+      expect(errorTracked.stack).toBeDefined();
+    });
+  });
+
   describe("track()", () => {
     it("serializes non error data", () => {
       let errorTracked: Error;

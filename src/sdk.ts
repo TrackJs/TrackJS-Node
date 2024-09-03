@@ -131,6 +131,24 @@ export function addLogTelemetry(severity: string, ...messages: any): void {
 }
 
 /**
+ * For parity with the browser agent, add a set of helper functions that resembles the
+ * console object hanging off TrackJS.
+ */
+export const console = {
+  log: (...messages: any): void => addLogTelemetry("log", ...messages),
+  info: (...messages: any): void => addLogTelemetry("info", ...messages),
+  debug: (...messages: any): void => addLogTelemetry("debug", ...messages),
+  warn: (...messages: any): void => addLogTelemetry("warn", ...messages),
+  error: (...messages: any): void => {
+    if (!hasInstalled) {
+      throw new TrackJSError("not installed.");
+    }
+    let error = isError(messages) ? messages : new Error(serialize(messages));
+    AgentRegistrar.getCurrentAgent().captureError(error, TrackJSEntry.Console);
+  }
+};
+
+/**
  * Attach a event handler to Errors. Event handlers will be called in order
  * they were attached.
  *
