@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+
+- Added `TrackJS.console` function for parity with the browser agent.
+
 ## 1.1.0
 
 - Update NetworkWatcher to instrument the `request` method instead of the private `_http_agent` method, which breaks on some platforms.
