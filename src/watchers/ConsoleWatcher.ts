@@ -4,6 +4,7 @@ import { AgentRegistrar } from "../AgentRegistrar";
 import { Watcher } from "./Watcher";
 import { TrackJSEntry } from "../types/TrackJSCapturePayload";
 import { isError } from "../utils/isType";
+import { TrackJSOptions } from "../types";
 
 const CONSOLE_FN_NAMES = ["debug", "info", "warn", "error", "log"];
 
@@ -12,7 +13,7 @@ class _ConsoleWatcher implements Watcher {
    * @inheritdoc
    * @param _console {Object} override of the global console object.
    */
-  install(_console?: Object): void {
+  install(options: TrackJSOptions, _console?: Object): void {
     let consoleObj = _console || console;
     CONSOLE_FN_NAMES.forEach((name) => {
       patch(consoleObj, name, function(originalFn) {

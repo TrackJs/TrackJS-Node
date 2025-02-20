@@ -43,9 +43,12 @@ export function install(options: TrackJSInstallOptions): void {
   }
 
   try {
-    AgentRegistrar.init(new Agent(options));
-    watchers.forEach((w) => w.install());
-    AgentRegistrar.getCurrentAgent().captureUsage();
+    const agent = new Agent(options);
+    AgentRegistrar.init(agent);
+    for (const watcher of watchers) {
+      watcher.install(agent.options);
+    }
+    agent.captureUsage();
     hasInstalled = true;
   } catch (error) {
     captureFault(error);

@@ -5,12 +5,17 @@ import { NetworkTelemetry } from "../telemetry";
 import { AgentRegistrar } from "../AgentRegistrar";
 import { Watcher } from "./Watcher";
 import { TrackJSEntry } from "../types/TrackJSCapturePayload";
+import { TrackJSOptions } from "../types";
 
 class _NetworkWatcher implements Watcher {
   /**
    * @inheritdoc
    */
-  install(): void {
+  install(options: TrackJSOptions): void {
+    if (!options.network.enabled) {
+      return;
+    }
+
     [http, https].forEach((module) => {
       patch(module, "request", (original) => {
         return function request(outgoing) {

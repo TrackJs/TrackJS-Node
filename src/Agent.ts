@@ -9,6 +9,7 @@ import { deduplicate, truncate } from "./agentHelpers";
 import { uuid } from "./utils/uuid";
 import { RELEASE_VERSION } from "./version";
 import { TrackJSEntry } from "./types/TrackJSCapturePayload";
+import { nestedAssign } from "./utils/nestedAssign";
 
 export class Agent {
   static defaults: TrackJSOptions = {
@@ -18,6 +19,10 @@ export class Agent {
     dependencies: true,
     errorURL: "https://capture.trackjs.com/capture/node",
     faultURL: "https://usage.trackjs.com/fault.gif",
+    network: {
+      error: true,
+      enabled: true
+    },
     sessionId: "",
     usageURL: "https://usage.trackjs.com/usage.gif",
     userId: "",
@@ -32,16 +37,13 @@ export class Agent {
   private _onErrorFns = [];
 
   constructor(options: TrackJSInstallOptions) {
-    this.options = Object.assign({}, Agent.defaults, options);
-    this.options.correlationId = this.options.correlationId;
+    this.options = nestedAssign({}, Agent.defaults, options);
 
     if (isFunction(options.onError)) {
       this.onError(options.onError);
-      delete this.options.onError;
     }
 
     this.metadata = new Metadata(this.options.metadata);
-    delete this.options.metadata;
 
     if (this.options.defaultMetadata) {
       this.metadata.add("hostname", os.hostname());
