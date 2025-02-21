@@ -8,40 +8,50 @@ import { TrackJSEntry } from "../types/TrackJSCapturePayload";
 import { TrackJSOptions } from "../types";
 
 class _NetworkWatcher implements Watcher {
+
+  private options: TrackJSOptions;
+
   /**
    * @inheritdoc
    */
   install(options: TrackJSOptions): void {
-    if (!options.network.enabled) {
+    this.options = options;
+
+    if (!this.options.network.enabled) {
       return;
     }
 
-    [http, https].forEach((module) => {
-      patch(module, "request", (original) => {
-        return function request(outgoing) {
-          let req = original.apply(this, arguments);
+    const networkWatcher = this;
+    for(const module of [http, https]) {
+      for (const method of ["request", "get"]) {
+        patch(module, method, (original) => {
+          return function request(options) {
+            const req = original.apply(this, arguments);
 
-          if (!(outgoing || {})["__trackjs__"]) {
-            let networkTelemetry = _NetworkWatcher.createTelemetryFromRequest(req);
-            AgentRegistrar.getCurrentAgent(req["domain"]).telemetry.add("n", networkTelemetry);
+            if (!options?.__trackjs__)  {
+              const networkTelemetry = networkWatcher.createTelemetryFromRequest(req);
+              AgentRegistrar.getCurrentAgent(req.domain).telemetry.add("n", networkTelemetry);
+            }
+
+            return req;
           }
-
-          return req;
-        };
-      });
-    });
+        })
+      }
+    }
   }
 
   /**
    * @inheritdoc
    */
   uninstall(): void {
-    [http, https].forEach((module) => {
-      unpatch(module, "request");
-    });
+    for(const module of [http, https]) {
+      for (const method of ["request", "get"]) {
+        unpatch(module, method);
+      }
+    }
   }
 
-  static createTelemetryFromRequest(request: http.ClientRequest): NetworkTelemetry {
+  createTelemetryFromRequest(request: http.ClientRequest): NetworkTelemetry {
     let networkTelemetry = new NetworkTelemetry();
     networkTelemetry.type = "http";
     networkTelemetry.startedOn = new Date().toISOString();
@@ -57,7 +67,7 @@ class _NetworkWatcher implements Watcher {
       networkTelemetry.statusText = response.statusMessage;
       networkTelemetry.completedOn = new Date().toISOString();
 
-      if (networkTelemetry.statusCode >= 400) {
+      if (this.options.network.error && networkTelemetry.statusCode >= 400) {
         AgentRegistrar.getCurrentAgent(request["domain"]).captureError(
           new Error(
             `${networkTelemetry.statusCode} ${networkTelemetry.statusText}: ${networkTelemetry.method} ${networkTelemetry.url}`
