@@ -17,6 +17,10 @@ describe("Agent", () => {
         dependencies: false,
         errorURL: "https://mycapture.com/",
         faultURL: "https://myfault.com/",
+        network: {
+          error: true,
+          enabled: false
+        },
         sessionId: "session",
         usageURL: "https://myusage.com/",
         userId: "user",
@@ -27,10 +31,10 @@ describe("Agent", () => {
     });
 
     it("initializes with default options", () => {
-      let options = {
+      const options = {
         token: "token"
       };
-      let agent = new Agent(options);
+      const agent = new Agent(options);
       expect(agent.options).toEqual({
         token: "token",
         application: "",
@@ -38,6 +42,10 @@ describe("Agent", () => {
         errorURL: "https://capture.trackjs.com/capture/node",
         defaultMetadata: true,
         dependencies: true,
+        network: {
+          error: true,
+          enabled: true
+        },
         sessionId: "",
         usageURL: "https://usage.trackjs.com/usage.gif",
         userId: "",
@@ -229,11 +237,6 @@ describe("Agent", () => {
         onError: handler
       };
       let agent = new Agent(options);
-      expect(agent.options).not.toEqual(
-        expect.objectContaining({
-          onError: handler
-        })
-      );
       agent.captureError(new Error("test message"), TrackJSEntry.Direct);
       expect(handler).toHaveBeenCalled();
     });

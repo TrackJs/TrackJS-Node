@@ -1,12 +1,13 @@
 import { AgentRegistrar } from "../AgentRegistrar";
 import { Watcher } from ".";
 import { TrackJSEntry } from "../types/TrackJSCapturePayload";
+import { TrackJSOptions } from "../types";
 
 class _ExceptionWatcher implements Watcher {
   /**
    * @inheritdoc
    */
-  install(): void {
+  install(options: TrackJSOptions): void {
     process.on("uncaughtException", this.handleException);
   }
 

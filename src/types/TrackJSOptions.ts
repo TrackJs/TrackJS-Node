@@ -55,6 +55,21 @@ export interface TrackJSOptions {
   metadata?: { [key: string]: string };
 
   /**
+   * Network telemetry options
+   */
+  network?: {
+    /**
+     * Whether an error should be captured when a network request returns a 400 or greater status code
+     */
+    error?: boolean;
+
+    /**
+     * Whether network requests should automatically be recorded as Telemetry
+     */
+    enabled?: boolean;
+  };
+
+  /**
    * Custom callback handler for errors detected.
    */
   onError?: (payload: TrackJSCapturePayload) => boolean;

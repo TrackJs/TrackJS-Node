@@ -3,12 +3,13 @@ import { Watcher } from ".";
 import { isError } from "../utils/isType";
 import { serialize } from "../utils/serialize";
 import { TrackJSEntry } from "../types/TrackJSCapturePayload";
+import { TrackJSOptions } from "../types";
 
 class _RejectionWatcher implements Watcher {
   /**
    * @inheritdoc
    */
-  install(): void {
+  install(options: TrackJSOptions): void {
     process.on("unhandledRejection", this.rejectionHandler);
   }
 

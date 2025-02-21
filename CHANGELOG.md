@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+
+- Added installation options for `network.enabled` and `network.error` to control whether network telemetry and errors are captured.
+- Fixed wrapping of `http.get` and `https.get` to add telemetry events.
+
 ## 1.2.0
 
 - Added `TrackJS.console` function for parity with the browser agent.
