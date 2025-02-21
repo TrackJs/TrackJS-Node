@@ -8,7 +8,6 @@ import { TrackJSEntry } from "../types/TrackJSCapturePayload";
 import { TrackJSOptions } from "../types";
 
 class _NetworkWatcher implements Watcher {
-
   private options: TrackJSOptions;
 
   /**
@@ -22,20 +21,20 @@ class _NetworkWatcher implements Watcher {
     }
 
     const networkWatcher = this;
-    for(const module of [http, https]) {
+    for (const module of [http, https]) {
       for (const method of ["request", "get"]) {
         patch(module, method, (original) => {
           return function request(options) {
             const req = original.apply(this, arguments);
 
-            if (!options?.__trackjs__)  {
+            if (!(options || {}).__trackjs__) {
               const networkTelemetry = networkWatcher.createTelemetryFromRequest(req);
               AgentRegistrar.getCurrentAgent(req.domain).telemetry.add("n", networkTelemetry);
             }
 
             return req;
-          }
-        })
+          };
+        });
       }
     }
   }
@@ -44,7 +43,7 @@ class _NetworkWatcher implements Watcher {
    * @inheritdoc
    */
   uninstall(): void {
-    for(const module of [http, https]) {
+    for (const module of [http, https]) {
       for (const method of ["request", "get"]) {
         unpatch(module, method);
       }
