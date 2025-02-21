@@ -41,9 +41,11 @@ export class Agent {
 
     if (isFunction(options.onError)) {
       this.onError(options.onError);
+      delete this.options.onError;
     }
 
     this.metadata = new Metadata(this.options.metadata);
+    delete this.options.metadata;
 
     if (this.options.defaultMetadata) {
       this.metadata.add("hostname", os.hostname());
