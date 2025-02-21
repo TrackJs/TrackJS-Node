@@ -74,7 +74,7 @@ describe("NetworkWatcher", () => {
     });
 
     it("when error enabled, captures error from failing request", (done) => {
-      _NetworkWatcher.install({ network: { enabled: true, error: true }});
+      _NetworkWatcher.install({ network: { enabled: true, error: true } });
       fakeAgent.telemetry.add = jest.fn();
       fakeAgent.captureError = jest.fn();
       const req = https.request("https://httpstat.us/501", { method: "GET" }, (res) => {
@@ -92,7 +92,7 @@ describe("NetworkWatcher", () => {
     });
 
     it("when error disabled, no errors captured", (done) => {
-      _NetworkWatcher.install({ network: { enabled: true, error: false }});
+      _NetworkWatcher.install({ network: { enabled: true, error: false } });
       fakeAgent.telemetry.add = jest.fn();
       fakeAgent.captureError = jest.fn();
       const req = https.request("https://httpstat.us/501", { method: "GET" }, (res) => {
@@ -103,6 +103,5 @@ describe("NetworkWatcher", () => {
       });
       req.end();
     });
-
   });
 });
